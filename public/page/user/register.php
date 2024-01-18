@@ -1,3 +1,33 @@
+<?php
+
+include "../../database/koneksi.php";
+
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+    $username = $_POST["username"];
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $email = $_POST["email"];
+    $createdAt = date("Y-m-d H:i:s");
+
+    $query = "INSERT INTO users (name, username, password, email, createdAt) VALUES ('', '$username', '$password', '$email', '$createdAt')";
+    
+    $result = mysqli_query($conn, $query);
+    
+    if ($result) {
+        // Registrasi berhasil, arahkan pengguna ke halaman index.php
+        header("Location: ../index.php");
+        exit();
+    } else {
+        // Ada kesalahan dalam eksekusi query
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-white">
 
@@ -37,15 +67,6 @@
 
                 <div>
                     <div class="flex items-center justify-between">
-                        <label for="confirm_password" class="block text-sm font-medium leading-6 text-gray-900">Confirm Password</label>
-                    </div>
-                    <div class="mt-2">
-                        <input id="confirm_password" name="confirm_password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between">
                         <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                     </div>
                     <div class="mt-2">
@@ -54,7 +75,7 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Sign Up</button>
+                    <button type="submit" name="submit" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Sign Up</button>
                 </div>
 
                 <div>
