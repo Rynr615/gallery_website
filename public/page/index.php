@@ -1,3 +1,18 @@
+<?php
+
+include "../database/koneksi.php";
+
+session_start();
+
+//$_SESSION['username'] = $username;
+
+if (!isset($_SESSION['username'])) {
+    header("Location: ./user/login.php");
+    exit();
+}else{
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,3 +28,6 @@
     </h1>
 </body>
 </html>
+<?php 
+}
+?>

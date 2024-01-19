@@ -1,12 +1,30 @@
-<?php
+<?php 
 
 include "../../database/koneksi.php";
 
-session_start();
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
 
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $result = mysqli_query($conn, $query);
+    
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $hashed_password = $row["password"];
+        
+        if (password_verify($password, $hashed_password)) {
+            session_start();
+            $_SESSION['username']=$row["username"];
+            var_dump($_SESSION['username']);
+            header("Location: ../index.php");
+            exit();
+        } else {
+            //header("Location: ./login.php");
+            $error_password = "Password Salah!!!";
+        }
+        
+    }
 }
 
 ?>
@@ -31,7 +49,7 @@ if (!isset($_SESSION['username'])) {
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form class="space-y-6" action="#" method="POST">
+            <form class="space-y-6" action="" method="POST">
                 <div>
                     <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                     <div class="mt-2">
@@ -49,7 +67,7 @@ if (!isset($_SESSION['username'])) {
                 </div>
 
                 <div>
-                    <button type="submit" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Sign in</button>
+                    <button type="submit" name="submit" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Sign in</button>
                 </div>
 
                 <div>

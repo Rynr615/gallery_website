@@ -2,8 +2,6 @@
 
 include "../../database/koneksi.php";
 
-session_start();
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $username = $_POST["username"];
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
@@ -16,14 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     
     if ($result) {
         // Registrasi berhasil, arahkan pengguna ke halaman index.php
-        header("Location: ../index.php");
+        header("Location:../index.php");
         exit();
     } else {
         // Ada kesalahan dalam eksekusi query
         echo "Error: " . mysqli_error($conn);
     }
 }
-
 
 
 ?>
