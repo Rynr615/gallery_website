@@ -34,6 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     <title>Sign Up Page</title>
     <link rel="stylesheet" href="../../css/output.css">
     <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/all.min.css">
+    <link rel="stylesheet" href="../../css/fontawesome.min.css">
+    <link rel="icon" href="../../assets/logo/logo-main.svg" type="image/x-icon">
+
 </head>
 
 <body class="h-full">
