@@ -1,6 +1,6 @@
 <?php
 
-include "../database/koneksi.php";
+include "../../database/koneksi.php";
 
 session_start();
 
@@ -27,7 +27,7 @@ if (!isset($_SESSION['username'])) {
         <link rel="icon" href="../assets/logo/logo-main.svg" type="image/x-icon">
     </head>
 
-    <body class="h-full">
+    <body class="h-screen font-poppins">
         <!-- navbar -->
         <div x-data="{ open: false, profileMenuOpen: false }">
             <nav class="bg-gray-800">
@@ -85,7 +85,7 @@ if (!isset($_SESSION['username'])) {
                                     <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                                         <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
                                         <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                                        <a href="./user/logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
                                     </div>
                                 </div>
                             </div>
@@ -107,15 +107,44 @@ if (!isset($_SESSION['username'])) {
         </div>
 
         <!-- main-content -->
-        <div class="h-screen">
+        <div class="container">
+            <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 md:p-2 xl:p-5">
 
+                <!-- card  -->
+                <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                    <div class="absolute top-3 right-3">
+                        <i class="fas fa-heart text-red-500 text-2xl hover:text-red-700"></i>
+                    </div>
+                    <div class="p-2 flex justify-center">
+                        <a href="#">
+                            <img class="rounded-md" src="https://tailwindflex.com/public/images/thumbnails/coming-soon-page/thumb_u.min.webp" loading="lazy">
+                        </a>
+                    </div>
+
+                    <div class="px-4 pb-3">
+                        <div>
+                            <a href="#">
+                                <h5 class="text-xl font-semibold tracking-tight hover:text-blue-800 dark:hover:text-blue-300 text-gray-900 dark:text-white ">
+                                    Card
+                                </h5>
+                            </a>
+
+                            <p class="antialiased text-gray-600 dark:text-gray-400 text-sm break-all">
+                                A card component is a flexible and extensible content container. Card has a wide range of uses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
 
         <!-- footer -->
-        <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2">
+        <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
             <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="sm:col-span-2">
-                    <a href="/" aria-label="Go home" title="Company" class="inline-flex items-center">
+                    <a href="./index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                         <img src="../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                         <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                     </a>

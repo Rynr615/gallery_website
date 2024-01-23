@@ -1,6 +1,6 @@
 <?php
 
-include "../../database/koneksi.php";
+include "../../../database/koneksi.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $username = $_POST["username"];
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
 </head>
 
-<body class="h-full">
+<body class="h-full font-poppins">
     <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img class="mx-auto h-24 w-auto" src="../../assets/logo/logo-main.svg" alt="">
