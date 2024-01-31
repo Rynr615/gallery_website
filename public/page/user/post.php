@@ -1,27 +1,89 @@
 <?php
-
 include "../../../database/koneksi.php";
 
 session_start();
 
-$username = $_SESSION["username"];
-
+// Periksa apakah sesi username sudah diset atau belum
 if (!isset($_SESSION['username'])) {
     header("Location: ./login.php");
     exit();
 }
 
-$query = "SELECT * FROM users WHERE username = '$username'";
-$result = mysqli_query($conn, $query);
+// Ambil photoID dari parameter URL
+$photoID = isset($_GET['photoID']) ? $_GET['photoID'] : null;
+
+
+
+if ($photoID) {
+    // Query untuk mendapatkan data foto
+    $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username
+              FROM photos
+              INNER JOIN users ON photos.userID = users.userID
+              WHERE photos.photoID = $photoID";
+
+    $result = mysqli_query($conn, $query);
+
+    // Periksa apakah query berhasil dieksekusi
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+
+        // Ekstrak data dari hasil query
+        $title = $row['title'];
+        $description = $row['description'];
+        $image_path = $row['image_path'];
+        $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
+        $name = $row['name'];
+        $username = $row['username'];
+    } else {
+        // Jika query gagal, atur nilai default
+        $title = "Foto Tidak Ditemukan";
+        $description = "Maaf, foto tidak ditemukan.";
+        $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
+        $createdAt = "";
+        $name = "";
+        $username = "";
+    }
+} else {
+    // Jika photoID tidak ditemukan dalam parameter URL
+    $title = "Foto Tidak Ditemukan";
+    $description = "Maaf, foto tidak ditemukan.";
+    $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
+    $createdAt = "";
+    $name = "";
+    $username = "";
+}
+
+// Ambil jumlah like untuk foto
+$queryLikes = "SELECT COUNT(*) AS totalLikes FROM likes WHERE photoID = $photoID";
+$resultLikes = mysqli_query($conn, $queryLikes);
 
 // Periksa apakah query berhasil dieksekusi
-if ($result && mysqli_num_rows($result) > 0) {
-    // Ambil data pengguna terbaru
-    $pengguna = mysqli_fetch_assoc($result);
+if ($resultLikes) {
+    $rowLikes = mysqli_fetch_assoc($resultLikes);
+    $totalLikes = $rowLikes['totalLikes'];
 } else {
-    // Handle kesalahan query
-    echo "Error: " . mysqli_error($conn);
+    // Jika query gagal, atur nilai default
+    $totalLikes = 0;
 }
+
+$queryComments = "SELECT comments.commentText, comments.createdAt, users.username
+                  FROM comments
+                  INNER JOIN users ON comments.userID = users.userID
+                  WHERE comments.photoID = $photoID
+                  ORDER BY comments.createdAt DESC";
+
+$resultComments = mysqli_query($conn, $queryComments);
+
+$countComments = "SELECT COUNT(*) AS totalComments FROM comments WHERE photoID = $photoID";
+$resultCommentsCount = mysqli_query($conn, $countComments);
+
+if($resultCommentsCount) {
+    $rowComments = mysqli_fetch_array($resultCommentsCount);
+    $totalComment = $rowComments["totalComments"];
+} else {
+    $totalComment = 0;
+}
+
 
 ?>
 
@@ -39,7 +101,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <link rel="icon" href="../../assets/logo/logo-main.svg" type="image/x-icon">
 </head>
 
-<body class="h-screen font-poppins">
+<body class="h-screen overflow-x-hidden font-poppins">
     <!-- navbar -->
     <div x-data="{ open: false, profileMenuOpen: false }">
         <nav class="bg-gray-800">
@@ -66,7 +128,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div class="flex space-x-4">
                                 <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                             </div>
                         </div>
                     </div>
@@ -108,7 +170,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
                     <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
+                    <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
             </div>
@@ -117,12 +179,81 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <!-- main-content -->
-    <div class="container mx-auto">
-        <h1 class="text-3xl font-bold underline">Hello, <?php echo $pengguna['username']; ?>!</h1>
-        <p>Email: <?php echo $pengguna['email']; ?></p>
-        <!-- ... (kode konten lainnya) -->
-    </div>
+    <div class="container mx-auto ">
+        <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
+            <div class="mx-auto flex justify-between ">
+                <div class="">
+                    <p class="font-semibold">
+                        <span>Title : </span> <?= $title; ?>
+                    </p>
+                    <p class="pt-2 text-sm text-gray-400">
+                        <span class="font-normal">Author : </span><?= $username ?>
+                    </p>
+                    <p class="pt-2">
+                        <?= $description ?>
+                    </p>
+                </div>
+                <div class="">
+                    <p class="text-xs">
+                        <span>Published on : </span><?= $createdAt ?>
+                    </p>
+                    <div class="mt-10 flex gap-4">
+                        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></button>
+                        <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Hapus<i class="fa-solid fa-trash ml-2"></i></button>
+                    </div>
+                </div>
 
+            </div>
+            <div class='flex justify-center mt-5'>
+                <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
+            </div>
+            <div class="flex justify-between mt-5">
+                <!-- like -->
+                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
+                    <a href="like.php?photoID=<?= $photoID; ?>" type="submit" class="text-gray-800">
+                        <i class="fa-solid fa-thumbs-up"></i> <?= $totalLikes ?> Likes
+                    </a>
+                </div>
+                <div id="commentPopup" class="m-10 w-full border-gray-100 border shadow-md rounded-xl py-12 px-8 hidden bg-white">
+                    <h2 class="text-lg font-semibold mb-2">Send a comment</h2>
+                    <form method="post" action="comment.php">
+                        <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                        <textarea name="commentText" placeholder="Tulis komentar Anda..." class="w-full h-24 p-2 border rounded-md mb-2"></textarea>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Send<i class="fa-solid fa-paper-plane ml-3"></i> </button>
+                    </form>
+                </div>
+                <!-- comment -->
+                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
+                    <div class="">
+                        <button class="text-gray-800" onclick="openCommentPopup()">
+                            <i class="fa-regular fa-comment"></i> <?= $totalComment; ?> Comments
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
+                    <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
+                        <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
+                            <div class="mb-3 flex justify-between">
+                                <div class="mb-3">
+                                    <p class="font-bold mb-3"><?= htmlspecialchars($comment['username']) ?></p>
+                                    <p><?= htmlspecialchars($comment['commentText']) ?></p>  
+                                </div>
+                                
+                                <div class="">
+                                    <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } else { ?>
+                    <p class="text-gray-600">No comments yet.</p>
+                <?php } ?>
+            </div>
+
+        </div>
+    </div>
 
     <!-- footer -->
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
@@ -181,6 +312,22 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <script src="../../js/script.min.js"></script>
+
+    <script>
+        let open = true
+
+        function openCommentPopup() {
+            // Tampilkan popup komentar
+            if (open) {
+                document.getElementById('commentPopup').style.display = 'block';
+                open = false
+            } else {
+                document.getElementById('commentPopup').style.display = 'none';
+                open = true
+
+            }
+        }
+    </script>
 
 </body>
 

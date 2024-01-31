@@ -175,20 +175,20 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
             <form action="" method="post" enctype="multipart/form-data">
-                <div class="grid grid-cols-2 gap-5">
+                <div class="flex items-center flex-col">
                     <!-- title -->
-                    <div class="col-span-2 mt-5">
+                    <div class="w-1/3 mt-5">
                         <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
                         <div class="mt-2">
                             <input type="text" name="title" id="title" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <!-- Upload image -->
-                    <div class="col-span-full mt-5">
+                    <div class="w-1/3 mt-5">
                         <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Photo</label>
-                        <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                        <div class="mt-2 w-full flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                             <div class="text-center">
-                                <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                <label for="file-upload" class="relative w-full cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                     <span>Upload a file</span>
                                     <input id="file-upload" name="file-upload" type="file" class="sr-only" onchange="previewImage(this)">
                                 </label>
@@ -198,7 +198,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </div>
                     </div>
                     <!-- description -->
-                    <div class="col-span-full mt-5">
+                    <div class="w-1/3 mt-5">
                         <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
                         <div class="mt-2">
                             <textarea id="description" placeholder="Tell us about your photo" name="description" rows="5" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>

@@ -11,10 +11,10 @@ if (!isset($_SESSION['username'])) {
     exit();
 } else {
 
-    $query = "SELECT photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
+    $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos
     INNER JOIN users ON photos.userID = users.userID
-    ORDER BY photos.createdAt DESC";
+    ORDER BY photos.createdAt DESC LIMIT 20";
 
     $result = mysqli_query($conn, $query);
 
@@ -126,7 +126,7 @@ if (!isset($_SESSION['username'])) {
                         <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
                             <!-- ... (ikon love) -->
                             <div class="p-2 flex justify-center">
-                                <a href="#" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                                <a href="./user/post.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
                                     <!-- Tambahkan kelas CSS untuk memastikan rasio 16:9 -->
                                     <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../database/uploads/<?php echo $row['image_path']; ?>" loading="lazy" alt="<?php echo $row['title']; ?>">
                                 </a>
@@ -134,15 +134,28 @@ if (!isset($_SESSION['username'])) {
 
                             <div class="px-4 pb-3">
                                 <div>
-                                    <a href="#">
+                                    <a href="./user/post.php?photoID=<?= $row['photoID'] ?>">
                                         <h5 class="text-xl font-semibold tracking-tight hover:text-blue-800 dark:hover:text-blue-300 text-gray-900 dark:text-white ">
                                             <?php echo $row['title']; ?>
                                         </h5>
                                     </a>
 
                                     <p class="antialiased text-gray-600 dark:text-gray-400 text-sm break-all">
-                                        <?php echo $row['description']; ?>
+                                        <?php
+                                        $description = $row['description'];
+                                        if (strlen($description) > 20) {
+                                        ?>
+                                            <!-- Jika deskripsi lebih dari 20 karakter, potong dan tambahkan tautan "lihat postingan" -->
+                                            <span><?= substr($description, 0, 20) ?></span>
+                                            <a href="./user/post.php?photoID=<?= $row['photoID'] ?>" class="text-blue-500 hover:text-white">lihat postingan</a>
+                                        <?php
+                                        } else {
+                                            // Jika kurang dari atau sama dengan 20 karakter, tampilkan normal
+                                            echo $description;
+                                        }
+                                        ?>
                                     </p>
+
                                     <p class="mt-2 text-gray-500 text-sm">
                                         Uploaded by
                                         <span class="hover:text-white" style="cursor: default;">
