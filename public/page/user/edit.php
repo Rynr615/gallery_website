@@ -1,105 +1,108 @@
 <?php
 include "../../../database/koneksi.php";
 
+// Start session
 session_start();
 
-// Periksa apakah sesi username sudah diset atau belum
+// Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
-    header("Location: ./login.php");
+    // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
+    header("Location: ../login.php");
     exit();
 }
 
-// Ambil photoID dari parameter URL
-$photoID = isset($_GET['photoID']) ? $_GET['photoID'] : null;
+// Variabel username sudah pasti terdefinisi jika sampai di sini
+$username = $_SESSION['username'];
 
-$username = $_SESSION["username"];
-
-$queryUserID = "SELECT userID FROM users WHERE username = '$username'";
-$resultUser = mysqli_query($conn, $queryUserID);
-
-$showButtons = false;
-if ($resultUser && mysqli_num_rows($resultUser) > 0) {
-    $rowUser = mysqli_fetch_assoc($resultUser);
-    $userID = $rowUser["userID"];
-
-    if ($photoID) {
-        // Query untuk mendapatkan data foto
-        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username
-        FROM photos
-        INNER JOIN users ON photos.userID = users.userID
-        WHERE photos.photoID = $photoID";
-
-
-        $result = mysqli_query($conn, $query);
-
-        // Periksa apakah query berhasil dieksekusi
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-
-            if (isset($row['userID']) && $row['userID'] == $userID) {
-                $showButtons = true;
-            }
-
-            // Ekstrak data dari hasil query
-            $title = $row['title'];
-            $description = $row['description'];
-            $image_path = $row['image_path'];
-            $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
-            $name = $row['name'];
-            $username = $row['username'];
-        } else {
-            // Jika query gagal, atur nilai default
-            $title = "Foto Tidak Ditemukan";
-            $description = "Maaf, foto tidak ditemukan.";
-            $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
-            $createdAt = "";
-            $name = "";
-            $username = "";
-        }
-    } else {
-        // Jika photoID tidak ditemukan dalam parameter URL
-        $title = "Foto Tidak Ditemukan";
-        $description = "Maaf, foto tidak ditemukan.";
-        $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
-        $createdAt = "";
-        $name = "";
-        $username = "";
-    }
-}
-
-
-// Ambil jumlah like untuk foto
-$queryLikes = "SELECT COUNT(*) AS totalLikes FROM likes WHERE photoID = $photoID";
-$resultLikes = mysqli_query($conn, $queryLikes);
+// Lakukan koneksi dan query untuk mendapatkan userID
+$query = "SELECT * FROM users WHERE username = '$username'";
+$resultUser = mysqli_query($conn, $query);
 
 // Periksa apakah query berhasil dieksekusi
-if ($resultLikes) {
-    $rowLikes = mysqli_fetch_assoc($resultLikes);
-    $totalLikes = $rowLikes['totalLikes'];
-} else {
-    // Jika query gagal, atur nilai default
-    $totalLikes = 0;
+if ($resultUser && mysqli_num_rows($resultUser) > 0) {
+    // Ambil data pengguna terbaru
+    $pengguna = mysqli_fetch_assoc($resultUser);
+
+    // Dapatkan userID dari data pengguna
+    $userID = $pengguna['userID'];
+
+    if (isset($_GET['photoID'])) {
+        $photoID = mysqli_real_escape_string($conn, $_GET['photoID']);
+
+        // Query untuk mendapatkan data foto berdasarkan photoID dan userID
+        $queryPhoto = "SELECT * FROM photos WHERE photoID = $photoID AND userID = $userID";
+        $resultPhoto = mysqli_query($conn, $queryPhoto);
+
+        // Periksa apakah query berhasil dieksekusi
+        if ($resultPhoto && mysqli_num_rows($resultPhoto) > 0) {
+            $rowPhoto = mysqli_fetch_assoc($resultPhoto);
+            $titleBeforeEdit = $rowPhoto['title'];
+            $descriptionBeforeEdit = $rowPhoto['description'];
+            $imagePathBeforeEdit = $rowPhoto['image_path'];
+        } else {
+            // Jika query gagal, atur nilai default atau redirect ke halaman lain
+            header("Location: ../../page/index.php");
+            exit();
+        }
+    } else {
+        // Jika photoID tidak ada dalam parameter URL, redirect ke halaman lain
+        header("Location: ../../page/index.php");
+        exit();
+    }
+
+    // Proses pengeditan foto
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $photoID = mysqli_real_escape_string($conn, $_POST['photoID']);
+        $title = mysqli_real_escape_string($conn, $_POST['title']);
+        $description = mysqli_real_escape_string($conn, $_POST['description']);
+
+        // Mengambil data foto sebelum diedit
+        $queryBeforeEdit = "SELECT title, description, image_path FROM photos WHERE photoID = $photoID AND userID = $userID";
+        $resultBeforeEdit = mysqli_query($conn, $queryBeforeEdit);
+
+        if ($resultBeforeEdit && mysqli_num_rows($resultBeforeEdit) > 0) {
+            $rowBeforeEdit = mysqli_fetch_assoc($resultBeforeEdit);
+            $titleBeforeEdit = $rowBeforeEdit['title'];
+            $descriptionBeforeEdit = $rowBeforeEdit['description'];
+            $imagePathBeforeEdit = $rowBeforeEdit['image_path'];
+        } else {
+            // Jika query gagal, atur nilai default atau redirect ke halaman lain
+            header("Location: ../../page/index.php");
+            exit();
+        }
+
+        // Cek apakah ada file yang diupload
+        if ($_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
+            // Hapus foto lama jika ada
+            $oldImagePath = "../../../database/uploads/" . $imagePathBeforeEdit;
+            unlink($oldImagePath);
+
+            // Proses upload file baru
+            $fileName = $_FILES['file-upload']['name'];
+            $fileTmpName = $_FILES['file-upload']['tmp_name'];
+            $encryptedFileName = time() . '_' . $fileName;
+            $uploadDirectory = "../../../database/uploads/";
+
+            move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName);
+
+            // Update data foto di tabel photos, termasuk penggantian gambar
+            $updateQuery = "UPDATE photos SET title = '$title', description = '$description', image_path = '$encryptedFileName' WHERE photoID = $photoID AND userID = $userID";
+        } else {
+            // Update data foto di tabel photos tanpa penggantian gambar
+            $updateQuery = "UPDATE photos SET title = '$title', description = '$description' WHERE photoID = $photoID AND userID = $userID";
+        }
+
+        if (mysqli_query($conn, $updateQuery)) {
+            // Jika berhasil, alihkan ke halaman index.php atau halaman lain yang sesuai
+            header("Location: ../../page/index.php");
+            exit();
+        } else {
+            // Handle kesalahan query
+            echo "Error: " . mysqli_error($conn);
+            exit();
+        }
+    }
 }
-
-$queryComments = "SELECT comments.commentText, comments.createdAt, users.username
-                  FROM comments
-                  INNER JOIN users ON comments.userID = users.userID
-                  WHERE comments.photoID = $photoID
-                  ORDER BY comments.createdAt DESC";
-
-$resultComments = mysqli_query($conn, $queryComments);
-
-$countComments = "SELECT COUNT(*) AS totalComments FROM comments WHERE photoID = $photoID";
-$resultCommentsCount = mysqli_query($conn, $countComments);
-
-if ($resultCommentsCount) {
-    $rowComments = mysqli_fetch_array($resultCommentsCount);
-    $totalComment = $rowComments["totalComments"];
-} else {
-    $totalComment = 0;
-}
-
-
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +119,7 @@ if ($resultCommentsCount) {
     <link rel="icon" href="../../assets/logo/logo-main.svg" type="image/x-icon">
 </head>
 
-<body class="h-screen overflow-x-hidden font-poppins">
+<body class="h-screen font-poppins">
     <!-- navbar -->
     <div x-data="{ open: false, profileMenuOpen: false }">
         <nav class="bg-gray-800">
@@ -142,8 +145,8 @@ if ($resultCommentsCount) {
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
                                 <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
+                                <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                             </div>
                         </div>
                     </div>
@@ -194,86 +197,52 @@ if ($resultCommentsCount) {
     </div>
 
     <!-- main-content -->
-    <div class="container mx-auto ">
-        <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
-            <div class="mx-auto flex justify-between ">
-                <div class="">
-                    <p class="font-semibold">
-                        <span>Title : </span> <?= $title; ?>
-                    </p>
-                    <p class="pt-2 text-sm text-gray-400">
-                        <span class="font-normal">Author : </span><?= $username ?>
-                    </p>
-                    <p class="pt-2">
-                        <?= $description ?>
-                    </p>
-                </div>
-                <div class="">
-                    <p class="text-xs">
-                        <span>Published on : </span><?= $createdAt ?>
-                    </p>
-                    <?php if (isset($showButtons) && $showButtons) : ?>
-                        <!-- Tampilkan tombol hanya jika user yang sedang login adalah pemilik foto -->
-                        <div class="mt-10 flex gap-4">
-                            <a href="edit.php?photoID=<?= $photoID ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></a>
-                            <form method="post" action="delete.php">
-                                <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                                <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Hapus<i class="fa-solid fa-trash ml-2"></i></button>
-                            </form>
-
+    <div class="container">
+        <div class="m-10">
+            <div class="w-full text-center mt-10">
+                <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
+            </div>
+            <form action="" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="photoID" value="<?php echo $photoID; ?>">
+                <div class="flex items-center flex-col">
+                    <!-- title -->
+                    <div class="w-1/3 mt-5">
+                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">New Title</label>
+                        <div class="mt-2">
+                            <input type="text" name="title" id="title" value="<?= $titleBeforeEdit ?>" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
-                    <?php endif; ?>
-                </div>
-
-            </div>
-            <div class='flex justify-center mt-5'>
-                <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
-            </div>
-            <div class="flex justify-between mt-5">
-                <!-- like -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
-                    <a href="like.php?photoID=<?= $photoID; ?>" type="submit" class="text-gray-800">
-                        <i class="fa-solid fa-thumbs-up"></i> <?= $totalLikes ?> Likes
-                    </a>
-                </div>
-                <div id="commentPopup" class="m-10 w-full border-gray-100 border shadow-md rounded-xl py-12 px-8 hidden bg-white">
-                    <h2 class="text-lg font-semibold mb-2">Send a comment</h2>
-                    <form method="post" action="comment.php">
-                        <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                        <textarea name="commentText" placeholder="Tulis komentar Anda..." class="w-full h-24 p-2 border rounded-md mb-2"></textarea>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Send<i class="fa-solid fa-paper-plane ml-3"></i> </button>
-                    </form>
-                </div>
-                <!-- comment -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
-                    <div class="">
-                        <button class="text-gray-800" onclick="openCommentPopup()">
-                            <i class="fa-regular fa-comment"></i> <?= $totalComment; ?> Comments
-                        </button>
                     </div>
-                </div>
-            </div>
-            <div class="mt-5">
-                <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
-                    <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
-                        <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
-                            <div class="mb-3 flex justify-between">
-                                <div class="mb-3">
-                                    <p class="font-bold mb-3"><?= htmlspecialchars($comment['username']) ?></p>
-                                    <p><?= htmlspecialchars($comment['commentText']) ?></p>
-                                </div>
-
-                                <div class="">
-                                    <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
+                    <!-- Upload image -->
+                    <div class="w-1/3 mt-5">
+                        <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Photo</label>
+                        <div class="mt-2 w-full flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                            <div class="text-center">
+                                <label for="file-upload" class="relative w-full cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input id="file-upload" name="file-upload" type="file" class="sr-only" onchange="previewImage(this)">
+                                </label>
+                                <p class="text-xs leading-5 text-gray-600">PNG, JPG, SVG up to 10MB</p>
+                                <div class="mt-4 min-h-[250px]" id="image-preview">
+                                    <?php
+                                    // Tampilkan gambar sebelum diedit
+                                    echo '<img src="../../../database/uploads/' . $imagePathBeforeEdit . '" class="rounded-md mt-2" alt="Image Before Edit">';
+                                    ?>
                                 </div>
                             </div>
-                        <?php } ?>
+                        </div>
                     </div>
-                <?php } else { ?>
-                    <p class="text-gray-600">No comments yet.</p>
-                <?php } ?>
-            </div>
-
+                    <!-- description -->
+                    <div class="w-1/3 mt-5">
+                        <label for="description" class="block text-sm font-medium leading-6 text-gray-900">New Description</label>
+                        <div class="mt-2">
+                            <textarea id="description" placeholder="<?= $descriptionBeforeEdit ?>" name="description" rows="5" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"><?= $descriptionBeforeEdit ?></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-center gap-x-6">
+                    <button type="submit" class="rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Update</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -334,19 +303,22 @@ if ($resultCommentsCount) {
     </div>
 
     <script src="../../js/script.min.js"></script>
-
     <script>
-        let open = true
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
 
-        function openCommentPopup() {
-            // Tampilkan popup komentar
-            if (open) {
-                document.getElementById('commentPopup').style.display = 'block';
-                open = false
-            } else {
-                document.getElementById('commentPopup').style.display = 'none';
-                open = true
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
 
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('rounded-md', 'mt-2');
+                    preview.innerHTML = '';
+                    preview.appendChild(img);
+                };
+
+                reader.readAsDataURL(input.files[0]);
             }
         }
     </script>
