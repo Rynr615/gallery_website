@@ -124,7 +124,6 @@ if (!isset($_SESSION['username'])) {
                     ?>
                         <!-- card  -->
                         <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
-                            <!-- ... (ikon love) -->
                             <div class="p-2 flex justify-center">
                                 <a href="./user/post.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
                                     <!-- Tambahkan kelas CSS untuk memastikan rasio 16:9 -->

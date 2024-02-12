@@ -7,7 +7,7 @@ session_start();
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
     // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
-    header("Location: ../login.php");
+    header("Location: ./login.php");
     exit();
 }
 
@@ -188,8 +188,8 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
                     <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
+                    <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
             </div>
         </nav>

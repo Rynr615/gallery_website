@@ -99,6 +99,24 @@ if ($resultCommentsCount) {
     $totalComment = 0;
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['addToAlbum'])) {
+        $albumID = $_POST['albumID'];
+
+        // Update kolom albumID pada tabel photos untuk menyimpan postingan ke album yang dipilih
+        $updateQuery = "UPDATE photos SET albumID = $albumID WHERE photoID = $photoID";
+        $resultUpdate = mysqli_query($conn, $updateQuery);
+
+        if ($resultUpdate) {
+            echo "<script>alert('Added to album successfully');</script>";
+            // Redirect or do any other action after successfully adding to album
+        } else {
+            echo "<script>alert('Failed to add to album');</script>";
+        }
+    }
+}
+
+
 
 ?>
 
@@ -185,8 +203,8 @@ if ($resultCommentsCount) {
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
                     <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
+                    <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
             </div>
         </nav>
@@ -220,7 +238,26 @@ if ($resultCommentsCount) {
                                 <input type="hidden" name="photoID" value="<?= $photoID ?>">
                                 <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Hapus<i class="fa-solid fa-trash ml-2"></i></button>
                             </form>
-
+                        </div>
+                        <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to album</label>
+                        <div class="mt-2">
+                            <form method="post" action="">
+                                <select id="album" name="albumID" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    <!-- Fetch and display user's albums as options -->
+                                    <?php
+                                    $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userID";
+                                    $resultUserAlbums = mysqli_query($conn, $queryUserAlbums);
+                                    if ($resultUserAlbums && mysqli_num_rows($resultUserAlbums) > 0) {
+                                        while ($rowAlbum = mysqli_fetch_assoc($resultUserAlbums)) {
+                                            echo "<option value='" . $rowAlbum['albumID'] . "'>" . $rowAlbum['title'] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value=''>No albums found</option>";
+                                    }
+                                    ?>
+                                </select>
+                                <button type="submit" name="addToAlbum" class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Album</button>
+                            </form>
                         </div>
                     <?php endif; ?>
                 </div>
