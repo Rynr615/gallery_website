@@ -11,13 +11,36 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+// Ambil data pengguna
 $query = "SELECT * FROM users WHERE username = '$username'";
 $result = mysqli_query($conn, $query);
 
 // Periksa apakah query berhasil dieksekusi
 if ($result && mysqli_num_rows($result) > 0) {
     // Ambil data pengguna terbaru
-    $pengguna = mysqli_fetch_assoc($result);
+    $row = mysqli_fetch_assoc($result);
+
+    // Ambil jumlah postingan pengguna
+    $query_postingan = "SELECT COUNT(*) AS jumlah_postingan FROM photos WHERE userID = '{$row['userID']}'";
+    $result_postingan = mysqli_query($conn, $query_postingan);
+    $jumlah_postingan = 0;
+    if ($result_postingan && mysqli_num_rows($result_postingan) > 0) {
+        $row_postingan = mysqli_fetch_assoc($result_postingan);
+        $jumlah_postingan = $row_postingan['jumlah_postingan'];
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+
+    // Ambil jumlah album pengguna
+    $query_album = "SELECT COUNT(*) AS jumlah_album FROM albums WHERE userID = '{$row['userID']}'";
+    $result_album = mysqli_query($conn, $query_album);
+    $jumlah_album = 0;
+    if ($result_album && mysqli_num_rows($result_album) > 0) {
+        $row_album = mysqli_fetch_assoc($result_album);
+        $jumlah_album = $row_album['jumlah_album'];
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
 } else {
     // Handle kesalahan query
     echo "Error: " . mysqli_error($conn);
@@ -72,9 +95,12 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
                     <div class="flex items-center">
                         <!-- Search Box -->
-                        <div class="hidden sm:block ">
-                            <input type="text" placeholder="Search" class="bg-gray-700 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                        </div>
+                        <form action="./result_search.php" class="flex flex-row gap-2" method="GET">
+                            <div class="hidden sm:block">
+                                <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
+                            </div>
+                            <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                        </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                 <!-- ... (kode ikon notifikasi) -->
@@ -90,12 +116,12 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo">
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                                     <a href="./profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                                    <a href="./setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
                                     <a href="./logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
                                 </div>
                             </div>
@@ -117,10 +143,53 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <!-- main-content -->
-    <div class="container mx-auto">
-        <h1 class="text-3xl font-bold underline">Hello, <?php echo $pengguna['username']; ?>!</h1>
-        <p>Email: <?php echo $pengguna['email']; ?></p>
-        <!-- ... (kode konten lainnya) -->
+    <div class="container mx-auto p-10">
+        <div class="relative flex flex-col w-full min-w-0 mb-6 !important break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30 draggable">
+            <!-- card body -->
+            <div class="px-9 pt-9 flex-auto min-h-[70px] pb-0 bg-transparent">
+                <div class="flex flex-wrap mb-6 xl:flex-nowrap">
+                    <div class="mb-5 mr-5">
+                        <div class="relative inline-block shrink-0 w-48 rounded-2xl">
+                            <img class="inline-block shrink-0 rounded-full w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo" />
+                        </div>
+                    </div>
+                    <div class="grow">
+                        <div class="flex flex-wrap items-start justify-between mb-2">
+                            <div class="flex flex-col">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-id-card mr-2"></i><p class="text-secondary-inverse hover:text-primary transition-colors duration-200 ease-in-out font-semibold text-[1.5rem] mr-1" href="javascript:void(0)"> <?= $row['username'] ?> </p>
+                                </div>
+                                <div class="flex flex-wrap pr-2 font-medium">
+                                    <p class="flex items-center mb-2 font-normal mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
+                                        <i class="fa-regular fa-user mr-2"></i><?= $row['name'] ?>
+                                    </p>
+                                </div>
+                                <div class="flex flex-wrap pr-2 font-medium">
+                                    <p class="flex items-center mb-2 font-normal mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
+                                        <i class="fa-regular fa-envelope mr-2"></i> <?= $row['email'] ?>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="flex items-center mb-2 mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
+                                        <i class="fa-solid fa-calendar-days mr-2"></i> Joined since : <?= date('F j Y', strtotime($row['createdAt'])); ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="relative top-0 right-0">
+                            <div class="flex flex-wrap absolute justify-between">
+                                <div class="flex flex-wrap items-center">
+                                    <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah Postingan <?= $jumlah_postingan ?> </span>
+                                    <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah Album <?= $jumlah_album ?></span>
+                                    <!-- <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah like didapatkan </span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
