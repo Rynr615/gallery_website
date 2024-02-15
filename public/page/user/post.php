@@ -18,6 +18,7 @@ $queryUserID = "SELECT * FROM users WHERE username = '$username'";
 $resultUser = mysqli_query($conn, $queryUserID);
 
 $showButtons = false;
+$showButtonsComment = false;
 if ($resultUser && mysqli_num_rows($resultUser) > 0) {
     $rowUser = mysqli_fetch_assoc($resultUser);
     $userID = $rowUser["userID"];
@@ -67,39 +68,49 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
         $name = "";
         $username = "";
     }
+
+    // Query untuk memeriksa apakah ada komentar yang terkait dengan foto
+    $queryShowButton = "SELECT * FROM comments WHERE photoID = $photoID AND userID = $userID";
+    $resultShowButton = mysqli_query($conn, $queryShowButton);
+
+    $showButtonsComment = $resultShowButton && mysqli_num_rows($resultShowButton) > 0;
+
+    // Ambil jumlah like untuk foto
+    $queryLikes = "SELECT COUNT(*) AS totalLikes FROM likes WHERE photoID = $photoID";
+    $resultLikes = mysqli_query($conn, $queryLikes);
+
+    // Periksa apakah query berhasil dieksekusi
+    if ($resultLikes) {
+        $rowLikes = mysqli_fetch_assoc($resultLikes);
+        $totalLikes = $rowLikes['totalLikes'];
+    } else {
+        // Jika query gagal, atur nilai default
+        $totalLikes = 0;
+    }
+
+    $queryComments = "SELECT comments.commentText, comments.createdAt, users.username, comments.userID, comments.commentID, users.userID
+                      FROM comments
+                      INNER JOIN users ON comments.userID = users.userID
+                      WHERE comments.photoID = $photoID
+                      ORDER BY comments.createdAt DESC";
+
+    $resultComments = mysqli_query($conn, $queryComments);
+
+    $countComments = "SELECT COUNT(*) AS totalComments FROM comments WHERE photoID = $photoID";
+    $resultCommentsCount = mysqli_query($conn, $countComments);
+
+    if ($resultCommentsCount) {
+        $rowComments = mysqli_fetch_array($resultCommentsCount);
+        $totalComment = $rowComments["totalComments"];
+    } else {
+        $totalComment = 0;
+    }
 }
 
+$queryCheckLike = "SELECT * FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+$resultCheckLike = mysqli_query($conn, $queryCheckLike);
 
-// Ambil jumlah like untuk foto
-$queryLikes = "SELECT COUNT(*) AS totalLikes FROM likes WHERE photoID = $photoID";
-$resultLikes = mysqli_query($conn, $queryLikes);
-
-// Periksa apakah query berhasil dieksekusi
-if ($resultLikes) {
-    $rowLikes = mysqli_fetch_assoc($resultLikes);
-    $totalLikes = $rowLikes['totalLikes'];
-} else {
-    // Jika query gagal, atur nilai default
-    $totalLikes = 0;
-}
-
-$queryComments = "SELECT comments.commentText, comments.createdAt, users.username
-                  FROM comments
-                  INNER JOIN users ON comments.userID = users.userID
-                  WHERE comments.photoID = $photoID
-                  ORDER BY comments.createdAt DESC";
-
-$resultComments = mysqli_query($conn, $queryComments);
-
-$countComments = "SELECT COUNT(*) AS totalComments FROM comments WHERE photoID = $photoID";
-$resultCommentsCount = mysqli_query($conn, $countComments);
-
-if ($resultCommentsCount) {
-    $rowComments = mysqli_fetch_array($resultCommentsCount);
-    $totalComment = $rowComments["totalComments"];
-} else {
-    $totalComment = 0;
-}
+$userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['addToAlbum'])) {
@@ -117,8 +128,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
-
 
 ?>
 
@@ -241,7 +250,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <a href="edit.php?photoID=<?= $photoID ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></a>
                             <form method="post" action="delete.php">
                                 <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                                <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Hapus<i class="fa-solid fa-trash ml-2"></i></button>
+                                <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete<i class="fa-solid fa-trash ml-2"></i></button>
                             </form>
                         </div>
                         <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to album</label>
@@ -272,24 +281,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
             </div>
             <div class="flex justify-between mt-5">
-                <!-- like -->
+                <!-- before like -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
-                    <a href="like.php?photoID=<?= $photoID; ?>" type="submit" class="text-gray-800">
-                        <i class="fa-solid fa-thumbs-up"></i> <?= $totalLikes ?> Likes
-                    </a>
+                    <?php if ($userHasLiked) : ?>
+                        <a href="unlike.php?photoID=<?= $photoID; ?>" class="text-gray-800">
+                            <i class="fa-regular fa-thumbs-up text-blue-500"></i>
+                            <span><?= $totalLikes ?> Likes</span>
+                        </a>
+                    <?php else : ?>
+                        <a href="like.php?photoID=<?= $photoID; ?>" class="text-gray-800">
+                            <i class="fa-regular fa-thumbs-up"></i>
+                            <span><?= $totalLikes ?> Likes</span>
+                        </a>
+                    <?php endif; ?>
                 </div>
-                <div id="commentPopup" class="m-10 w-full border-gray-100 border shadow-md rounded-xl py-12 px-8 hidden bg-white">
-                    <h2 class="text-lg font-semibold mb-2">Send a comment</h2>
-                    <form method="post" action="comment.php">
-                        <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                        <textarea name="commentText" placeholder="Tulis komentar Anda..." class="w-full h-24 p-2 border rounded-md mb-2"></textarea>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Send<i class="fa-solid fa-paper-plane ml-3"></i> </button>
-                    </form>
+
+
+
+                <!-- comment popup -->
+                <div id="commentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                    <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                        <h2 class="text-xl font-semibold mb-2">Send a comment</h2>
+                        <form method="post" action="comment.php" class="space-y-4">
+                            <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                            <textarea name="commentText" placeholder="" class="w-full h-24 p-2 border rounded-md"></textarea>
+                            <div class="flex justify-center">
+                                <button type="submit" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none">
+                                    Send<i class="fa-solid fa-paper-plane ml-3"></i>
+                                </button>
+                                <button type="button" name="submit" onclick="togglePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+
+
+
                 <!-- comment -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
                     <div class="">
-                        <button class="text-gray-800" onclick="openCommentPopup()">
+                        <button class="text-gray-800" onclick="togglePopup()">
                             <i class="fa-regular fa-comment"></i> <?= $totalComment; ?> Comments
                         </button>
                     </div>
@@ -307,8 +340,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 <div class="">
                                     <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
+                                    <div class="flex justify-end pt-2">
+                                        <?php if ($comment['userID'] == $userID) : ?>
+                                            <!-- Tombol edit -->
+                                            <button type="button" onclick="togglePopupEdit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+
+                                            <!-- Form untuk menghapus komentar -->
+                                            <form action="comment.php" method="post">
+                                                <input type="text" name="commentID" value="<?= $comment['commentID'] ?>" hidden>
+                                                <button type="submit" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
+
                                 </div>
                             </div>
+
+                            <!-- update comment popup -->
+                            <div id="editCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                                    <h2 class="text-xl font-semibold mb-2">Edit Comment</h2>
+                                    <form method="post" action="edit_comment.php" class="space-y-4">
+                                        <input type="hidden" name="commentID" value="<?= $comment['commentID'] ?>">
+                                        <input type="hidden" name="photoID" value="<?= $comment['photoID'] ?>">
+                                        <textarea name="commentText" placeholder="" class="w-full h-24 p-2 border rounded-md"><?= $comment["commentText"] ?></textarea>
+                                        <div class="flex justify-center">
+                                            <button type="submit" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none">
+                                                Save<i class="fa-solid fa-save ml-3"></i>
+                                            </button>
+                                            <button type="button" onclick="togglePopupEdit()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <hr>
                         <?php } ?>
                     </div>
                 <?php } else { ?>
@@ -378,19 +446,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="../../js/script.min.js"></script>
 
     <script>
-        let open = true
+        let open = false;
 
-        function openCommentPopup() {
-            // Tampilkan popup komentar
-            if (open) {
-                document.getElementById('commentPopup').style.display = 'block';
-                open = false
+        function togglePopup() {
+            var popup = document.getElementById("commentPopup");
+            if (!open) {
+                popup.style.display = 'block';
+                open = true;
             } else {
-                document.getElementById('commentPopup').style.display = 'none';
-                open = true
-
+                popup.style.display = 'none';
+                open = false;
             }
         }
+
+        function togglePopupEdit() {
+            var popup = document.getElementById("editCommentPopup");
+            if (!open) {
+                popup.style.display = 'block';
+                open = true;
+            } else {
+                popup.style.display = 'none';
+                open = false;
+            }
+        }
+    </script>
     </script>
 
 </body>

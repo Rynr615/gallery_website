@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Tangkap data yang dikirimkan melalui formulir komentar
     $photoID = $_POST["photoID"];
     $commentText = $_POST["commentText"];
+    $commentID = $_POST["commentID"];
     $username = $_SESSION["username"];
 
     // Ambil userID berdasarkan username
@@ -36,6 +37,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Handle jika terjadi kesalahan saat menyisipkan komentar
             echo "Error: " . mysqli_error($conn);
         }
+
+        $queryCommentUser = "SELECT userID FROM comments WHERE commentID = '$commentID'";
+        $resultCommentUser = mysqli_query($conn, $queryCommentUser);
+
+        if ($resultCommentUser && mysqli_num_rows($resultCommentUser) > 0) {
+            $rowCommentUser = mysqli_fetch_assoc($resultCommentUser);
+            $commentUserID = $rowCommentUser['userID'];
+
+            // Periksa apakah pengguna yang saat ini masuk adalah pemilik komentar
+            if ($userID == $commentUserID) {
+                // Lakukan penghapusan komentar
+                $queryDeleteComment = "DELETE FROM comments WHERE commentID = '$commentID'";
+                $resultDeleteComment = mysqli_query($conn, $queryDeleteComment);
+
+                if ($resultDeleteComment) {
+                    // Redirect kembali ke halaman yang sesuai setelah berhasil menghapus komentar
+                    header("Location: {$_SERVER["HTTP_REFERER"]}");
+                    exit();
+                } else {
+                    // Handle kesalahan jika penghapusan komentar gagal
+                    echo "Error: " . mysqli_error($conn);
+                }
+            } else {
+                // Handle jika pengguna tidak memiliki izin untuk menghapus komentar
+                echo "<script>alert('You do not have permission to delete this comment.');</script>";
+                header("Location: {$_SERVER["HTTP_REFERER"]}");
+            }
+        } else {
+            // Handle jika komentar tidak ditemukan
+            echo "<script>alert('Comment not found.');</script>";
+            header("Location: {$_SERVER["HTTP_REFERER"]}");
+        }
     } else {
         // Handle jika data pengguna tidak ditemukan
         echo "Error: User not found";
@@ -45,4 +78,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: ../index.php");
     exit();
 }
-

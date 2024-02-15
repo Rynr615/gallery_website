@@ -24,13 +24,21 @@ if (!isset($_SESSION["username"])) {
         $resultLike = mysqli_query($conn, $queryLike);
 
         if (mysqli_num_rows($resultLike) == 1) {
-            // Jika pengguna sudah memberikan like, berikan opsi untuk membatalkan like
-            echo '<a href="unlike.php?photoID=' . $photoID . '" type="submit" class="text-gray-800"><i class="fa-solid fa-thumbs-up text-blue-500"></i> Unlike</a>';
+            // Jika pengguna sudah memberikan like, hapus like tersebut dari database
+            $queryDeleteLike = "DELETE FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+            $resultDeleteLike = mysqli_query($conn, $queryDeleteLike);
+
+            if ($resultDeleteLike) {
+                header("Location: " . $_SERVER['HTTP_REFERER']);
+                exit();
+            } else {
+                // Handle jika terjadi kesalahan saat menghapus like
+                echo "Error: Failed to unlike";
+            }
         } else {
-            $createdAt = date("Y-m-d H:i:s");
-            // Perbaikan pada kueri INSERT
-            mysqli_query($conn, "INSERT INTO likes (photoID, userID, createdAt) VALUES ('$photoID', '$userID', '$createdAt')");
+            // Handle jika pengguna belum memberikan like sebelumnya
             header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit();
         }
     } else {
         // Handle jika data pengguna tidak ditemukan
