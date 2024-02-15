@@ -23,6 +23,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
     $profile_photo = $row['profile_photo'];
     $username = $row['username']; // Inisialisasi variabel username
+    $accesLevel = $row['access_level']; //
 } else {
     // Handle kesalahan query
     echo "Error: " . mysqli_error($conn);
@@ -84,6 +85,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     <a href="./index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                     <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                     <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                    <?php if($accesLevel === 'admin') : ?>
+                                    <a href="./admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                    <?php elseif ($accesLevel === 'user') : ?>
+                                        <a href="./admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
