@@ -1,31 +1,7 @@
 <?php
+
 include "../../../database/koneksi.php";
-
-session_start();
-
-// Periksa apakah sesi username sudah diset atau belum
-if (!isset($_SESSION['username'])) {
-    header("Location: ../user/login.php");
-    exit();
-}
-
-$username = $_SESSION["username"];
-
-$query = "SELECT * FROM users WHERE username = '$username'";
-$result = mysqli_query($conn, $query);
-
-// Periksa apakah query berhasil dieksekusi
-if ($result && mysqli_num_rows($result) > 0) {
-    // Ambil data pengguna terbaru
-    $row = mysqli_fetch_assoc($result);
-    $profile = $row['profile_photo'];
-    $username = $row['username']; // Inisialisasi variabel username
-    $accesLevel = $row['access_level']; //
-} else {
-    // Handle kesalahan query
-    echo "Error: " . mysqli_error($conn);
-    exit();
-}
+// Cek apakah ada parameter pencarian yang diterima dari permintaan GET
 
 // Hitung jumlah total baris data
 $queryTotalRows = "SELECT COUNT(*) as total FROM users";
@@ -168,85 +144,82 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 </thead>
                 <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                     <?php
-                    // Query untuk mendapatkan data user dari database dengan batasan berdasarkan halaman yang sedang aktif
-                    $queryUser = "SELECT * FROM users LIMIT $rowsPerPage OFFSET $offset";
-                    $resultUser = mysqli_query($conn, $queryUser);
-
-                    // Periksa apakah query berhasil dieksekusi
-                    if ($resultUser && mysqli_num_rows($resultUser) > 0) {
-                        // Loop melalui setiap baris hasil query dan tampilkan data user
-                        while ($row = mysqli_fetch_assoc($resultUser)) {
-                            // Data user untuk tiap baris
-                            $profile_photo = $row['profile_photo'];
-                            $username = $row['username'];
-                            $iduser = $row['userID'];
-                            $email = $row['email'];
-                            $name = $row['name'];
-                            $role = $row['access_level'];
-                            $createdAt = $row['createdAt'];
+                    if (isset($_GET['search'])) {
+                        // Sanitasi input pencarian
+                        $search = mysqli_real_escape_string($conn, $_GET['search']);
+                        // Buat query untuk mencari pengguna berdasarkan nama pengguna atau email yang cocok dengan kata kunci pencarian
+                        $querySearch = "SELECT * FROM users WHERE username LIKE '%$search%' OR email LIKE '%$search%'";
+                        $resultSearch = mysqli_query($conn, $querySearch);
+                        if ($resultSearch && mysqli_num_rows($resultSearch) > 0) {
+                            // Tampilkan hasil pencarian di tabel pengguna
+                            while ($row = mysqli_fetch_assoc($resultSearch)) {
+                                $profile_photo = $row['profile_photo'];
+                                $username = $row['username'];
+                                $iduser = $row['userID'];
+                                $email = $row['email'];
+                                $name = $row['name'];
+                                $role = $row['access_level'];
+                                $createdAt = $row['createdAt'];
                     ?>
-                            <tr class="hover:bg-gray-50">
-                                <!-- profile username, email -->
-                                <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
-                                    <div class="relative h-10 w-10">
-                                        <!-- profile_photo -->
-                                        <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo ?>" alt="" />
-                                    </div>
-                                    <div class="text-sm">
-                                        <!-- username -->
-                                        <div class="font-medium text-gray-700"><?= $username ?></div>
-                                        <!-- email -->
-                                        <div class="text-gray-400"><?= $email ?></div>
-                                    </div>
-                                </th>
-                                <!-- name -->
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center w-auto gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                                        <?= $name ?>
-                                    </span>
-                                </td>
-                                <!-- joined since -->
-                                <td class="px-6 py-4"><?= $createdAt ?></td>
-                                <!-- role -->
-                                <td class="px-6 py-4">
-                                    <div class="flex gap-2">
-                                        <?php if ($role === 'admin') : ?>
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
-                                                Admin
-                                            </span>
-                                        <?php elseif ($role === 'user') : ?>
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
-                                                User
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex justify-end gap-4">
-                                        <form action="manage-user.php" method="get">
-                                            <button type="submit" name="userID" onclick="togglePopup()" value="<?= $iduser ?>" class="hover:text-sky-600" x-data="{ tooltip: 'Edit' }">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <!-- profile username, email -->
+                                    <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+                                        <div class="relative h-10 w-10">
+                                            <!-- profile_photo -->
+                                            <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo ?>" alt="" />
+                                        </div>
+                                        <div class="text-sm">
+                                            <!-- username -->
+                                            <div class="font-medium text-gray-700"><?= $username ?></div>
+                                            <!-- email -->
+                                            <div class="text-gray-400"><?= $email ?></div>
+                                        </div>
+                                    </th>
+                                    <!-- name -->
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center w-auto gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                            <?= $name ?>
+                                        </span>
+                                    </td>
+                                    <!-- joined since -->
+                                    <td class="px-6 py-4"><?= $createdAt ?></td>
+                                    <!-- role -->
+                                    <td class="px-6 py-4">
+                                        <div class="flex gap-2">
+                                            <?php if ($role === 'admin') : ?>
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
+                                                    Admin
+                                                </span>
+                                            <?php elseif ($role === 'user') : ?>
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                                                    User
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-end gap-4">
+                                            <form action="manage-user.php" method="get">
+                                                <button type="submit" name="userID" value="<?= $iduser ?>" class="hover:text-sky-600">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
                         <?php
+
+                            }
                         }
-                        // Bebaskan hasil query
-                        mysqli_free_result($resultUser);
-                    } else {
-                        // Jika tidak ada data user yang ditemukan
-                        ?>
+                    } else { ?>
                         <tr>
                             <td colspan="5" class="text-center py-4">No users found.</td>
                         </tr>
-                    <?php
-                    }
-                    ?>
+                    <?php } ?>
                 </tbody>
+
             </table>
 
             <!-- pagination -->

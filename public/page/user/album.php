@@ -25,6 +25,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     // Dapatkan userID dari data pengguna
     $userID = $pengguna['userID'];
+    $accesLevel = $pengguna['access_level'];
 
     // Proses tambah album
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -154,6 +155,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <?php if ($accesLevel === 'admin') : ?>
+                                    <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                <?php elseif ($accesLevel === 'user') : ?>
+                                    <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

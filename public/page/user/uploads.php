@@ -24,6 +24,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $pengguna = mysqli_fetch_assoc($result);
     $profile_photo = $pengguna['profile_photo'];
     $username = $pengguna['username'];
+    $accesLevel = $pengguna['access_level'];
 
     // Dapatkan userID dari data pengguna
     $userID = $pengguna['userID'];
@@ -118,6 +119,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <?php if ($accesLevel === 'admin') : ?>
+                                    <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                <?php elseif ($accesLevel === 'user') : ?>
+                                    <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -164,6 +170,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <?php if ($accesLevel === 'admin') : ?>
+                        <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                    <?php elseif ($accesLevel === 'user') : ?>
+                        <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
