@@ -88,7 +88,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                 <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
-                                <a href="../user/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                             </div>
                         </div>
                     </div>
@@ -101,14 +101,6 @@ $offset = ($current_page - 1) * $rowsPerPage;
                             <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <!-- ... (kode ikon notifikasi) -->
-                                <span class="absolute -inset-1.5"></span>
-                                <span class="sr-only">View notifications</span>
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                </svg>
-                            </button>
                             <div class="relative ml-3">
                                 <div>
                                     <button @click="profileMenuOpen = !profileMenuOpen" type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
@@ -364,16 +356,16 @@ $offset = ($current_page - 1) * $rowsPerPage;
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../../page/index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
                 <div class="mt-6 lg:max-w-sm">
                     <p class="text-sm text-gray-800">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+                        NUMÉRIQUE GALLERY is a website designed to store memories and photos in digital format.
                     </p>
                     <p class="mt-4 text-sm text-gray-800">
-                        Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        With NUMÉRIQUE GALLERY, we can upload our photos into our private gallery, as well as easily organize and store them.
                     </p>
                 </div>
             </div>
@@ -381,11 +373,11 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 <p class="text-base font-bold tracking-wide text-gray-900">Contacts</p>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Phone:</p>
-                    <a href="#" aria-label="Our phone" title="Our phone" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">08xxxxxxxxxx</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">087718603438</span>
                 </div>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Email:</p>
-                    <a href="" aria-label="Our email" title="Our email" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">example@gmail.com</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">ryanyanuar184@gmail.com</span>
                 </div>
             </div>
             <div>
@@ -405,7 +397,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     </a>
                 </div>
                 <p class="mt-4 text-sm text-gray-500">
-                    Bacon ipsum dolor amet short ribs pig sausage prosciutto chicken spare ribs salami.
+                    Don't forget to follow.
                 </p>
             </div>
         </div>

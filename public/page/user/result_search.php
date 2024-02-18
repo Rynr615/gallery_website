@@ -224,10 +224,10 @@ if (isset($_GET['search'])) {
                         </a>
                         <div class="mt-6 lg:max-w-sm">
                             <p class="text-sm text-gray-800">
-                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+                                NUMÉRIQUE GALLERY is a website designed to store memories and photos in digital format.
                             </p>
                             <p class="mt-4 text-sm text-gray-800">
-                                Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                                With NUMÉRIQUE GALLERY, we can upload our photos into our private gallery, as well as easily organize and store them.
                             </p>
                         </div>
                     </div>
@@ -235,11 +235,11 @@ if (isset($_GET['search'])) {
                         <p class="text-base font-bold tracking-wide text-gray-900">Contacts</p>
                         <div class="flex">
                             <p class="mr-1 text-gray-800">Phone:</p>
-                            <a href="#" aria-label="Our phone" title="Our phone" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">08xxxxxxxxxx</a>
+                            <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">087718603438</span>
                         </div>
                         <div class="flex">
                             <p class="mr-1 text-gray-800">Email:</p>
-                            <a href="" aria-label="Our email" title="Our email" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">example@gmail.com</a>
+                            <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">ryanyanuar184@gmail.com</span>
                         </div>
                     </div>
                     <div>
@@ -259,7 +259,7 @@ if (isset($_GET['search'])) {
                             </a>
                         </div>
                         <p class="mt-4 text-sm text-gray-500">
-                            Bacon ipsum dolor amet short ribs pig sausage prosciutto chicken spare ribs salami.
+                            Don't forget to follow.
                         </p>
                     </div>
                 </div>

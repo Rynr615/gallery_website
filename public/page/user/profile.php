@@ -163,7 +163,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <div class="flex flex-wrap items-start justify-between mb-2">
                             <div class="flex flex-col">
                                 <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-id-card mr-2"></i><p class="text-secondary-inverse hover:text-primary transition-colors duration-200 ease-in-out font-semibold text-[1.5rem] mr-1" href="javascript:void(0)"> <?= $row['username'] ?> </p>
+                                    <i class="fa-solid fa-id-card mr-2"></i>
+                                    <p class="text-secondary-inverse hover:text-primary transition-colors duration-200 ease-in-out font-semibold text-[1.5rem] mr-1" href="javascript:void(0)"> <?= $row['username'] ?> </p>
                                 </div>
                                 <div class="flex flex-wrap pr-2 font-medium">
                                     <p class="flex items-center mb-2 font-normal mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
@@ -198,21 +199,20 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
     </div>
 
-
     <!-- footer -->
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../../page/index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
                 <div class="mt-6 lg:max-w-sm">
                     <p class="text-sm text-gray-800">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+                        NUMÉRIQUE GALLERY is a website designed to store memories and photos in digital format.
                     </p>
                     <p class="mt-4 text-sm text-gray-800">
-                        Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        With NUMÉRIQUE GALLERY, we can upload our photos into our private gallery, as well as easily organize and store them.
                     </p>
                 </div>
             </div>
@@ -220,11 +220,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <p class="text-base font-bold tracking-wide text-gray-900">Contacts</p>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Phone:</p>
-                    <a href="#" aria-label="Our phone" title="Our phone" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">08xxxxxxxxxx</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">087718603438</span>
                 </div>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Email:</p>
-                    <a href="" aria-label="Our email" title="Our email" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">example@gmail.com</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">ryanyanuar184@gmail.com</span>
                 </div>
             </div>
             <div>
@@ -244,7 +244,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </a>
                 </div>
                 <p class="mt-4 text-sm text-gray-500">
-                    Bacon ipsum dolor amet short ribs pig sausage prosciutto chicken spare ribs salami.
+                    Don't forget to follow.
                 </p>
             </div>
         </div>

@@ -33,7 +33,20 @@ if ($result && mysqli_num_rows($result) > 0) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check jika file ter-upload
         if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
-            // ... (proses validasi tipe dan ukuran file)
+            // Validasi ekstensi file
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+            $fileExtension = strtolower(pathinfo($_FILES['file-upload']['name'], PATHINFO_EXTENSION));
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                echo "Error: Only JPG, JPEG, PNG, and SVG files are allowed.";
+                exit();
+            }
+
+            // Validasi ukuran file
+            $maxFileSize = 50 * 1024 * 1024; // 50MB
+            if ($_FILES['file-upload']['size'] > $maxFileSize) {
+                echo "Error: Maximum file size allowed is 50MB.";
+                exit();
+            }
 
             // Dapatkan informasi file
             $fileName = $_FILES['file-upload']['name'];
@@ -51,9 +64,10 @@ if ($result && mysqli_num_rows($result) > 0) {
             // Insert data foto ke tabel photos
             $title = mysqli_real_escape_string($conn, $_POST['title']);
             $description = mysqli_real_escape_string($conn, $_POST['description']);
+            $albumId = mysqli_real_escape_string($conn, $_POST['album']); // Ambil id album dari input select
 
-            $insertQuery = "INSERT INTO photos (userID, title, description, image_path) 
-                            VALUES ('$userID', '$title', '$description', '$encryptedFileName')";
+            $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path) 
+                            VALUES ('$userID', '$albumId', '$title', '$description', '$encryptedFileName')";
 
             if (mysqli_query($conn, $insertQuery)) {
                 // Jika berhasil, alihkan ke halaman index.php
@@ -189,12 +203,38 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="flex items-center flex-col">
-                    <!-- title -->
-                    <div class="w-1/3 mt-5">
-                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
-                        <div class="mt-2">
-                            <input type="text" name="title" id="title" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <div class="flex gap-2">
+                        <!-- title -->
+                        <div class="mt-5">
+                            <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+                            <div class="mt-2">
+                                <input type="text" name="title" id="title" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            </div>
                         </div>
+                        <!-- album -->
+                        <div class="mt-5">
+                            <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
+                            <div class="mt-2">
+                                <select id="album" name="album" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    <?php
+                                    $userId = $userID;
+                                    $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";
+                                    $albumResult = mysqli_query($conn, $albumQuery);
+
+                                    // Periksa apakah ada album yang tersedia
+                                    if (mysqli_num_rows($albumResult) > 0) {
+                                        // Tampilkan opsi album
+                                        while ($row = mysqli_fetch_assoc($albumResult)) {
+                                            echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value=''>No albums available</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- Upload image -->
                     <div class="w-1/3 mt-5">
@@ -205,7 +245,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     <span>Upload a file</span>
                                     <input id="file-upload" name="file-upload" type="file" class="sr-only" onchange="previewImage(this)">
                                 </label>
-                                <p class="text-xs leading-5 text-gray-600">PNG, JPG, SVG up to 10MB</p>
+                                <p class="text-xs leading-5 text-gray-600">PNG, JPG, SVG up to 50MB</p>
                                 <div class="mt-4 min-h-[250px]" id="image-preview"></div>
                             </div>
                         </div>
@@ -229,16 +269,16 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../../page/index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
                 <div class="mt-6 lg:max-w-sm">
                     <p class="text-sm text-gray-800">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+                        NUMÉRIQUE GALLERY is a website designed to store memories and photos in digital format.
                     </p>
                     <p class="mt-4 text-sm text-gray-800">
-                        Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        With NUMÉRIQUE GALLERY, we can upload our photos into our private gallery, as well as easily organize and store them.
                     </p>
                 </div>
             </div>
@@ -246,11 +286,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <p class="text-base font-bold tracking-wide text-gray-900">Contacts</p>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Phone:</p>
-                    <a href="#" aria-label="Our phone" title="Our phone" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">08xxxxxxxxxx</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">087718603438</span>
                 </div>
                 <div class="flex">
                     <p class="mr-1 text-gray-800">Email:</p>
-                    <a href="" aria-label="Our email" title="Our email" class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">example@gmail.com</a>
+                    <span class="transition-colors duration-300 text-deep-purple-accent-400 hover:text-deep-purple-800">ryanyanuar184@gmail.com</span>
                 </div>
             </div>
             <div>
@@ -270,7 +310,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </a>
                 </div>
                 <p class="mt-4 text-sm text-gray-500">
-                    Bacon ipsum dolor amet short ribs pig sausage prosciutto chicken spare ribs salami.
+                    Don't forget to follow.
                 </p>
             </div>
         </div>
