@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         if (password_verify($password, $hashed_password)) {
             session_start();
             $_SESSION['username']=$row["username"];
-            header("Location: ../index.php");
+            header("Location: ./dashboard.php");
             exit();
         } else {
             //header("Location: ./login.php");
@@ -78,12 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
                         <span class="link__login">
                             Don't have an account?
                             <a href="./register.php" class="text-blue-600 font-semibold hover:text-blue-500">Sign Up</a>
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="link__login">
-                            Login as guest?
-                            <a href="../guest/index-guest.php" class="text-blue-600 font-semibold hover:text-blue-500">Login as guest</a>
                         </span>
                     </div>
                 </div>

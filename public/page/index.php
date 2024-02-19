@@ -1,46 +1,17 @@
 <?php
 
-session_start();
-
 include "../../database/koneksi.php";
 
-// Periksa apakah pengguna sudah login
-if (!isset($_SESSION['username'])) {
-    header("Location: ./user/login.php");
-    exit();
-}
-
-// Inisialisasi variabel username
-$username = $_SESSION['username'];
-
-// Lakukan query untuk mendapatkan data pengguna berdasarkan username
-$query = "SELECT * FROM users WHERE username = '$username'";
-$result = mysqli_query($conn, $query);
-
-// Periksa apakah query berhasil dieksekusi
-if ($result && mysqli_num_rows($result) > 0) {
-    // Ambil data pengguna terbaru
-    $row = mysqli_fetch_assoc($result);
-    $profile_photo = $row['profile_photo'];
-    $username = $row['username']; // Inisialisasi variabel username
-    $accesLevel = $row['access_level']; //
-} else {
-    // Handle kesalahan query
-    echo "Error: " . mysqli_error($conn);
-    exit();
-}
-
-// Lakukan query untuk mendapatkan data foto
 $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos
     INNER JOIN users ON photos.userID = users.userID
-    ORDER BY photos.createdAt DESC";
+    ORDER BY photos.createdAt DESC LIMIT 20";
 
 $result = mysqli_query($conn, $query);
 
 // Periksa apakah query berhasil dieksekusi
 if ($result && mysqli_num_rows($result) > 0) {
-    // Tampilkan halaman jika query berhasil
+
 ?>
 
     <!DOCTYPE html>
@@ -82,19 +53,14 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                             <div class="hidden sm:ml-6 sm:block">
                                 <div class="flex space-x-4">
-                                    <a href="./index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                    <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                    <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
-                                    <?php if ($accesLevel === 'admin') : ?>
-                                        <a href="./admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <?php elseif ($accesLevel === 'user') : ?>
-                                        <a href="./admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <?php endif; ?>
+                                    <a href="./index-guest.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                    <a href="../user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
+                                    <a href="../user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <form action="./user/result_search.php" class="flex flex-row gap-2" method="GET">
+                            <form action="./guest/result-search_guest.php" class="flex flex-row gap-2" method="GET">
                                 <div class="hidden sm:block">
                                     <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                                 </div>
@@ -109,30 +75,16 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="../../database/uploads/<?= $profile_photo ?>" alt="<?= $username ?> profile photo">
+                                        <img class="h-8 w-8 rounded-full" src="../../database/uploads/default_profile.svg" alt="">
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="./user/profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                    <a href="./user/setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                                    <a href="./user/logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                                    <a href="./user/register.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Register</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-        </div>
-
-        <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
-            <div class="space-y-1 px-2 pb-3 pt-2">
-                <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                <a href="./index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
-            </div>
-        </div>
-        </nav>
-
         </div>
 
         <!-- main-content -->
@@ -145,8 +97,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                 ?>
                     <!-- card  -->
                     <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                        <!-- ... (ikon love) -->
                         <div class="p-2 flex justify-center">
-                            <a href="./user/post.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                            <a href="./post-guest.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
                                 <!-- Tambahkan kelas CSS untuk memastikan rasio 16:9 -->
                                 <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../database/uploads/<?php echo $row['image_path']; ?>" loading="lazy" alt="<?php echo $row['title']; ?>">
                             </a>
@@ -154,7 +107,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                         <div class="px-4 pb-3">
                             <div>
-                                <a href="./user/post.php?photoID=<?= $row['photoID'] ?>">
+                                <a href="./post-guest.php?photoID=<?= $row['photoID'] ?>">
                                     <h5 class="text-xl font-semibold tracking-tight hover:text-blue-800 dark:hover:text-blue-300 text-gray-900 dark:text-white ">
                                         <?php echo $row['title']; ?>
                                     </h5>
@@ -167,7 +120,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     ?>
                                         <!-- Jika deskripsi lebih dari 20 karakter, potong dan tambahkan tautan "lihat postingan" -->
                                         <span><?= substr($description, 0, 20) ?></span>
-                                        <a href="./user/post.php?photoID=<?= $row['photoID'] ?>" class="text-blue-500 hover:text-white">lihat postingan</a>
+                                        <a href="./post-guest.php?photoID=<?= $row['photoID'] ?>" class="text-blue-500 hover:text-white">lihat postingan</a>
                                     <?php
                                     } else {
                                         // Jika kurang dari atau sama dengan 20 karakter, tampilkan normal
