@@ -8,19 +8,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $email = $_POST["email"];
     $createdAt = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO users (name, username, password, email, createdAt) VALUES ('', '$username', '$password', '$email', '$createdAt')";
-    
-    $result = mysqli_query($conn, $query);
-    
-    if ($result) {
-        // Registrasi berhasil, arahkan pengguna ke halaman index.php
-        header("Location:../index.php");
-        exit();
+    // Periksa apakah username sudah ada
+    $checkUsernameQuery = "SELECT * FROM users WHERE username = '$username'";
+    $checkUsernameResult = mysqli_query($conn, $checkUsernameQuery);
+
+    // Periksa apakah email sudah ada
+    $checkEmailQuery = "SELECT * FROM users WHERE email = '$email'";
+    $checkEmailResult = mysqli_query($conn, $checkEmailQuery);
+
+    if (mysqli_num_rows($checkUsernameResult) > 0) {
+        // Username sudah ada, munculkan pesan error
+        echo "<script>alert('Error: Username already exists.');</script>";
+        echo "<script>window.location.href ='register.php';</script>";
+    } elseif (mysqli_num_rows($checkEmailResult) > 0) {
+        // Email sudah ada, munculkan pesan error
+        echo "<script>alert('Error: Email already exists.');</script>";
+        echo "<script>window.location.href ='register.php';</script>";
     } else {
-        // Ada kesalahan dalam eksekusi query
-        echo "Error: " . mysqli_error($conn);
+        // Insert data user ke dalam tabel users
+        $query = "INSERT INTO users (name, username, password, email, createdAt) VALUES ('', '$username', '$password', '$email', '$createdAt')";
+
+        $result = mysqli_query($conn, $query);
+
+        if ($result) {
+            header("Location:./login.php");
+            exit();
+        } else {
+            // Ada kesalahan dalam eksekusi query
+            echo "Error: " . mysqli_error($conn);
+        }
     }
 }
+
 
 
 ?>

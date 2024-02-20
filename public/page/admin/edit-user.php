@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
 
     if ($resultUpdate) {
         // Data berhasil diperbarui
-        header("Location: ./manage-user.php?page=" . $_GET['page']);
+        header("Location: ./manage-user.php");
         exit();
     } else {
         // Gagal mengupdate data

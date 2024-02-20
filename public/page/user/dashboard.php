@@ -30,11 +30,27 @@ if ($result && mysqli_num_rows($result) > 0) {
     exit();
 }
 
+$queryTotalRows = "SELECT COUNT(*) as total FROM photos";
+$resultTotalRows = mysqli_query($conn, $queryTotalRows);
+$totalRows = mysqli_fetch_assoc($resultTotalRows)['total'];
+
+// Batasan jumlah baris per halaman
+$rowsPerPage = 12;
+
+// Hitung jumlah halaman
+$totalPages = ceil($totalRows / $rowsPerPage);
+
+// Tentukan halaman saat ini
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Hitung offset untuk query
+$offset = ($current_page - 1) * $rowsPerPage;
+
 // Lakukan query untuk mendapatkan data foto
 $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos
     INNER JOIN users ON photos.userID = users.userID
-    ORDER BY photos.createdAt DESC";
+    ORDER BY photos.createdAt DESC LIMIT $rowsPerPage OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 
@@ -82,10 +98,10 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                             <div class="hidden sm:ml-6 sm:block">
                                 <div class="flex space-x-4">
-                                    <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                    <a href="./dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
-                                    <?php if ($accesLevel === 'admin') : ?>
+                                    <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                         <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                     <?php elseif ($accesLevel === 'user') : ?>
                                         <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
@@ -108,7 +124,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                             <!-- ... (kode gambar profil) -->
                                             <span class="absolute -inset-1.5"></span>
                                             <span class="sr-only">Open user menu</span>
-                                            <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $pengguna['profile_photo'] ?>" alt="<?= $pengguna['username'] ?> profile photo">
+                                            <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo">
                                         </button>
                                     </div>
                                     <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
@@ -125,7 +141,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                     <div class="space-y-1 px-2 pb-3 pt-2">
                         <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                        <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                        <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                         <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                         <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                     </div>
@@ -137,7 +153,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
             <div class="space-y-1 px-2 pb-3 pt-2">
                 <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                <a href="./index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                 <a href="./user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                 <a href="./user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
             </div>
@@ -210,13 +226,51 @@ if ($result && mysqli_num_rows($result) > 0) {
                 ?>
 
             </div>
+
+            <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                <div class="flex flex-1 justify-between sm:hidden">
+                    <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                    <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+                </div>
+                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div></div>
+                    <div>
+                        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <?php if ($current_page > 1) : ?>
+                                <a href="?page=<?= ($current_page - 1) ?>" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <span class="sr-only">Previous</span>
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                                <a href="?page=<?= $i ?>" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+
+                            <?php if ($current_page < $totalPages) : ?>
+                                <a href="?page=<?= ($current_page + 1) ?>" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <span class="sr-only">Next</span>
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- footer -->
         <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
             <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="sm:col-span-2">
-                    <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                    <a href="./dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                         <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                         <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                     </a>

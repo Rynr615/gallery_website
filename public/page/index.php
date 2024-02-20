@@ -2,10 +2,26 @@
 
 include "../../database/koneksi.php";
 
+$queryTotalRows = "SELECT COUNT(*) as total FROM photos";
+$resultTotalRows = mysqli_query($conn, $queryTotalRows);
+$totalRows = mysqli_fetch_assoc($resultTotalRows)['total'];
+
+// Batasan jumlah baris per halaman
+$rowsPerPage = 12;
+
+// Hitung jumlah halaman
+$totalPages = ceil($totalRows / $rowsPerPage);
+
+// Tentukan halaman saat ini
+$current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Hitung offset untuk query
+$offset = ($current_page - 1) * $rowsPerPage;
+
 $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos
     INNER JOIN users ON photos.userID = users.userID
-    ORDER BY photos.createdAt DESC LIMIT 20";
+    ORDER BY photos.createdAt DESC LIMIT $rowsPerPage OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 
@@ -80,6 +96,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                                     <a href="./user/register.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Register</a>
+                                    <a href="./user/login.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Login</a>
                                 </div>
                             </div>
                         </div>
@@ -97,9 +114,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 ?>
                     <!-- card  -->
                     <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
-                        <!-- ... (ikon love) -->
                         <div class="p-2 flex justify-center">
-                            <a href="./post-guest.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                            <a href="./guest/post-guest.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
                                 <!-- Tambahkan kelas CSS untuk memastikan rasio 16:9 -->
                                 <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../database/uploads/<?php echo $row['image_path']; ?>" loading="lazy" alt="<?php echo $row['title']; ?>">
                             </a>
@@ -151,6 +167,44 @@ if ($result && mysqli_num_rows($result) > 0) {
                 mysqli_close($conn);
                 ?>
 
+            </div>
+
+            <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                <div class="flex flex-1 justify-between sm:hidden">
+                    <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                    <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+                </div>
+                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div></div>
+                    <div>
+                        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <?php if ($current_page > 1) : ?>
+                                <a href="?page=<?= ($current_page - 1) ?>" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <span class="sr-only">Previous</span>
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                                <a href="?page=<?= $i ?>" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+
+                            <?php if ($current_page < $totalPages) : ?>
+                                <a href="?page=<?= ($current_page + 1) ?>" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                                    <span class="sr-only">Next</span>
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            <?php endif; ?>
+
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
 

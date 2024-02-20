@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include "../../../database/koneksi.php";
 
@@ -8,21 +8,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
     $query = "SELECT * FROM users WHERE username = '$username'";
     $result = mysqli_query($conn, $query);
-    
+
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $hashed_password = $row["password"];
-        
+
         if (password_verify($password, $hashed_password)) {
             session_start();
-            $_SESSION['username']=$row["username"];
+            $_SESSION['username'] = $row["username"];
             header("Location: ./dashboard.php");
             exit();
         } else {
-            //header("Location: ./login.php");
-            $error_password = "Password Salah!!!";
+            echo "<script>alert('Error: Username or Password Wrong.');</script>";
+            echo "<script>window.location.href ='register.php';</script>";
         }
-        
     }
 }
 

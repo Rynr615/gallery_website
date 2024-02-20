@@ -64,6 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 } else {
     // Redirect jika bukan metode POST
-    header("Location: ../index.php");
+    header("Location: ./dashboard.php");
     exit();
 }

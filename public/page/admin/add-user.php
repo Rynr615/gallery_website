@@ -1,17 +1,16 @@
 <?php
-
 include "../../../database/koneksi.php";
 
 session_start();
 
-$username = $_SESSION["username"];
-
+// Periksa apakah sesi username sudah diset atau belum
 if (!isset($_SESSION['username'])) {
-    header("Location: ./login.php");
+    header("Location: ../user/login.php");
     exit();
 }
 
-// Ambil data pengguna
+$username = $_SESSION["username"];
+
 $query = "SELECT * FROM users WHERE username = '$username'";
 $result = mysqli_query($conn, $query);
 
@@ -19,34 +18,52 @@ $result = mysqli_query($conn, $query);
 if ($result && mysqli_num_rows($result) > 0) {
     // Ambil data pengguna terbaru
     $row = mysqli_fetch_assoc($result);
-    $accesLevel = $row['access_level'];
-
-    // Ambil jumlah postingan pengguna
-    $query_postingan = "SELECT COUNT(*) AS jumlah_postingan FROM photos WHERE userID = '{$row['userID']}'";
-    $result_postingan = mysqli_query($conn, $query_postingan);
-    $jumlah_postingan = 0;
-    if ($result_postingan && mysqli_num_rows($result_postingan) > 0) {
-        $row_postingan = mysqli_fetch_assoc($result_postingan);
-        $jumlah_postingan = $row_postingan['jumlah_postingan'];
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
-
-    // Ambil jumlah album pengguna
-    $query_album = "SELECT COUNT(*) AS jumlah_album FROM albums WHERE userID = '{$row['userID']}'";
-    $result_album = mysqli_query($conn, $query_album);
-    $jumlah_album = 0;
-    if ($result_album && mysqli_num_rows($result_album) > 0) {
-        $row_album = mysqli_fetch_assoc($result_album);
-        $jumlah_album = $row_album['jumlah_album'];
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
+    $profile = $row['profile_photo'];
+    $username = $row['username']; // Inisialisasi variabel username
+    $accessLevel = $row['access_level']; //
 } else {
     // Handle kesalahan query
     echo "Error: " . mysqli_error($conn);
+    exit();
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+    $username = $_POST["username"];
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $email = $_POST["email"];
+    $createdAt = date("Y-m-d H:i:s");
+
+    // Periksa apakah username sudah ada
+    $checkUsernameQuery = "SELECT * FROM users WHERE username = '$username'";
+    $checkUsernameResult = mysqli_query($conn, $checkUsernameQuery);
+
+    // Periksa apakah email sudah ada
+    $checkEmailQuery = "SELECT * FROM users WHERE email = '$email'";
+    $checkEmailResult = mysqli_query($conn, $checkEmailQuery);
+
+    if (mysqli_num_rows($checkUsernameResult) > 0) {
+        // Username sudah ada, munculkan pesan error
+        echo "<script>alert('Error: Username already exists.');</script>";
+        echo "<script>window.location.href ='add-user.php';</script>";
+    } elseif (mysqli_num_rows($checkEmailResult) > 0) {
+        // Email sudah ada, munculkan pesan error
+        echo "<script>alert('Error: Email already exists.');</script>";
+        echo "<script>window.location.href ='add-user.php';</script>";
+    } else {
+        // Insert data user ke dalam tabel users
+        $query = "INSERT INTO users (name, username, password, email, createdAt) VALUES ('', '$username', '$password', '$email', '$createdAt')";
+
+        $result = mysqli_query($conn, $query);
+
+        if ($result) {
+            header("Location:./manage-user.php");
+            exit();
+        } else {
+            // Ada kesalahan dalam eksekusi query
+            echo "Error: " . mysqli_error($conn);
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +80,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <link rel="icon" href="../../assets/logo/logo-main.svg" type="image/x-icon">
 </head>
 
-<body class="h-screen font-poppins">
+<body class="h-screen overflow-x-hidden font-poppins">
     <!-- navbar -->
     <div x-data="{ open: false, profileMenuOpen: false }">
         <nav class="bg-gray-800">
@@ -88,20 +105,16 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="./dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
-                                <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                                    <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                <?php elseif ($accesLevel === 'user') : ?>
-                                    <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                <?php endif; ?>
+                                <a href="../user/dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
+                                <a href="../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <!-- Search Box -->
-                        <form action="./result_search.php" class="flex flex-row gap-2" method="GET">
+                        <form action="../user/result_search.php" class="flex flex-row gap-2" method="GET">
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
@@ -114,13 +127,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo">
+                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile ?>" alt="<?= $username ?> profile photo">
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="./profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                    <a href="./setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                                    <a href="./logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                                    <a href="../user/profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="../user/setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                                    <a href="../user/logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +144,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                    <a href="../user/dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
@@ -141,51 +154,33 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <!-- main-content -->
-    <div class="container mx-auto p-10">
-        <div class="relative flex flex-col w-full min-w-0 mb-6 !important break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30 draggable">
-            <!-- card body -->
-            <div class="px-9 pt-9 flex-auto min-h-[70px] pb-0 bg-transparent">
-                <div class="flex flex-wrap mb-6 xl:flex-nowrap">
-                    <div class="mb-5 mr-5">
-                        <div class="relative inline-block shrink-0 w-48 rounded-2xl">
-                            <img class="inline-block shrink-0 rounded-full w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo" />
-                        </div>
+    <div class="container mx-auto">
+        <div class="py-12 transition duration-150 ease-in-out z-10" id="addUserPopup">
+            <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
+                <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
+                    <div class="w-full flex justify-start text-gray-600 mb-3">
+                        <i class="fa-solid fa-user-plus text-4xl"></i>
                     </div>
-                    <div class="grow">
-                        <div class="flex flex-wrap items-start justify-between mb-2">
-                            <div class="flex flex-col">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-id-card mr-2"></i>
-                                    <p class="text-secondary-inverse hover:text-primary transition-colors duration-200 ease-in-out font-semibold text-[1.5rem] mr-1" href="javascript:void(0)"> <?= $row['username'] ?> </p>
-                                </div>
-                                <div class="flex flex-wrap pr-2 font-medium">
-                                    <p class="flex items-center mb-2 font-normal mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
-                                        <i class="fa-regular fa-user mr-2"></i><?= $row['name'] ?>
-                                    </p>
-                                </div>
-                                <div class="flex flex-wrap pr-2 font-medium">
-                                    <p class="flex items-center mb-2 font-normal mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
-                                        <i class="fa-regular fa-envelope mr-2"></i> <?= $row['email'] ?>
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="flex items-center mb-2 mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
-                                        <i class="fa-solid fa-calendar-days mr-2"></i> Joined since : <?= date('F j Y', strtotime($row['createdAt'])); ?>
-                                    </p>
-                                </div>
-                            </div>
+                    <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4">Edit User</h1>
 
+                    <form action="./add-user.php" method="post">
+                        <input type="hidden" name="userID">
+                        <!-- username -->
+                        <label for="username" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Username</label>
+                        <input id="username" name="username" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" />
+
+                        <!-- name -->
+                        <label for="password" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Password</label>
+                        <input id="password" type="password" name="password" class="text-gray-600 mb-5 mt-2 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" />
+
+                        <!-- email -->
+                        <label for="email" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Email</label>
+                        <input id="email" type="email" name="email" class="text-gray-600 mb-5 mt-2 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" />
+
+                        <div class="flex items-center justify-start">
+                            <button name="submit" class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm">Submit</button>
                         </div>
-                        <div class="relative top-0 right-0">
-                            <div class="flex flex-wrap absolute justify-between">
-                                <div class="flex flex-wrap items-center">
-                                    <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah Postingan <?= $jumlah_postingan ?> </span>
-                                    <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah Album <?= $jumlah_album ?></span>
-                                    <!-- <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah like didapatkan </span> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -195,7 +190,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="./dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../user/dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
@@ -248,7 +243,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <script src="../../js/script.min.js"></script>
-
 </body>
 
 </html>

@@ -88,7 +88,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="../user/dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
@@ -127,7 +127,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                    <a href="../user/dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
@@ -140,14 +140,17 @@ $offset = ($current_page - 1) * $rowsPerPage;
     <div class="container mx-auto ">
         <!-- component -->
         <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
-            <div class="m-5 ">
+            <div class="m-5 flex justify-between">
                 <form action="search.php" method="GET">
                     <!-- <label for="search" class="block text-sm font-medium text-gray-700">Search:</label> -->
                     <div class="mt-1 relative flex gap-2 rounded-md shadow-sm">
-                        <input type="text" name="search" id="search" class="focus:ring-indigo-500 focus:border-indigo-500 block w-1/3 pr-10 sm:text-sm border-gray-300 rounded-md" placeholder="Search users...">
+                        <input type="text" name="search" id="search" class="focus:ring-indigo-500 w-80 focus:border-indigo-500 inline pr-10 sm:text-sm border-gray-300 rounded-md" placeholder="Search by username or email...">
                         <button type="submit" class="inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white text-xs rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">Search</button>
                     </div>
                 </form>
+                <div class="">
+                    <a href="add-user.php" class="inset-y-0 right-0 w-10 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"><i class="fa-solid fa-plus"></i></a>
+                </div>
             </div>
 
 
@@ -206,32 +209,41 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                 <td class="px-6 py-4">
                                     <div class="flex gap-2">
                                         <?php if ($role === 'admin') : ?>
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
                                                 Admin
                                             </span>
                                         <?php elseif ($role === 'user') : ?>
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
                                                 User
                                             </span>
+                                        <?php elseif ($role === "super_admin") : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
+                                                Super Admin
+                                            </span>
+
                                         <?php endif; ?>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end gap-4">
-                                        <form action="manage-user.php" method="get">
-                                            <button type="submit" name="userID" onclick="togglePopup()" value="<?= $iduser ?>" class="hover:text-sky-600" x-data="{ tooltip: 'Edit' }">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                        <form method="post" action="./delete-user.php">
-                                            <button type="submit" name="userID" value="<?= $iduser ?>" class="hover:text-red-600" x-data="{ tooltip: 'Delete' }">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <?php if ($role === 'admin' || $role === 'user') : ?>
+                                            <form action="manage-user.php" method="get">
+                                                <button type="submit" name="userID" onclick="togglePopup()" value="<?= $iduser ?>" class="hover:text-sky-600" x-data="{ tooltip: 'Edit' }">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            <form method="post" action="./delete-user.php">
+                                                <button type="submit" name="userID" value="<?= $iduser ?>" class="hover:text-red-600" x-data="{ tooltip: 'Delete' }">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        <?php elseif ($role === 'super_admin') : ?>
+                                            <div></div>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -312,7 +324,8 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 }
             }
             ?>
-            <!-- modal popup -->
+
+            <!-- modal popup edit-user -->
             <div class="py-12 hidden transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0" id="userPopup">
                 <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
                     <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
@@ -356,8 +369,6 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     </div>
                 </div>
             </div>
-
-
         </div>
 
     </div>
@@ -366,7 +377,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../user/dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>

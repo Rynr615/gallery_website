@@ -20,8 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deletePhoto'])) {
 
     if ($deleteResult) {
         // Hapus berhasil, tambahkan logika tambahan jika diperlukan
-        header("location: ../index.php");
-    } else {
+        header("location: ./dashboard.php");
+    } else { 
         // Hapus gagal, tampilkan pesan kesalahan MySQL
         echo "Error: " . mysqli_error($conn);
     }

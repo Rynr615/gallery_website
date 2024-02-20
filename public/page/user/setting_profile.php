@@ -14,11 +14,6 @@ $username = $_SESSION['username'];
 $query = "SELECT * FROM users WHERE username = '$username'";
 $result = mysqli_query($conn, $query);
 
-$failUpdate = "";
-$failUpdatePhoto = "";
-$succesUpdate = "";
-$succesUpdatePhoto = "";
-
 // Periksa apakah query berhasil dieksekusi
 if ($result && mysqli_num_rows($result) > 0) {
     // Ambil data pengguna terbaru
@@ -50,6 +45,25 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        if (isset($_POST['cancelButton'])) {
+            header('Location: ./setting_profile.php');
+            exit();
+        } else {
+            $name = mysqli_real_escape_string($conn, $_POST['name']);
+            $email = mysqli_real_escape_string($conn, $_POST['email']);
+            // Update profile details in database
+            $queryUpdateDetails = "UPDATE users SET name = '$name', email = '$email' WHERE userID = '$userID'";
+            $resultUpdateDetails = mysqli_query($conn, $queryUpdateDetails);
+            if ($resultUpdateDetails) {
+                echo "<script>alert('Update profile succes');</script>";
+                echo "<script>window.location.href = 'setting_profile.php';</script>";
+            } else {
+                // Error message
+                echo "<script>alert('Update profile failed');</script>";
+                echo "<script>window.location.href = 'setting_profile.php';</script>";
+            }
+        }
         // Handle profile photo upload
         if ($_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['profile_photo'];
@@ -69,13 +83,13 @@ if ($result && mysqli_num_rows($result) > 0) {
 
             // Validasi ekstensi file
             if (!in_array($fileExt, $allowedExtensions)) {
-                echo "Invalid file type. Allowed types: png, jpg, jpeg, svg.";
+                echo "<script>alert('Invalid file type. Allowed types: png, jpg, jpeg, svg.');</script>";
                 exit();
             }
 
             // Validasi ukuran file
             if ($fileSize > $maxFileSize) {
-                echo "File size exceeds 5MB limit.";
+                echo "<script>alert('File size exceeds 5MB limit.');</script>";
                 exit();
             }
 
@@ -85,7 +99,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
             // Upload file
             if (!move_uploaded_file($fileTmpName, $fileDestination)) {
-                echo "Error uploading file.";
+                echo "<script>alert('Error uploading file');</script>";
                 exit();
             }
 
@@ -93,32 +107,12 @@ if ($result && mysqli_num_rows($result) > 0) {
             $queryUpdatePhoto = "UPDATE users SET profile_photo = '$newFileName' WHERE userID = '$userID'";
             $resultUpdatePhoto = mysqli_query($conn, $queryUpdatePhoto);
             if ($resultUpdatePhoto) {
-                // Success message
-                $succesUpdatePhoto = "Profile photo updated successfully.";
+                echo "<script>alert('Update profile succes');</script>";
+                echo "<script>window.location.href = 'setting_profile.php';</script>";
             } else {
                 // Error message
-                $failUpdatePhoto = "Error updating profile photo: " . mysqli_error($conn);
-            }
-        }
-
-        // Handle other profile details update
-        // Sanitize input to prevent SQL injection
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
-
-        if (isset($_POST['cancelButton'])) {
-            $succesUpdate = "";
-        } else {
-            // Update profile details in database
-            $queryUpdateDetails = "UPDATE users SET name = '$name', email = '$email' WHERE userID = '$userID'";
-            $resultUpdateDetails = mysqli_query($conn, $queryUpdateDetails);
-            if ($resultUpdateDetails) {
-                // Success message
-                // header("Location: ./setting_profile.php");
-                $succesUpdate = "Profile updated successfully.";
-            } else {
-                // Error message
-                $failUpdate = "Error updating profile";
+                echo "<script>alert('Update profile failed');</script>";
+                echo "<script>window.location.href = 'setting_profile.php';</script>";
             }
         }
     }
@@ -169,10 +163,10 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="../../page/index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="./dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
-                                <?php if ($accesLevel === 'admin') : ?>
+                                <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                     <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
                                     <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
@@ -212,7 +206,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="../../page/index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                    <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
@@ -288,35 +282,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <p class="flex items-center mb-2 mt-5 mr-5 text-secondary-dark hover:text-primary" href="javascript:void(0)">
                                             Joined since : <?= date('F j Y', strtotime($row['createdAt'])); ?>
                                         </p>
-                                        <?php if ($_SERVER["REQUEST_METHOD"] == "POST") : ?>
-                                            <?php if ($failUpdate) : ?>
-                                                <!-- Fail update -->
-                                                <div id="failUpdate" class="p-4 mb-4 text-sm w-full text-red-800 rounded-lg bg-red-50 dark:text-red-400" role="alert">
-                                                    <span class="font-medium"><?= $failUpdate ?></span>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if ($succesUpdate) : ?>
-                                                <!-- Succes update -->
-                                                <div id="succesUpdate" class="p-4 mb-4 text-sm w-full text-green-800 rounded-lg bg-green-50 dark:text-green-600" role="alert">
-                                                    <span class="font-medium"><?= $succesUpdate ?></span>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if ($failUpdatePhoto) : ?>
-                                                <!-- Fail update -->
-                                                <div id="failUpdatePhoto" class="p-4 mb-4 text-sm w-full text-red-800 rounded-lg bg-red-50 dark:text-red-400" role="alert">
-                                                    <span class="font-medium"><?= $failUpdatePhoto ?></span>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if ($succesUpdatePhoto) : ?>
-                                                <!-- Succes update -->
-                                                <div id="succesUpdatePhoto" class="p-4 mb-4 text-sm w-full text-green-800 rounded-lg bg-green-50 dark:text-green-600" role="alert">
-                                                    <span class="font-medium"><?= $succesUpdatePhoto ?></span>
-                                                </div>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -332,7 +297,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="./dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
