@@ -211,6 +211,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     if (mysqli_num_rows($albumResult) > 0) {
                                         // Tampilkan opsi album
                                         while ($row = mysqli_fetch_assoc($albumResult)) {
+                                            echo "<option value='0'></option>";
                                             echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
                                         }
                                     } else {

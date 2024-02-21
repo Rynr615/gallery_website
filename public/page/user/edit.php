@@ -14,6 +14,8 @@ if (!isset($_SESSION['username'])) {
 // Variabel username sudah pasti terdefinisi jika sampai di sini
 $username = $_SESSION['username'];
 
+$photoID = $_GET['photoID'];
+
 // Lakukan koneksi dan query untuk mendapatkan userID
 $query = "SELECT * FROM users WHERE username = '$username'";
 $resultUser = mysqli_query($conn, $query);
@@ -76,6 +78,15 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
 
         // Cek apakah ada file yang diupload
         if ($_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
+            // Validasi ekstensi file
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+            $fileExtension = strtolower(pathinfo($_FILES['file-upload']['name'], PATHINFO_EXTENSION));
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                echo "<script>alert('Error: Only JPG, JPEG, PNG, and SVG files are allowed.');</script>";
+                echo "<script>window.location.href='./dashboard.php'</script>";
+                exit();
+            }
+
             // Hapus foto lama jika ada
             $oldImagePath = "../../../database/uploads/" . $imagePathBeforeEdit;
             unlink($oldImagePath);

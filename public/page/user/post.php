@@ -246,10 +246,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <!-- Tampilkan tombol hanya jika user yang sedang login adalah pemilik foto -->
                         <div class="mt-10 flex gap-4">
                             <a href="edit.php?photoID=<?= $photoID ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></a>
-                            <form method="post" action="delete.php">
-                                <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                                <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete<i class="fa-solid fa-trash ml-2"></i></button>
-                            </form>
+                            <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
+                                <i class="fa-solid fa-trash mr-2"></i> Delete
+                            </button>
                         </div>
                         <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to album</label>
                         <div class="mt-2">
@@ -270,6 +269,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </select>
                                 <button type="submit" name="addToAlbum" class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Album</button>
                             </form>
+                        </div>
+                    <?php elseif ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                        <div class="mt-10 flex gap-4">
+                            <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
+                                <i class="fa-solid fa-trash mr-2"></i> Delete
+                            </button>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -382,6 +387,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php } ?>
             </div>
 
+            <div id="deletePhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                    <h2 class="text-xl font-semibold mb-2">Delete Photo</h2>
+                    <p class="mb-4">Are you sure you want to delete this photo? This action cannot be undone.</p>
+                    <div class="flex justify-center">
+                        <form method="post" action="delete.php">
+                            <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                            <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Yes</button>
+                        </form>
+                        <button onclick="toggleDeletePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -466,6 +487,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 popup.style.display = 'none';
                 open = false;
             }
+        }
+
+        function toggleDeletePopup() {
+            var popup = document.getElementById("deletePhotoPopup");
+            popup.classList.toggle("hidden");
         }
     </script>
     </script>
