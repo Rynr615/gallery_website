@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
             exit();
         } else {
             echo "<script>alert('Error: Username or Password Wrong.');</script>";
-            echo "<script>window.location.href ='register.php';</script>";
+            echo "<script>window.location.href ='login.php';</script>";
         }
     }
 }

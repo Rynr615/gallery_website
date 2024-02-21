@@ -6,7 +6,7 @@ include "../../../database/koneksi.php";
 
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
-    header("Location: ./user/login.php");
+    header("Location: ./login.php");
     exit();
 }
 

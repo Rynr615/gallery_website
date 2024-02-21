@@ -87,7 +87,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             }
         } else {
             // Jika thumbnail tidak diunggah, gunakan nilai default
-            $thumbnail_path = 'album_default.jpg'; // Tentukan nilai default
+            $thumbnail_path = 'album_default.jpg';
         }
 
         // Hanya simpan nama file thumbnail (tanpa path) ke database
