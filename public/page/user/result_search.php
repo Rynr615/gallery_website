@@ -113,13 +113,13 @@ if (isset($_GET['search'])) {
                                                 <!-- ... (kode gambar profil) -->
                                                 <span class="absolute -inset-1.5"></span>
                                                 <span class="sr-only">Open user menu</span>
-                                                <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile_photo ?>" alt="<?= $username ?> profile photo">
+                                                <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile_photo ?>" alt="<?= $row['username'] ?> profile photo">
                                             </button>
                                         </div>
                                         <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                                             <a href="./profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
                                             <a href="./setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                                            <a href="./logout.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                                            <button type="button" onclick="toggleSignOutPopup()" id="signOutButton" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
                                         </div>
                                     </div>
                                 </div>
@@ -136,6 +136,23 @@ if (isset($_GET['search'])) {
                         </div>
                     </div>
                 </nav>
+
+                <div id="signOutPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                    <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                        <h2 class="text-xl font-semibold mb-2">Sign Out</h2>
+                        <p class="mb-4">Are you sure you want to Sign Out?</p>
+                        <div class="flex justify-center">
+                            <form id="signOutForm" action="./logout.php">
+                                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                                    Yes
+                                </button>
+                            </form>
+                            <button onclick="toggleSignOutPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
@@ -274,6 +291,12 @@ if (isset($_GET['search'])) {
             </div>
 
             <script src="../../js/script.min.js"></script>
+            <script>
+                function toggleSignOutPopup() {
+                    var popup = document.getElementById("signOutPopup");
+                    popup.classList.toggle("hidden");
+                }
+            </script>
 
         </body>
 
