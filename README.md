@@ -1,8 +1,7 @@
-
 # Website Gallery untuk Syarat Kelulusan Jurusan Rekayasa Perangkat Lunak
 
 ## Deskripsi
-Ini adalah sebuah proyek website gallery yang dibuat untuk memenuhi syarat kelulusan dalam jurusan Rekayasa Perangkat Lunak. Website ini memiliki berbagai fitur yang memungkinkan pengguna untuk mendaftar, masuk, mengelola profil, mengelola album, mengelola foto, memberikan komentar, memberikan like, dan melihat data pengguna lainnya.
+Ini adalah sebuah proyek website gallery yang dibuat untuk memenuhi syarat kelulusan dalam jurusan Rekayasa Perangkat Lunak. Website ini memiliki berbagai fitur yang memungkinkan pengguna untuk mendaftar, masuk, mengelola profil, mengelola album, mengelola foto, memberikan komentar, memberikan like.
 
 ## Fitur
 - Register
@@ -29,13 +28,14 @@ Untuk menggunakan aplikasi ini, pastikan Anda memiliki Git dan Node.js (beserta 
     ```bash
     $ git clone https://github.com/Rynr615/gallery_website.git
     ```
+2. [Download](https://nodejs.org/en/download) dan Install Node.js.
 
-2. Pindah ke direktori proyek:
+3. Pindah ke direktori proyek:
     ```bash
     $ cd gallery
     ```
 
-3. Jalankan Tailwind:
+4. Jalankan Tailwind:
     ```bash
     $ npm run build-css -watch
     ```
