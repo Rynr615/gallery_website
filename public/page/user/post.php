@@ -361,18 +361,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="">
                                     <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
                                     <div class="flex justify-end pt-2">
-                                        <?php if ($comment['userID'] == $userID) : ?>
-                                            <!-- Tombol edit -->
-                                            <button type="button" onclick="togglePopupEdit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-
-                                            <!-- Form untuk menghapus komentar -->
-                                            <form action="comment.php" method="post">
-                                                <input type="text" name="commentID" value="<?= $comment['commentID'] ?>" hidden>
-                                                <button type="submit" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
-                                            </form>
+                                        <?php if ($comment['userID'] == $userID || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                                            <?php if ($comment['userID'] == $userID) : ?>
+                                                <!-- Tombol edit -->
+                                                <button type="button" onclick="togglePopupEdit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            <?php endif; ?>
+                                            <button type="button" onclick="toggleCommentPopup()" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
                                         <?php endif; ?>
+
                                     </div>
 
+                                </div>
+                            </div>
+
+                            <!-- delete comment popup -->
+                            <div id="deleteCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                                    <h2 class="text-xl font-semibold mb-2">Delete Comment</h2>
+                                    <p class="mb-4">Are you sure you want to delete this comment? This action cannot be undone.</p>
+                                    <div class="flex justify-center">
+                                        <form method="post" action="comment.php">
+                                            <input type="text" name="commentID" value="<?= $comment['commentID'] ?>" hidden>
+                                            <button type="submit" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Yes</button>
+                                        </form>
+                                        <button onclick="toggleCommentPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">No</button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -413,7 +428,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Yes</button>
                         </form>
-                        <button onclick="toggleDeletePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">
+                        <button onclick="toggleCommentPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">
                             No
                         </button>
                     </div>
@@ -513,6 +528,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function toggleSignOutPopup() {
             var popup = document.getElementById("signOutPopup");
+            popup.classList.toggle("hidden");
+        }
+
+        function toggleCommentPopup() {
+            var popup = document.getElementById("deleteCommentPopup");
             popup.classList.toggle("hidden");
         }
     </script>
