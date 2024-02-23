@@ -20,6 +20,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
     $userID = $row['userID']; // Ambil userID
     $accesLevel = $row['access_level'];
+    $profile_photo = $row['profile_photo'];
 
     // Ambil jumlah postingan pengguna
     $query_postingan = "SELECT COUNT(*) AS jumlah_postingan FROM photos WHERE userID = '$userID'";

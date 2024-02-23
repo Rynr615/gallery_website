@@ -9,6 +9,23 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+$username = $_SESSION['username'];
+
+$queryUser  = "SELECT * FROM users WHERE username = '$username'";
+$result = mysqli_query($conn, $queryUser);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    // Ambil data pengguna terbaru
+    $row = mysqli_fetch_assoc($result);
+    $profile_photo = $row['profile_photo'];
+    $username = $row['username']; // Inisialisasi variabel username
+    $accesLevel = $row['access_level']; //
+} else {
+    // Handle kesalahan query
+    echo "Error: " . mysqli_error($conn);
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Tangkap data yang dikirimkan melalui formulir komentar
     $photoID = $_POST["photoID"];
@@ -46,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $commentUserID = $rowCommentUser['userID'];
 
             // Periksa apakah pengguna yang saat ini masuk adalah pemilik komentar
-            if ($userID == $commentUserID) {
+            if ($userID == $commentUserID || $accesLevel === 'admin' || $accesLevel === 'super_admin') {
                 // Lakukan penghapusan komentar
                 $queryDeleteComment = "DELETE FROM comments WHERE commentID = '$commentID'";
                 $resultDeleteComment = mysqli_query($conn, $queryDeleteComment);
