@@ -216,12 +216,13 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="container p-10">
         <div class="relative flex justify-end">
             <button onclick="togglePopup()" id="albumPopupButton" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                <i class="fa-solid fa-pen-to-square mr-2"></i> Edit Album
+                <i class="fa-solid fa-pen-to-square"></i>
             </button>
             <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white block bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                <i class="fa-solid fa-trash mr-2"></i> Delete Album
+                <i class="fa-solid fa-trash"></i>
             </button>
         </div>
+
 
         <div id="deleteAlbumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
             <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
@@ -258,7 +259,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <p class="pt-2">
                         <?= $row['description'] ?>
                     </p>
-
                 </div>
 
                 <div id="albumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
@@ -296,12 +296,50 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
                 </div>
+
+                <div id="albumPhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                    <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                        <h2 class="text-xl font-semibold mb-2">Add Photo</h2>
+                        <form id="albumForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
+                            <div class="flex justify-center mb-2">
+                                <div class="flex-1">
+                                    <div class="mb-2">
+                                        <input type="hidden" name="albumID" value="<?= $albumID ?>">
+                                        <label for="file-upload" class="block text-sm cursor-pointer text-center w-64 h-64 border border-gray-900 bg-slate-700 font-medium leading-6 text-gray-900">
+                                            <div class="p-32">
+                                                <span class="">
+                                                    Select Image
+                                                </span> <input type="file" name="file-upload" id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-center">
+                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
+                                    Submit
+                                </button>
+                                <button type="button" onclick="togglealbumPhotoPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
         <?php
             }
         }
         ?>
 
         <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 md:p-2 xl:p-5 m-5">
+            <div class="border border-dashed bg-slate-900 w-64 flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
+                <button type="button" onclick="togglealbumPhotoPopup()" id="albumPhotoPopupButton" class="w-full">
+                    <div class="border border-dashed h-52 rounded-md w-full overflow-hidden">
+                        <i class="fa-solid fa-folder-plus pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
+                    </div>
+                </button>
+            </div>
             <?php
             // Tampilkan setiap foto dari album yang dipilih
             if ($resultPhotos && mysqli_num_rows($resultPhotos) > 0) {
@@ -431,7 +469,19 @@ if ($result && mysqli_num_rows($result) > 0) {
                 button.innerHTML = "Close Album";
             } else {
                 popup.classList.add("hidden");
-                button.innerHTML = "<i class='fa-solid fa-pen-to-square mr-2'></i>Edit Album";
+                button.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
+            }
+        }
+
+        function togglealbumPhotoPopup() {
+            var popup = document.getElementById("albumPhotoPopup");
+            var button = document.getElementById("albumPhotoPopupButton");
+            if (popup.classList.contains("hidden")) {
+                popup.classList.remove("hidden");
+                button.innerHTML = "Close Album";
+            } else {
+                popup.classList.add("hidden");
+                button.innerHTML = "<div class='border border-dashed h-52 rounded-md w-full overflow-hidden'><i class='fa-solid fa-folder-plus pt-16' style='text-align: center; font-size: 56px; color: rgb(226, 232, 240);'></i></div>";
             }
         }
 

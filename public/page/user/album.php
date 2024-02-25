@@ -244,11 +244,6 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     <div class="container p-10">
         <div class="relative">
-            <button onclick="togglePopup()" id="albumPopupButton" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 absolute top-0 right-0 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Add Album
-            </button>
-        </div>
-        <div class="relative">
             <h1 class="font-medium px-5 py-2.5 absolute top-0 left-0">My Album</h1>
         </div>
 
@@ -289,6 +284,14 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
 
         <div class="w-full mx-auto flex flex-wrap gap-4 justify-center pt-16">
+            <div class="border border-dashed bg-slate-900 w-64 flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
+                <button type="button" onclick="togglePopup()" id="albumPopupButton" class="w-full">
+                    <div class="border border-dashed h-52 rounded-md w-full overflow-hidden">
+                        <i class="fa-solid fa-folder-plus pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
+                    </div>
+                </button>
+            </div>
+
             <?php
             // Tampilkan album yang dibuat oleh pengguna
             if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) {
@@ -357,6 +360,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <!-- footer -->
@@ -427,7 +432,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 button.innerHTML = "Close Album";
             } else {
                 popup.classList.add("hidden");
-                button.innerHTML = "Add Album";
+                button.innerHTML = "<div class='border border-dashed h-52 rounded-md w-full overflow-hidden'><i class='fa-solid fa-folder-plus pt-16' style='text-align: center; font-size: 56px; color: rgb(226, 232, 240);'></i></div>";
             }
         }
 
