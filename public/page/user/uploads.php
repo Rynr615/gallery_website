@@ -30,58 +30,58 @@ if ($result && mysqli_num_rows($result) > 0) {
     $userID = $pengguna['userID'];
 
     // Proses pengiriman file
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Check jika file ter-upload
-        if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
-            // Validasi ekstensi file
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
-            $fileExtension = strtolower(pathinfo($_FILES['file-upload']['name'], PATHINFO_EXTENSION));
+    if (isset($_FILES['file-upload']) && !empty($_FILES['file-upload']['name'])) {
+        // Validasi ekstensi file
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+        foreach ($_FILES['file-upload']['name'] as $index => $fileName) {
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
             if (!in_array($fileExtension, $allowedExtensions)) {
                 echo "Error: Only JPG, JPEG, PNG, and SVG files are allowed.";
                 exit();
             }
+        }
 
-            // Validasi ukuran file
-            $maxFileSize = 50 * 1024 * 1024; // 50MB
-            if ($_FILES['file-upload']['size'] > $maxFileSize) {
+        // Validasi ukuran file
+        $maxFileSize = 50 * 1024 * 1024; // 50MB
+        foreach ($_FILES['file-upload']['size'] as $index => $fileSize) {
+            if ($fileSize > $maxFileSize) {
                 echo "Error: Maximum file size allowed is 50MB.";
                 exit();
             }
+        }
 
-            // Dapatkan informasi file
-            $fileName = $_FILES['file-upload']['name'];
-            $fileTmpName = $_FILES['file-upload']['tmp_name'];
+        // Dapatkan judul dan deskripsi
+        $title = mysqli_real_escape_string($conn, $_POST['title']);
+        $description = mysqli_real_escape_string($conn, $_POST['description']);
 
+        // Tentukan direktori penyimpanan (gantilah sesuai kebutuhan Anda)
+        $uploadDirectory = "../../../database/uploads/";
+
+        foreach ($_FILES['file-upload']['tmp_name'] as $index => $fileTmpName) {
             // Generate nama file yang terenkripsi (contoh menggunakan timestamp)
-            $encryptedFileName = time() . '_' . $fileName;
-
-            // Tentukan direktori penyimpanan (gantilah sesuai kebutuhan Anda)
-            $uploadDirectory = "../../../database/uploads/";
+            $encryptedFileName = time() . '_' . $_FILES['file-upload']['name'][$index];
 
             // Pindahkan file ke direktori tujuan dengan nama terenkripsi
-            move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName);
+            if (!move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName)) {
+                echo "Error uploading file.";
+                exit();
+            }
 
             // Insert data foto ke tabel photos
-            $title = mysqli_real_escape_string($conn, $_POST['title']);
-            $description = mysqli_real_escape_string($conn, $_POST['description']);
             $albumId = isset($_POST['album']) && $_POST['album'] > 0 ? mysqli_real_escape_string($conn, $_POST['album']) : 'NULL'; // Ambil id album dari input select, atau gunakan NULL jika tidak ada album yang dipilih
 
             $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path) 
                 VALUES ('$userID', $albumId, '$title', '$description', '$encryptedFileName')";
 
-            if (mysqli_query($conn, $insertQuery)) {
-                header("Location: ./dashboard.php");
-                exit();
-            } else {
+            if (!mysqli_query($conn, $insertQuery)) {
                 // Handle kesalahan query
                 echo "Error: " . mysqli_error($conn);
                 exit();
             }
-        } else {
-            // Handle kesalahan upload file
-            echo "Error uploading file.";
-            exit();
         }
+
+        header("Location: ./dashboard.php");
+        exit();
     }
 } else {
     // Handle kesalahan query
@@ -244,8 +244,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     // Periksa apakah ada album yang tersedia
                                     if (mysqli_num_rows($albumResult) > 0) {
                                         // Tampilkan opsi album
+                                        echo "<option value='0'></option>";
                                         while ($row = mysqli_fetch_assoc($albumResult)) {
-                                            echo "<option value='0'></option>";
                                             echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
                                         }
                                     } else {
@@ -264,7 +264,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div class="text-center">
                                 <label for="file-upload" class="relative w-full cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                     <span>Upload a file</span>
-                                    <input id="file-upload" name="file-upload" type="file" class="sr-only" onchange="previewImage(this)">
+                                    <input id="file-upload" name="file-upload[]" multiple type="file" class="sr-only" onchange="previewImage(this)">
                                 </label>
                                 <p class="text-xs leading-5 text-gray-600">PNG, JPG, SVG up to 50MB</p>
                                 <div class="mt-4 min-h-[250px]" id="image-preview"></div>

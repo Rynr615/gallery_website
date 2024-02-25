@@ -11,6 +11,8 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+$albumID = $_POST['albumID'];
+
 // Variabel username sudah pasti terdefinisi jika sampai di sini
 $username = $_SESSION['username'];
 
@@ -32,57 +34,53 @@ if ($result && mysqli_num_rows($result) > 0) {
     // Proses pengiriman file
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check jika file ter-upload
-        if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] === UPLOAD_ERR_OK) {
+
+
+        if (isset($_FILES['file-upload']) && !empty($_FILES['file-upload']['name'])) {
             // Validasi ekstensi file
             $allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
-            $fileExtension = strtolower(pathinfo($_FILES['file-upload']['name'], PATHINFO_EXTENSION));
-            if (!in_array($fileExtension, $allowedExtensions)) {
-                echo "Error: Only JPG, JPEG, PNG, and SVG files are allowed.";
-                exit();
+            foreach ($_FILES['file-upload']['name'] as $index => $fileName) {
+                $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                if (!in_array($fileExtension, $allowedExtensions)) {
+                    echo "Error: Only JPG, JPEG, PNG, and SVG files are allowed.";
+                    exit();
+                }
             }
 
             // Validasi ukuran file
             $maxFileSize = 50 * 1024 * 1024; // 50MB
-            if ($_FILES['file-upload']['size'] > $maxFileSize) {
-                echo "Error: Maximum file size allowed is 50MB.";
-                exit();
+            foreach ($_FILES['file-upload']['size'] as $index => $fileSize) {
+                if ($fileSize > $maxFileSize) {
+                    echo "Error: Maximum file size allowed is 50MB.";
+                    exit();
+                }
             }
-
-            // Dapatkan informasi file
-            $fileName = $_FILES['file-upload']['name'];
-            $fileTmpName = $_FILES['file-upload']['tmp_name'];
-
-            // Generate nama file yang terenkripsi (contoh menggunakan timestamp)
-            $encryptedFileName = time() . '_' . $fileName;
 
             // Tentukan direktori penyimpanan (gantilah sesuai kebutuhan Anda)
             $uploadDirectory = "../../../database/uploads/";
 
-            // Pindahkan file ke direktori tujuan dengan nama terenkripsi
-            move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName);
+            foreach ($_FILES['file-upload']['tmp_name'] as $index => $fileTmpName) {
+                // Generate nama file yang terenkripsi (contoh menggunakan timestamp)
+                $encryptedFileName = time() . '_' . $_FILES['file-upload']['name'][$index];
 
-            // Insert data foto ke tabel photos
-            $albumId = $_POST['albumID']; // Ambil id album dari input select, atau gunakan NULL jika tidak ada album yang dipilih
+                // Pindahkan file ke direktori tujuan dengan nama terenkripsi
+                if (!move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName)) {
+                    echo "Error uploading file.";
+                    exit();
+                }
 
-            $insertQuery = "INSERT INTO photos (userID, albumID, image_path) 
-                VALUES ('$userID', $albumId, '$encryptedFileName')";
+                $insertQuery = "INSERT INTO photos (userID, albumID, image_path) 
+            VALUES ('$userID', $albumID,'$encryptedFileName')";
 
-            if (mysqli_query($conn, $insertQuery)) {
-                header("Location: ./dashboard.php");
-                exit();
-            } else {
-                // Handle kesalahan query
-                echo "Error: " . mysqli_error($conn);
-                exit();
+                if (!mysqli_query($conn, $insertQuery)) {
+                    // Handle kesalahan query
+                    echo "Error: " . mysqli_error($conn);
+                    exit();
+                }
             }
-        } else {
-            // Handle kesalahan upload file
-            echo "Error uploading file.";
+
+            header("Location: ./dashboard.php");
             exit();
         }
     }
-} else {
-    // Handle kesalahan query
-    echo "Error: " . mysqli_error($conn);
-    exit();
 }

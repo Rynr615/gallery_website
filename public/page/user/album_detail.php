@@ -294,13 +294,12 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </form>
                     </div>
-
                 </div>
 
                 <div id="albumPhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
                     <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                         <h2 class="text-xl font-semibold mb-2">Add Photo</h2>
-                        <form id="albumForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
+                        <form id="albumPhotoForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
                             <div class="flex justify-center mb-2">
                                 <div class="flex-1">
                                     <div class="mb-2">
@@ -309,7 +308,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                             <div class="p-32">
                                                 <span class="">
                                                     Select Image
-                                                </span> <input type="file" name="file-upload" id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
+                                                </span> <input type="file" name="file-upload[]" multiple id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
                                             </div>
                                         </label>
                                     </div>
