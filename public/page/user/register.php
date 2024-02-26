@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
     $email = $_POST["email"];
     $createdAt = date("Y-m-d H:i:s");
+    $lastLogin = date("Y-m-d H:i:s");
 
     // Periksa apakah username sudah ada
     $checkUsernameQuery = "SELECT * FROM users WHERE username = '$username'";
@@ -26,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         echo "<script>window.location.href ='register.php';</script>";
     } else {
         // Insert data user ke dalam tabel users
-        $query = "INSERT INTO users (name, username, password, email, createdAt) VALUES ('', '$username', '$password', '$email', '$createdAt')";
+        $query = "INSERT INTO users (name, username, password, email, last_login, createdAt) VALUES ('', '$username', '$password', '$email', '$lastLogin', '$createdAt')";
 
         $result = mysqli_query($conn, $query);
 

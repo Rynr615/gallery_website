@@ -14,6 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         $hashed_password = $row["password"];
 
         if (password_verify($password, $hashed_password)) {
+            // Update kolom last_login
+            $user_id = $row['userID'];
+            $current_datetime = date("Y-m-d H:i:s");
+            $update_query = "UPDATE users SET last_login = '$current_datetime' WHERE userID = $user_id";
+            mysqli_query($conn, $update_query);
+
+            // Start session
             session_start();
             $_SESSION['username'] = $row["username"];
             header("Location: ./dashboard.php");
@@ -24,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         }
     }
 }
+
 
 ?>
 

@@ -169,11 +169,12 @@ $offset = ($current_page - 1) * $rowsPerPage;
             </div>
 
 
-            <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
+            <table class="w-full border-collapse bg-white text-left text-xs text-gray-500">
                 <thead class="bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">User</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Name</th>
+                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Last Login</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Joined Since</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Role</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
@@ -197,6 +198,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                 $name = $row['name'];
                                 $role = $row['access_level'];
                                 $createdAt = $row['createdAt'];
+                                $lastLogin = $row['last_login'];
                     ?>
                                 <tr class="hover:bg-gray-50">
                                     <!-- profile username, email -->
@@ -218,6 +220,8 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                             <?= $name ?>
                                         </span>
                                     </td>
+                                    <!-- last login -->
+                                    <td class="px-6 py-4"><?= $lastLogin ?></td>
                                     <!-- joined since -->
                                     <td class="px-6 py-4"><?= $createdAt ?></td>
                                     <!-- role -->
