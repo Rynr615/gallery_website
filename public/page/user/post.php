@@ -243,63 +243,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- main-content -->
     <div class="container mx-auto ">
         <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
-            <div class="mx-auto flex justify-between ">
-                <div class="">
-                    <p class="font-semibold">
-                        <span>Title : </span> <?= $title; ?>
-                    </p>
-                    <p class="pt-2 text-sm text-gray-400">
-                        <span class="font-normal">Author : </span><?= $username ?>
-                    </p>
-                    <p class="pt-2">
-                        <?= $description ?>
-                    </p>
+            <div class="mx-auto flex justify-between">
+                <div class="flex items-center">
+                    <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="w-10 mr-2 rounded-full">
+                    <div class="">
+                        <p class="font-semibold">
+                            <?= $title; ?>
+                        </p>
+                        <p class="pt-1 text-sm text-gray-400">
+                            <span class="font-normal">Author : </span><?= $username ?>
+                        </p>
+                    </div>
                 </div>
-                <div class="">
+
+                <div class="relative">
                     <p class="text-xs">
                         <span>Published on : </span><?= $createdAt ?>
                     </p>
-                    <?php if (isset($showButtons) && $showButtons) : ?>
-                        <!-- Tampilkan tombol hanya jika user yang sedang login adalah pemilik foto -->
-                        <div class="mt-10 flex gap-4">
-                            <a href="edit.php?photoID=<?= $photoID ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></a>
-                            <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                                <i class="fa-solid fa-trash mr-2"></i> Delete
-                            </button>
-                        </div>
-                        <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to album</label>
-                        <div class="mt-2">
-                            <form method="post" action="">
-                                <select id="album" name="albumID" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                    <!-- Fetch and display user's albums as options -->
-                                    <?php
-                                    $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userID";
-                                    $resultUserAlbums = mysqli_query($conn, $queryUserAlbums);
-                                    if ($resultUserAlbums && mysqli_num_rows($resultUserAlbums) > 0) {
-                                        while ($rowAlbum = mysqli_fetch_assoc($resultUserAlbums)) {
-                                            echo "<option value='" . $rowAlbum['albumID'] . "'>" . $rowAlbum['title'] . "</option>";
-                                        }
-                                    } else {
-                                        echo "<option value=''>No albums found</option>";
-                                    }
-                                    ?>
-                                </select>
-                                <button type="submit" name="addToAlbum" class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Album</button>
-                            </form>
-                        </div>
-                    <?php elseif ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                        <div class="mt-10 flex gap-4">
-                            <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                                <i class="fa-solid fa-trash mr-2"></i> Delete
-                            </button>
-                        </div>
-                    <?php endif; ?>
+                    <button class="absolute bottom-0 right-0 pt-2 text-2xl text-red-500 hover:text-red-700">
+                        <!-- Ganti dengan ikon flag yang diinginkan -->
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </button>
                 </div>
+            </div>
 
+            <div class='mt-5 relative'>
+                <?php if (isset($showButtons) && $showButtons) :  ?>
+                    <div class="absolute top-0 right-0">
+                        <!-- Tombol-tombol di pojok kanan atas -->
+                        <div class="flex justify-between gap-4 p-4">
+                            <a href="edit.php?photoID=<?= $photoID ?>" class="">
+                                <i class="fa-solid fa-pen-to-square text-xl text-white hover:text-blue-600"></i>
+                            </a>
+                            <button class="" onclick="toggleDeletePopup()" id="deleteAlbumButton">
+                                <i class="fa-solid fa-trash text-xl text-white hover:text-red-600"></i>
+                            </button>
+                            <button onclick="toggleAddtoAlbumPopup()" class="">
+                                <i class="fa-solid fa-folder-plus text-xl text-white hover:text-blue-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                <?php elseif ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                    <div class="absolute top-0 right-0">
+                        <div class="flex justify-between gap-4 p-4">
+                            <button class="" onclick="toggleDeletePopup()" id="deleteAlbumButton">
+                                <i class="fa-solid fa-trash text-xl text-white hover:text-red-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <div>
+                    <img class="rounded-lg w-full" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
+                </div>
+                <!-- Foto -->
             </div>
-            <div class='flex justify-center mt-5'>
-                <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
-            </div>
+
+
             <div class="flex justify-between mt-5">
                 <!-- before like -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
@@ -435,6 +434,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
 
+            <!-- pop up add to album -->
+            <div id="AddtoAlbumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                    <h2 class="text-xl font-semibold mb-2">Add to Album</h2>
+                    <p class="mb-4">Are you sure you want to add this photo to your album?</p>
+                    <div class="flex justify-center">
+                        <form method="post" action="">
+                            <select id="album" name="albumID" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                <!-- Fetch and display user's albums as options -->
+                                <?php
+                                $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userID";
+                                $resultUserAlbums = mysqli_query($conn, $queryUserAlbums);
+                                if ($resultUserAlbums && mysqli_num_rows($resultUserAlbums) > 0) {
+                                    while ($rowAlbum = mysqli_fetch_assoc($resultUserAlbums)) {
+                                        echo "<option value='" . $rowAlbum['albumID'] . "'>" . $rowAlbum['title'] . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No albums found</option>";
+                                }
+                                ?>
+                            </select>
+                            <button type="submit" name="addToAlbum" class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Album</button>
+                            <button onclick="toggleAddtoAlbumPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">
+                                No
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -528,6 +558,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function toggleSignOutPopup() {
             var popup = document.getElementById("signOutPopup");
+            popup.classList.toggle("hidden");
+        }
+
+        function toggleAddtoAlbumPopup() {
+            var popup = document.getElementById("AddtoAlbumPopup");
             popup.classList.toggle("hidden");
         }
 

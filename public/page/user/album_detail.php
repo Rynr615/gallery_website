@@ -214,16 +214,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     </div>
 
     <div class="container p-10">
-        <div class="relative flex justify-end">
-            <button onclick="togglePopup()" id="albumPopupButton" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-            <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white block bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </div>
-
-
         <div id="deleteAlbumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
             <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Delete Album</h2>
@@ -246,96 +236,110 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) {
             while ($row = mysqli_fetch_array($resultAlbums)) {
-        ?>
-                <div class="relative">
-                    <p class="font-medium px-5 py-2.5 absolute top-0 left-0">
-                        <span>Title: </span> <?= $row['title'] ?>
-                    </p>
-                </div>
-                <div class="px-5 pt-10">
-                    <p class="pt-2 text-xs">
-                        <span>Created at : </span><?= $row['createdAt'] ?>
-                    </p>
-                    <p class="pt-2">
-                        <?= $row['description'] ?>
-                    </p>
-                </div>
 
-                <div id="albumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
-                    <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
-                        <h2 class="text-xl font-semibold mb-2">Edit Album</h2>
-                        <form id="albumForm" action="" method="post" enctype="multipart/form-data">
-                            <div class="flex items-start mb-2">
-                                <div class="w-48 h-64 overflow-hidden mr-4"> <!-- Memperbesar ukuran thumbnail -->
-                                    <img id="thumbnailPreview" src="../../../database/uploads/<?= $row['thumbnail_album'] ?>" alt="Thumbnail Preview" class="object-cover rounded-md w-full h-full">
-                                </div>
-                                <div class="flex-1">
-                                    <div class="mb-2">
-                                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title :</label>
-                                        <input type="text" name="title" id="title" value="<?= $row['title'] ?>" autocomplete="title" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description :</label>
-                                        <textarea id="description" name="description" rows="3" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"><?= $row['description'] ?></textarea>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="thumbnail" class="block text-sm font-medium leading-6 text-gray-900">Thumbnail :</label>
-                                        <input type="file" name="thumbnail" id="thumbnail" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-center">
-                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
-                                    Submit
-                                </button>
-                                <button type="button" onclick="togglePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div id="albumPhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
-                    <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
-                        <h2 class="text-xl font-semibold mb-2">Add Photo</h2>
-                        <form id="albumPhotoForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
-                            <div class="flex justify-center mb-2">
-                                <div class="flex-1">
-                                    <div class="mb-2">
-                                        <input type="hidden" name="albumID" value="<?= $albumID ?>">
-                                        <label for="file-upload" class="block text-sm cursor-pointer text-center w-64 h-64 border border-gray-900 bg-slate-700 font-medium leading-6 text-gray-900">
-                                            <div class="p-32">
-                                                <span class="">
-                                                    Select Image
-                                                </span> <input type="file" name="file-upload[]" multiple id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-center">
-                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
-                                    Submit
-                                </button>
-                                <button type="button" onclick="togglealbumPhotoPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-        <?php
+                $title = $row['title'];
+                $createdAt = $row['createdAt'];
+                $description = $row['description'];
             }
         }
         ?>
+        <div class="flex justify-between items-center mb-5">
+            <div>
+                <p class="font-medium">
+                    <span>Title: </span> <?= $title ?>
+                </p>
+                <p class="text-xs pt-2">
+                    <span>Created at: </span><?= $createdAt ?>
+                </p>
+            </div>
+            <div class="flex">
+                <button onclick="togglePopup()" id="albumPopupButton" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white block bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="relative">
+            <div class="px-5">
+                <p class="pt-2">
+                    <?= $description ?>
+                </p>
+            </div>
+        </div>
+
+
+        <div id="albumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+            <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Edit Album</h2>
+                <form id="albumForm" action="" method="post" enctype="multipart/form-data">
+                    <div class="flex items-start mb-2">
+                        <div class="w-48 h-64 overflow-hidden mr-4"> <!-- Memperbesar ukuran thumbnail -->
+                            <img id="thumbnailPreview" src="../../../database/uploads/<?= $row['thumbnail_album'] ?>" alt="Thumbnail Preview" class="object-cover rounded-md w-full h-full">
+                        </div>
+                        <div class="flex-1">
+                            <div class="mb-2">
+                                <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title :</label>
+                                <input type="text" name="title" id="title" value="<?= $row['title'] ?>" autocomplete="title" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                            <div class="mb-2">
+                                <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description :</label>
+                                <textarea id="description" name="description" rows="3" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"><?= $row['description'] ?></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label for="thumbnail" class="block text-sm font-medium leading-6 text-gray-900">Thumbnail :</label>
+                                <input type="file" name="thumbnail" id="thumbnail" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
+                            Submit
+                        </button>
+                        <button type="button" onclick="togglePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="albumPhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+            <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Add Photo</h2>
+                <form id="albumPhotoForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
+                    <div class="flex justify-center mb-2">
+                        <div class="flex-1">
+                            <div class="mb-2">
+                                <input type="hidden" name="albumID" value="<?= $albumID ?>">
+                                <label for="file-upload" class="block text-sm mx-auto rounded-md cursor-pointer text-center w-64 h-64 border border-dashed font-medium leading-6 text-gray-900">
+                                    <div class="">
+                                        <i class="fa-regular fa-file-image pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
+                                        <input type="file" name="file-upload[]" multiple id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
+                            Submit
+                        </button>
+                        <button type="button" onclick="togglealbumPhotoPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
 
         <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 md:p-2 xl:p-5 m-5">
-            <div class="border border-dashed bg-slate-900 w-64 flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
+            <div class="border border-dashed w-full flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
                 <button type="button" onclick="togglealbumPhotoPopup()" id="albumPhotoPopupButton" class="w-full">
                     <div class="border border-dashed h-52 rounded-md w-full overflow-hidden">
-                        <i class="fa-solid fa-folder-plus pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
+                        <i class="fa-regular fa-file-image pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
                     </div>
                 </button>
             </div>
@@ -465,7 +469,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             var button = document.getElementById("albumPopupButton");
             if (popup.classList.contains("hidden")) {
                 popup.classList.remove("hidden");
-                button.innerHTML = "Close Album";
+                button.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
             } else {
                 popup.classList.add("hidden");
                 button.innerHTML = "<i class='fa-solid fa-pen-to-square'></i>";
@@ -477,10 +481,10 @@ if ($result && mysqli_num_rows($result) > 0) {
             var button = document.getElementById("albumPhotoPopupButton");
             if (popup.classList.contains("hidden")) {
                 popup.classList.remove("hidden");
-                button.innerHTML = "Close Album";
+                button.innerHTML = "<div class='border border-dashed h-52 rounded-md w-full overflow-hidden'><i class='fa-regular fa-file-image pt-16' style='text-align: center; font-size: 56px; color: rgb(226, 232, 240);'></i></div>";
             } else {
                 popup.classList.add("hidden");
-                button.innerHTML = "<div class='border border-dashed h-52 rounded-md w-full overflow-hidden'><i class='fa-solid fa-folder-plus pt-16' style='text-align: center; font-size: 56px; color: rgb(226, 232, 240);'></i></div>";
+                button.innerHTML = "<div class='border border-dashed h-52 rounded-md w-full overflow-hidden'><i class='fa-regular fa-file-image pt-16' style='text-align: center; font-size: 56px; color: rgb(226, 232, 240);'></i></div>";
             }
         }
 

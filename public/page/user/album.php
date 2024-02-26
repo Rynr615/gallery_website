@@ -112,7 +112,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $totalRows = mysqli_fetch_assoc($resultTotalRows)['total'];
 
     // Batasan jumlah baris per halaman
-    $rowsPerPage = 12;
+    $rowsPerPage = 7;
 
     // Hitung jumlah halaman
     $totalPages = ceil($totalRows / $rowsPerPage);
@@ -284,7 +284,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
 
         <div class="w-full mx-auto flex flex-wrap gap-4 justify-center pt-16">
-            <div class="border border-dashed bg-slate-900 w-64 flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
+            <div class="border border-dashed w-64 flex flex-col items-center justify-center text-white font-semibold rounded-md p-4 transition duration-300 ease-in-out">
                 <button type="button" onclick="togglePopup()" id="albumPopupButton" class="w-full">
                     <div class="border border-dashed h-52 rounded-md w-full overflow-hidden">
                         <i class="fa-solid fa-folder-plus pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
