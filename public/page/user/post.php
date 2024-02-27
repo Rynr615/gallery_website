@@ -260,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p class="text-xs">
                         <span>Published on : </span><?= $createdAt ?>
                     </p>
-                    <button class="absolute bottom-0 right-0 pt-2 text-2xl text-red-500 hover:text-red-700">
+                    <button onclick="toggleReportPopup()" class="absolute bottom-0 right-0 pt-2 text-2xl text-red-500 hover:text-red-700">
                         <!-- Ganti dengan ikon flag yang diinginkan -->
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </button>
@@ -270,7 +270,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class='mt-5 relative'>
                 <?php if (isset($showButtons) && $showButtons) :  ?>
                     <div class="absolute top-0 right-0">
-                        <!-- Tombol-tombol di pojok kanan atas -->
+                        <!-- button edit, delete, add to album -->
                         <div class="flex justify-between gap-4 p-4">
                             <a href="edit.php?photoID=<?= $photoID ?>" class="">
                                 <i class="fa-solid fa-pen-to-square text-xl text-white hover:text-blue-600"></i>
@@ -347,6 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
             </div>
+
             <div class="mt-5">
                 <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
                     <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
@@ -464,6 +465,104 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
 
+            <!-- report pop up -->
+            <div id="ReportPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                    <h2 class="text-xl font-semibold mb-2">Report</h2>
+                    <p class="">Select one that is relevant</p>
+                    <div class="flex justify-center">
+                        <form method="post" action="report.php">
+                            <input type="hidden" name="userID" value="<?= $userID ?>">
+                            <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                            <fieldset class="m-3">
+                                <div class="mt-3 mb-3 space-y-6">
+                                    <!-- Checkbox for Spam -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="spam" name="reportType" type="radio" value="spam" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="spam" class="font-medium text-gray-900">Spam</label>
+                                            <p class="text-gray-500">Irrelevant or unwanted comments on a post</p>
+                                        </div>
+                                    </div>
+                                    <!-- Checkbox for Nudity -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="nudity" name="reportType" type="radio" value="nudity" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="nudity" class="font-medium text-gray-900">Nudity</label>
+                                            <p class="text-gray-500">Inappropriate content or not in line with ethics.</p>
+                                        </div>
+                                    </div>
+                                    <!-- Checkbox for Violence -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="violence" name="reportType" type="radio" value="violence" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="violence" class="font-medium text-gray-900">Violence</label>
+                                            <p class="text-gray-500">Threats or content posing a risk of violence.</p>
+                                        </div>
+                                    </div>
+                                    <!-- Checkbox for Terrorism -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="terrorism" name="reportType" type="radio" value="terrorism" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="terrorism" class="font-medium text-gray-900">Terrorism</label>
+                                            <p class="text-gray-500">Content related to terrorism or radicalism.</p>
+                                        </div>
+                                    </div>
+                                    <!-- Checkbox for Hate Speech -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="hate_speech" name="reportType" type="radio" value="hate_speech" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="hate_speech" class="font-medium text-gray-900">Hate speech</label>
+                                            <p class="text-gray-500"> Hate speech or discrimination.</p>
+                                        </div>
+                                    </div>
+                                    <!-- Checkbox for Sexual Harassment -->
+                                    <div class="relative flex gap-x-3">
+                                        <div class="flex h-6 items-center">
+                                            <input id="sexual_harassment" name="reportType" type="radio" value="sexual_harassment" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                        </div>
+                                        <div class="text-sm leading-6">
+                                            <label for="sexual_harassment" class="font-medium text-gray-900">Sexual Harassment</label>
+                                            <p class="text-gray-500">Inappropriate behavior or sexual harassment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <!-- Reason Input -->
+                                    <div class="col-span-full pt-3 gap-x-3">
+                                        <label for="reason" class="block text-sm font-medium leading-6 text-gray-900">Reason</label>
+                                        <div class="mt-2">
+                                            <input id="reason" name="reason" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        </div>
+                                    </div>
+                                    <!-- Additional Info Input -->
+                                    <div class="col-span-full gap-x-3">
+                                        <label for="additionalInfo" class="block text-sm font-medium leading-6 text-gray-900">Additional Info</label>
+                                        <div class="mt-2">
+                                            <textarea id="additionalInfo" name="additionalInfo" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <!-- Submit Buttons -->
+                            <div class="mx-auto">
+                                <button type="submit" name="report" class="text-white mt-2 bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Report</button>
+                                <button onclick="toggleReportPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">No</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -558,6 +657,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function toggleSignOutPopup() {
             var popup = document.getElementById("signOutPopup");
+            popup.classList.toggle("hidden");
+        }
+
+        function toggleReportPopup() {
+            var popup = document.getElementById("ReportPopup");
             popup.classList.toggle("hidden");
         }
 

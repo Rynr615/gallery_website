@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
             // Start session
             session_start();
             $_SESSION['username'] = $row["username"];
+            $_SESSION['userID'] = $row["userID"];
             header("Location: ./dashboard.php");
             exit();
         } else {

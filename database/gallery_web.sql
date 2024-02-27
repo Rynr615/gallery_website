@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 26, 2024 at 03:31 AM
+-- Generation Time: Feb 27, 2024 at 03:51 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -101,7 +101,6 @@ CREATE TABLE `photos` (
 --
 
 INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`) VALUES
-(3, 2, NULL, 'Post Ketiga', '', '1708519933_items-4.png', '2024-02-21 12:52:13'),
 (4, 1, NULL, 'Yoimiya', '', '1708522392_items-1.jpg', '2024-02-21 13:33:12'),
 (6, 1, 3, NULL, NULL, '1708861458_items-9.jpg', '2024-02-25 11:44:18'),
 (13, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708479145_items-11.jpg', '2024-02-25 13:48:58'),
@@ -110,13 +109,29 @@ INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `i
 (16, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519400_items-6.jpg', '2024-02-25 13:49:23'),
 (17, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519933_items-4.png', '2024-02-25 13:49:23'),
 (18, 1, 1, NULL, NULL, '1708869439_1708479145_items-11.jpg', '2024-02-25 13:57:19'),
-(19, 1, 1, NULL, NULL, '1708869439_1708519400_items-6.jpg', '2024-02-25 13:57:19'),
+(19, 1, 3, NULL, NULL, '1708869439_1708519400_items-6.jpg', '2024-02-26 13:18:27'),
 (20, 1, 1, NULL, NULL, '1708869439_1708519933_items-4.png', '2024-02-25 13:57:19'),
 (21, 1, 4, NULL, NULL, '1708912114_jessica_chandra.jpg', '2024-02-26 01:48:34'),
 (22, 1, 4, NULL, NULL, '1708912114_azizi_asadel.jpg', '2024-02-26 01:48:34'),
 (23, 1, 4, NULL, NULL, '1708912114_amanda_sukma.jpg', '2024-02-26 01:48:34'),
 (24, 1, 4, NULL, NULL, '1708912114_marsha_lenathea.jpg', '2024-02-26 01:48:34'),
 (25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reports`
+--
+
+CREATE TABLE `reports` (
+  `reportID` int(11) NOT NULL,
+  `reportType` varchar(50) NOT NULL,
+  `reportTypeID` int(11) NOT NULL,
+  `reason` varchar(255) NOT NULL,
+  `additionalInfo` text DEFAULT NULL,
+  `reportedBy` int(11) NOT NULL,
+  `reportedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -141,9 +156,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', NULL, '2024-02-20 17:20:41', 'default_profile.svg'),
-(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', NULL, '2024-02-21 06:42:50', 'default_profile.svg'),
-(3, '', 'fxthir', '$2y$10$kR52EIBOS9dqoo1SpXK7J.acVAIvQ.dHeiCtjbeNh5/p5EgI0gSvG', 'muhammadabdulfathir@gmail.com', 'user', NULL, '2024-02-22 02:33:34', 'default_profile.svg');
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-27 02:48:51', '2024-02-20 17:20:41', 'default_profile.svg'),
+(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-26 09:55:46', '2024-02-21 06:42:50', 'default_profile.svg'),
+(3, '', 'fxthir', '$2y$10$kR52EIBOS9dqoo1SpXK7J.acVAIvQ.dHeiCtjbeNh5/p5EgI0gSvG', 'muhammadabdulfathir@gmail.com', 'user', '2024-02-26 09:55:54', '2024-02-22 02:33:34', 'default_profile.svg'),
+(4, '', 'reynaldi', '$2y$10$qLeyJMP/l2e.ItonRGp1seRZSG1ZtnCvpE07sffkqIXkEISAjVQxa', 'rynldh@gmail.com', 'user', '2024-02-26 03:54:14', '2024-02-25 20:54:14', 'default_profile.svg');
 
 --
 -- Indexes for dumped tables
@@ -181,6 +197,14 @@ ALTER TABLE `photos`
   ADD KEY `albumID` (`albumID`);
 
 --
+-- Indexes for table `reports`
+--
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`reportID`),
+  ADD KEY `fk_report_user` (`reportedBy`),
+  ADD KEY `fk_report_album` (`reportTypeID`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -216,10 +240,16 @@ ALTER TABLE `photos`
   MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
+-- AUTO_INCREMENT for table `reports`
+--
+ALTER TABLE `reports`
+  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -251,6 +281,15 @@ ALTER TABLE `likes`
 ALTER TABLE `photos`
   ADD CONSTRAINT `photos_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`),
   ADD CONSTRAINT `photos_ibfk_2` FOREIGN KEY (`albumID`) REFERENCES `albums` (`albumID`);
+
+--
+-- Constraints for table `reports`
+--
+ALTER TABLE `reports`
+  ADD CONSTRAINT `fk_report_album` FOREIGN KEY (`reportTypeID`) REFERENCES `albums` (`albumID`),
+  ADD CONSTRAINT `fk_report_comment` FOREIGN KEY (`reportTypeID`) REFERENCES `comments` (`commentID`),
+  ADD CONSTRAINT `fk_report_photo` FOREIGN KEY (`reportTypeID`) REFERENCES `photos` (`photoID`),
+  ADD CONSTRAINT `fk_report_user` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
