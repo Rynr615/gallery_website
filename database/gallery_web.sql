@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2024 at 03:51 AM
+-- Generation Time: Feb 27, 2024 at 01:04 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -80,6 +80,13 @@ CREATE TABLE `likes` (
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `likes`
+--
+
+INSERT INTO `likes` (`likeID`, `userID`, `photoID`, `createdAt`) VALUES
+(2, 1, 26, '2024-02-27 05:21:07');
+
 -- --------------------------------------------------------
 
 --
@@ -115,7 +122,8 @@ INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `i
 (22, 1, 4, NULL, NULL, '1708912114_azizi_asadel.jpg', '2024-02-26 01:48:34'),
 (23, 1, 4, NULL, NULL, '1708912114_amanda_sukma.jpg', '2024-02-26 01:48:34'),
 (24, 1, 4, NULL, NULL, '1708912114_marsha_lenathea.jpg', '2024-02-26 01:48:34'),
-(25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34');
+(25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34'),
+(26, 1, NULL, 'test report', '', '1709003739_items-8.jpg', '2024-02-27 03:15:39');
 
 -- --------------------------------------------------------
 
@@ -126,12 +134,23 @@ INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `i
 CREATE TABLE `reports` (
   `reportID` int(11) NOT NULL,
   `reportType` varchar(50) NOT NULL,
-  `reportTypeID` int(11) NOT NULL,
+  `photoID` int(11) DEFAULT NULL,
   `reason` varchar(255) NOT NULL,
   `additionalInfo` text DEFAULT NULL,
   `reportedBy` int(11) NOT NULL,
+  `reportedUser` int(11) NOT NULL,
   `reportedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`reportID`, `reportType`, `photoID`, `reason`, `additionalInfo`, `reportedBy`, `reportedUser`, `reportedAt`) VALUES
+(6, 'spam', 26, 'too cute', '', 1, 0, '2024-02-27 11:56:00'),
+(7, 'spam', 26, 'too cute', '', 1, 0, '2024-02-27 11:57:23'),
+(8, 'spam', 26, 'apalah', '', 2, 0, '2024-02-27 12:00:36'),
+(9, 'spam', 26, 'wkkw', '', 2, 1, '2024-02-27 12:02:59');
 
 -- --------------------------------------------------------
 
@@ -156,8 +175,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-27 02:48:51', '2024-02-20 17:20:41', 'default_profile.svg'),
-(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-26 09:55:46', '2024-02-21 06:42:50', 'default_profile.svg'),
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-27 12:17:14', '2024-02-20 17:20:41', 'default_profile.svg'),
+(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-27 13:00:30', '2024-02-21 06:42:50', 'default_profile.svg'),
 (3, '', 'fxthir', '$2y$10$kR52EIBOS9dqoo1SpXK7J.acVAIvQ.dHeiCtjbeNh5/p5EgI0gSvG', 'muhammadabdulfathir@gmail.com', 'user', '2024-02-26 09:55:54', '2024-02-22 02:33:34', 'default_profile.svg'),
 (4, '', 'reynaldi', '$2y$10$qLeyJMP/l2e.ItonRGp1seRZSG1ZtnCvpE07sffkqIXkEISAjVQxa', 'rynldh@gmail.com', 'user', '2024-02-26 03:54:14', '2024-02-25 20:54:14', 'default_profile.svg');
 
@@ -202,7 +221,7 @@ ALTER TABLE `photos`
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`reportID`),
   ADD KEY `fk_report_user` (`reportedBy`),
-  ADD KEY `fk_report_album` (`reportTypeID`);
+  ADD KEY `fk_report_photo` (`photoID`);
 
 --
 -- Indexes for table `users`
@@ -231,19 +250,19 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -286,9 +305,7 @@ ALTER TABLE `photos`
 -- Constraints for table `reports`
 --
 ALTER TABLE `reports`
-  ADD CONSTRAINT `fk_report_album` FOREIGN KEY (`reportTypeID`) REFERENCES `albums` (`albumID`),
-  ADD CONSTRAINT `fk_report_comment` FOREIGN KEY (`reportTypeID`) REFERENCES `comments` (`commentID`),
-  ADD CONSTRAINT `fk_report_photo` FOREIGN KEY (`reportTypeID`) REFERENCES `photos` (`photoID`),
+  ADD CONSTRAINT `fk_report_photo` FOREIGN KEY (`photoID`) REFERENCES `photos` (`photoID`),
   ADD CONSTRAINT `fk_report_user` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`);
 COMMIT;
 

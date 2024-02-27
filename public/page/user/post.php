@@ -28,7 +28,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
 
     if ($photoID) {
         // Query untuk mendapatkan data foto
-        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username
+        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username, users.userID
         FROM photos
         INNER JOIN users ON photos.userID = users.userID
         WHERE photos.photoID = $photoID";
@@ -51,6 +51,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
             $name = $row['name'];
             $username = $row['username'];
+            $reportedUserID = $row['userID'];
         } else {
             // Jika query gagal, atur nilai default
             $title = "Foto Tidak Ditemukan";
@@ -176,6 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                     <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
                                     <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php endif; ?>
@@ -191,6 +193,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            <a href="../admin/report/reportPhoto.php" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                <span class="absolute -inset-1.5"></span>
+                                <span class="sr-only">View notifications</span>
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                </svg>
+                            </a>
                             <div class="relative ml-3">
                                 <div>
                                     <button @click="profileMenuOpen = !profileMenuOpen" type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
@@ -239,7 +248,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
     </div>
-
     <!-- main-content -->
     <div class="container mx-auto ">
         <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
@@ -265,6 +273,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </button>
                 </div>
+            </div>
+
+            <!-- description -->
+            <div class="mt-5">
+                <p>
+                    <?= $description ?>
+                </p>
             </div>
 
             <div class='mt-5 relative'>
@@ -298,7 +313,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Foto -->
             </div>
 
-
+            <!-- likes -->
             <div class="flex justify-between mt-5">
                 <!-- before like -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
@@ -336,8 +351,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
 
-
-
                 <!-- comment -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
                     <div class="">
@@ -348,6 +361,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
 
+            <!-- comments -->
             <div class="mt-5">
                 <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
                     <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
@@ -473,6 +487,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="flex justify-center">
                         <form method="post" action="report.php">
                             <input type="hidden" name="userID" value="<?= $userID ?>">
+                            <input type="hidden" name="reportedUser" value="<?= $reportedUserID ?>">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <fieldset class="m-3">
                                 <div class="mt-3 mb-3 space-y-6">

@@ -13,6 +13,7 @@ if (!isset($_SESSION['username'])) {
 // Ambil data pengguna dari session
 $userID = $_SESSION['userID'];
 $photoID = $_POST['photoID'];
+$reportedUserID = $_POST['reportedUser'];
 
 // Pastikan file ini dipanggil dari form
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['report'])) {
@@ -32,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['report'])) {
         // $reportedBy sudah diambil dari session sebelumnya
 
         // Lakukan penginputan data ke dalam tabel reports
-        $sql = "INSERT INTO reports (reportType, photoID, reason, additionalInfo, reportedBy) VALUES ('$reportType', '$photoID','$reason', '$additionalInfo', '$userID')";
+        $sql = "INSERT INTO reports (reportType, photoID, reason, additionalInfo, reportedBy, reportedUser) VALUES ('$reportType', '$photoID','$reason', '$additionalInfo', '$userID', '$reportedUserID')";
 
         if (mysqli_query($conn, $sql)) {
             header('Location: ' . $_SERVER['HTTP_REFERER']);
@@ -43,4 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['report'])) {
 
     // Tutup koneksi
     mysqli_close($conn);
+} else {
+    echo "<script>window.location.href='./post.php?photoID={$photoID}';</script>";
 }
