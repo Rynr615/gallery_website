@@ -8,6 +8,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deletePhoto'])) {
     $deleteLikesQuery = "DELETE FROM likes WHERE photoID = $photoID";
     $deleteLikesResult = mysqli_query($conn, $deleteLikesQuery);
 
+    // Hapus terlebih dahulu data dari tabel terkait (reports)
+    $deleteLikesQuery = "DELETE FROM reports WHERE photoID = $photoID";
+    $deleteLikesResult = mysqli_query($conn, $deleteLikesQuery);
+
     $deleteCommentsQuery = "DELETE FROM comments WHERE photoID = $photoID";
     $deleteCommentsResult = mysqli_query($conn, $deleteCommentsQuery);
 

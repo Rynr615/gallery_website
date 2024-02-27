@@ -374,17 +374,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 <div class="">
                                     <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
-                                    <div class="flex justify-end pt-2">
-                                        <?php if ($comment['userID'] == $userID || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                                            <?php if ($comment['userID'] == $userID) : ?>
-                                                <!-- Tombol edit -->
-                                                <button type="button" onclick="togglePopupEdit()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                            <?php endif; ?>
-                                            <button type="button" onclick="toggleCommentPopup()" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                                                <i class="fa-solid fa-trash"></i>
+                                    <div class="flex justify-end pt-2 relative">
+                                        <!-- Tombol dropdown untuk menampilkan opsi -->
+                                        <div class="relative inline-block text-left">
+                                            <button onclick="toggleOptions()" type="button" class="text-gray-700 bg-gray-200 rounded-lg px-5 py-2 focus:outline-none">
+                                                Actions
+                                                <svg class="h-4 w-4 inline-block ml-1 -mr-1 align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4.293 7.293a1 1 0 0 1 1.414 0L10 11.586l4.293-4.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
+                                                </svg>
                                             </button>
-                                        <?php endif; ?>
-
+                                            <!-- Kontainer untuk opsi yang akan ditampilkan ketika tombol di klik -->
+                                            <div id="optionsDropdown" class="absolute hidden mt-1">
+                                                <!-- Opsi untuk mengedit -->
+                                                <div class="flex justify-between">
+                                                    <?php if ($comment['userID'] == $userID || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                                                        <?php if ($comment['userID'] == $userID) : ?>
+                                                            <button onclick="togglePopupEdit()" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 w-full font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                        <?php endif; ?>
+                                                        <!-- Opsi untuk menghapus -->
+                                                        <button onclick="toggleCommentPopup()" type="button" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
+                                                    <?php endif; ?>
+                                                    <!-- Opsi untuk melaporkan -->
+                                                    <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -689,7 +703,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var popup = document.getElementById("deleteCommentPopup");
             popup.classList.toggle("hidden");
         }
-    </script>
+
+        // Fungsi untuk menampilkan/menyembunyikan dropdown opsi
+        function toggleOptions() {
+            var dropdown = document.getElementById("optionsDropdown");
+            dropdown.classList.toggle("hidden");
+        }
     </script>
 
 </body>
