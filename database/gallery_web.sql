@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2024 at 01:04 PM
+-- Generation Time: Feb 28, 2024 at 02:50 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -100,30 +100,31 @@ CREATE TABLE `photos` (
   `title` varchar(100) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `image_path` varchar(255) DEFAULT NULL,
-  `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `category` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `photos`
 --
 
-INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`) VALUES
-(4, 1, NULL, 'Yoimiya', '', '1708522392_items-1.jpg', '2024-02-21 13:33:12'),
-(6, 1, 3, NULL, NULL, '1708861458_items-9.jpg', '2024-02-25 11:44:18'),
-(13, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708479145_items-11.jpg', '2024-02-25 13:48:58'),
-(14, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708522392_items-1.jpg', '2024-02-25 13:48:58'),
-(15, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708479145_items-11.jpg', '2024-02-25 13:49:23'),
-(16, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519400_items-6.jpg', '2024-02-25 13:49:23'),
-(17, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519933_items-4.png', '2024-02-25 13:49:23'),
-(18, 1, 1, NULL, NULL, '1708869439_1708479145_items-11.jpg', '2024-02-25 13:57:19'),
-(19, 1, 3, NULL, NULL, '1708869439_1708519400_items-6.jpg', '2024-02-26 13:18:27'),
-(20, 1, 1, NULL, NULL, '1708869439_1708519933_items-4.png', '2024-02-25 13:57:19'),
-(21, 1, 4, NULL, NULL, '1708912114_jessica_chandra.jpg', '2024-02-26 01:48:34'),
-(22, 1, 4, NULL, NULL, '1708912114_azizi_asadel.jpg', '2024-02-26 01:48:34'),
-(23, 1, 4, NULL, NULL, '1708912114_amanda_sukma.jpg', '2024-02-26 01:48:34'),
-(24, 1, 4, NULL, NULL, '1708912114_marsha_lenathea.jpg', '2024-02-26 01:48:34'),
-(25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34'),
-(26, 1, NULL, 'test report', '', '1709003739_items-8.jpg', '2024-02-27 03:15:39');
+INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`, `category`) VALUES
+(4, 1, NULL, 'Yoimiya', '', '1708522392_items-1.jpg', '2024-02-21 13:33:12', ''),
+(6, 1, 3, NULL, NULL, '1708861458_items-9.jpg', '2024-02-25 11:44:18', ''),
+(13, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708479145_items-11.jpg', '2024-02-25 13:48:58', ''),
+(14, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708522392_items-1.jpg', '2024-02-25 13:48:58', ''),
+(15, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708479145_items-11.jpg', '2024-02-25 13:49:23', ''),
+(16, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519400_items-6.jpg', '2024-02-25 13:49:23', ''),
+(17, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519933_items-4.png', '2024-02-25 13:49:23', ''),
+(18, 1, 1, NULL, NULL, '1708869439_1708479145_items-11.jpg', '2024-02-25 13:57:19', ''),
+(19, 1, 3, NULL, NULL, '1708869439_1708519400_items-6.jpg', '2024-02-26 13:18:27', ''),
+(20, 1, 1, NULL, NULL, '1708869439_1708519933_items-4.png', '2024-02-25 13:57:19', ''),
+(21, 1, 4, NULL, NULL, '1708912114_jessica_chandra.jpg', '2024-02-26 01:48:34', ''),
+(22, 1, 4, NULL, NULL, '1708912114_azizi_asadel.jpg', '2024-02-26 01:48:34', ''),
+(23, 1, 4, NULL, NULL, '1708912114_amanda_sukma.jpg', '2024-02-26 01:48:34', ''),
+(24, 1, 4, NULL, NULL, '1708912114_marsha_lenathea.jpg', '2024-02-26 01:48:34', ''),
+(25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34', ''),
+(26, 1, NULL, 'test report', '', '1709003739_items-8.jpg', '2024-02-27 03:15:39', '');
 
 -- --------------------------------------------------------
 
@@ -175,8 +176,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-27 12:17:14', '2024-02-20 17:20:41', 'default_profile.svg'),
-(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-27 13:00:30', '2024-02-21 06:42:50', 'default_profile.svg'),
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-28 02:45:58', '2024-02-20 17:20:41', 'default_profile.svg'),
+(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-27 14:00:42', '2024-02-21 06:42:50', 'default_profile.svg'),
 (3, '', 'fxthir', '$2y$10$kR52EIBOS9dqoo1SpXK7J.acVAIvQ.dHeiCtjbeNh5/p5EgI0gSvG', 'muhammadabdulfathir@gmail.com', 'user', '2024-02-26 09:55:54', '2024-02-22 02:33:34', 'default_profile.svg'),
 (4, '', 'reynaldi', '$2y$10$qLeyJMP/l2e.ItonRGp1seRZSG1ZtnCvpE07sffkqIXkEISAjVQxa', 'rynldh@gmail.com', 'user', '2024-02-26 03:54:14', '2024-02-25 20:54:14', 'default_profile.svg');
 
@@ -221,7 +222,8 @@ ALTER TABLE `photos`
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`reportID`),
   ADD KEY `fk_report_user` (`reportedBy`),
-  ADD KEY `fk_report_photo` (`photoID`);
+  ADD KEY `fk_report_photo` (`photoID`),
+  ADD KEY `fk_reported_user` (`reportedUser`);
 
 --
 -- Indexes for table `users`
@@ -244,25 +246,25 @@ ALTER TABLE `albums`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -306,7 +308,8 @@ ALTER TABLE `photos`
 --
 ALTER TABLE `reports`
   ADD CONSTRAINT `fk_report_photo` FOREIGN KEY (`photoID`) REFERENCES `photos` (`photoID`),
-  ADD CONSTRAINT `fk_report_user` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`);
+  ADD CONSTRAINT `fk_report_user` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`),
+  ADD CONSTRAINT `fk_reported_user` FOREIGN KEY (`reportedUser`) REFERENCES `users` (`userID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

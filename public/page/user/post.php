@@ -28,7 +28,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
 
     if ($photoID) {
         // Query untuk mendapatkan data foto
-        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username, users.userID
+        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username, users.userID, photos.category
         FROM photos
         INNER JOIN users ON photos.userID = users.userID
         WHERE photos.photoID = $photoID";
@@ -51,6 +51,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
             $name = $row['name'];
             $username = $row['username'];
+            $category = $row['category'];
             $reportedUserID = $row['userID'];
         } else {
             // Jika query gagal, atur nilai default
@@ -282,6 +283,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </p>
             </div>
 
+            <!-- category -->
+            <div class="mt-5">
+                <p>
+                    <?php if ($category === 'Anime') : ?>
+                        <span class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                            <i class="fas fa-tv mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Food') : ?>
+                        <span class="rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
+                            <i class="fas fa-utensils mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Nature') : ?>
+                        <span class="rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                            <i class="fas fa-tree mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Game') : ?>
+                        <span class="rounded-full bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-600">
+                            <i class="fas fa-gamepad mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Comic') : ?>
+                        <span class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600">
+                            <i class="fas fa-book mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Sport') : ?>
+                        <span class="rounded-full bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-600">
+                            <i class="fas fa-football-ball mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Music') : ?>
+                        <span class="rounded-full bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-600">
+                            <i class="fas fa-music mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php elseif ($category === 'Idol') : ?>
+                        <span class="rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
+                            <i class="fas fa-star mr-1"></i> <?= $category ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+
+            </div>
+
             <div class='mt-5 relative'>
                 <?php if (isset($showButtons) && $showButtons) :  ?>
                     <div class="absolute top-0 right-0">
@@ -329,8 +370,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </a>
                     <?php endif; ?>
                 </div>
-
-
 
                 <!-- comment popup -->
                 <div id="commentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">

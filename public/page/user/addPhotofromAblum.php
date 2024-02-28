@@ -34,7 +34,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     // Proses pengiriman file
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check jika file ter-upload
-
+        $category = $_POST['category'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
 
         if (isset($_FILES['file-upload']) && !empty($_FILES['file-upload']['name'])) {
             // Validasi ekstensi file
@@ -69,8 +71,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                     exit();
                 }
 
-                $insertQuery = "INSERT INTO photos (userID, albumID, image_path) 
-            VALUES ('$userID', $albumID,'$encryptedFileName')";
+                $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path, category) 
+                VALUES ('$userID', $albumID, '$title', '$description', '$encryptedFileName', '$category')";
+
 
                 if (!mysqli_query($conn, $insertQuery)) {
                     // Handle kesalahan query

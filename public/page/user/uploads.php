@@ -53,6 +53,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         // Dapatkan judul dan deskripsi
         $title = mysqli_real_escape_string($conn, $_POST['title']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
+        $category = mysqli_real_escape_string($conn, $_POST['category']);
 
         // Tentukan direktori penyimpanan (gantilah sesuai kebutuhan Anda)
         $uploadDirectory = "../../../database/uploads/";
@@ -70,8 +71,8 @@ if ($result && mysqli_num_rows($result) > 0) {
             // Insert data foto ke tabel photos
             $albumId = isset($_POST['album']) && $_POST['album'] > 0 ? mysqli_real_escape_string($conn, $_POST['album']) : 'NULL'; // Ambil id album dari input select, atau gunakan NULL jika tidak ada album yang dipilih
 
-            $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path) 
-                VALUES ('$userID', $albumId, '$title', '$description', '$encryptedFileName')";
+            $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path, category) 
+                VALUES ('$userID', $albumId, '$title', '$description', '$encryptedFileName', '$category')";
 
             if (!mysqli_query($conn, $insertQuery)) {
                 // Handle kesalahan query
@@ -229,21 +230,41 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="w-full text-center mt-10">
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
-            <form action="" method="post" enctype="multipart/form-data">
-                <div class="flex items-center flex-col">
-                    <div class="flex gap-2">
-                        <!-- title -->
-                        <div class="mt-5">
-                            <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
-                            <div class="mt-2">
-                                <input type="text" name="title" id="title" required autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <form action="" method="post" enctype="multipart/form-data" class="w-full">
+                <div class="flex items-center flex-col w-full">
+                    <div>
+                        <div class="flex gap-2">
+                            <!-- title -->
+                            <div class="mt-5">
+                                <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+                                <div class="mt-2">
+                                    <input type="text" name="title" id="title" required autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div class="mx-auto w-full">
+                                    <label for="category" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                                    <div class="mt-2">
+                                        <select id="category" name="category" autocomplete="category-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                            <option value="Food">Food</option>
+                                            <option value="Nature">Nature</option>
+                                            <option value="Anime">Anime</option>
+                                            <option value="Game">Game</option>
+                                            <option value="Comic">Comic</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Sport">Music</option>
+                                            <option value="Sport">Idol</option>
+                                        </select>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                         <!-- album -->
-                        <div class="mt-5">
+                        <div class="mt-5 inline-block">
                             <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
                             <div class="mt-2">
-                                <select id="album" name="album" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                <select id="album" name="album" autocomplete="album-name" class="block w-screen rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                                     <?php
                                     $userId = $userID;
                                     $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";
@@ -263,8 +284,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </select>
                             </div>
                         </div>
-
                     </div>
+
                     <!-- Upload image -->
                     <div class="w-1/3 mt-5">
                         <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Photo</label>

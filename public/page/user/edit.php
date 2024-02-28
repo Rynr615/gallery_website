@@ -60,6 +60,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
         $photoID = mysqli_real_escape_string($conn, $_POST['photoID']);
         $title = mysqli_real_escape_string($conn, $_POST['title']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
+        $category = mysqli_real_escape_string($conn, $_POST['category']);
 
         // Mengambil data foto sebelum diedit
         $queryBeforeEdit = "SELECT title, description, image_path FROM photos WHERE photoID = $photoID AND userID = $userID";
@@ -100,15 +101,15 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             move_uploaded_file($fileTmpName, $uploadDirectory . $encryptedFileName);
 
             // Update data foto di tabel photos, termasuk penggantian gambar
-            $updateQuery = "UPDATE photos SET title = '$title', description = '$description', image_path = '$encryptedFileName' WHERE photoID = $photoID AND userID = $userID";
+            $updateQuery = "UPDATE photos SET title = '$title', description = '$description', image_path = '$encryptedFileName', category = '$category' WHERE photoID = $photoID AND userID = $userID";
         } else {
             // Update data foto di tabel photos tanpa penggantian gambar
-            $updateQuery = "UPDATE photos SET title = '$title', description = '$description' WHERE photoID = $photoID AND userID = $userID";
+            $updateQuery = "UPDATE photos SET title = '$title', description = '$description', category = '$category' WHERE photoID = $photoID AND userID = $userID";
         }
 
         if (mysqli_query($conn, $updateQuery)) {
             // Jika berhasil, alihkan ke halaman index.php atau halaman lain yang sesuai
-            header("Location: ./dashboard.php");
+            header("Location: ./post.php?photoID={$photoID}");
             exit();
         } else {
             // Handle kesalahan query
@@ -241,14 +242,60 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             <div class="w-full text-center mt-10">
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="post" enctype="multipart/form-data" class="w-full">
                 <input type="hidden" name="photoID" value="<?php echo $photoID; ?>">
                 <div class="flex items-center flex-col">
-                    <!-- title -->
-                    <div class="w-1/3 mt-5">
-                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">New Title</label>
-                        <div class="mt-2">
-                            <input type="text" name="title" id="title" value="<?= $titleBeforeEdit ?>" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <div>
+                        <div class="flex gap-2">
+                            <!-- title -->
+                            <div class="mt-5">
+                                <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+                                <div class="mt-2">
+                                    <input type="text" name="title" id="title" value="<?= $titleBeforeEdit ?>" required autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <div class="mx-auto w-full">
+                                    <label for="category" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                                    <div class="mt-2">
+                                        <select id="category" name="category" autocomplete="category-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                            <option value="Food">Food</option>
+                                            <option value="Nature">Nature</option>
+                                            <option value="Anime">Anime</option>
+                                            <option value="Game">Game</option>
+                                            <option value="Comic">Comic</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Music">Music</option>
+                                            <option value="Idol">Idol</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- album -->
+                        <div class="mt-5 inline-block">
+                            <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
+                            <div class="mt-2">
+                                <select id="album" name="album" autocomplete="album-name" class="block w-screen rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    <?php
+                                    $userId = $userID;
+                                    $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";
+                                    $albumResult = mysqli_query($conn, $albumQuery);
+
+                                    // Periksa apakah ada album yang tersedia
+                                    if (mysqli_num_rows($albumResult) > 0) {
+                                        // Tampilkan opsi album
+                                        echo "<option value='0'></option>";
+                                        while ($row = mysqli_fetch_assoc($albumResult)) {
+                                            echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value='0'>No Album Available</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <!-- Upload image -->

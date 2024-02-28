@@ -317,19 +317,47 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Add Photo</h2>
                 <form id="albumPhotoForm" action="addPhotofromAblum.php" method="post" enctype="multipart/form-data">
-                    <div class="flex justify-center mb-2">
-                        <div class="flex-1">
+                    <div class="flex mb-2">
+                        <!-- Input untuk gambar -->
+                        <div class="w-1/2 mr-4">
+                            <input type="hidden" name="albumID" value="<?= $albumID ?>">
+                            <label for="file-upload" class="block text-sm mx-auto rounded-md cursor-pointer text-center w-48 h-64 border border-dashed font-medium leading-6 text-gray-900">
+                                <div class="">
+                                    <i class="fa-regular fa-file-image pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
+                                    <input type="file" name="file-upload[]" multiple id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
+                                </div>
+                            </label>
+                        </div>
+                        <!-- Input untuk title, description, dan category -->
+                        <div class="w-1/2 h-auto">
                             <div class="mb-2">
-                                <input type="hidden" name="albumID" value="<?= $albumID ?>">
-                                <label for="file-upload" class="block text-sm mx-auto rounded-md cursor-pointer text-center w-64 h-64 border border-dashed font-medium leading-6 text-gray-900">
-                                    <div class="">
-                                        <i class="fa-regular fa-file-image pt-16" style="text-align: center; font-size: 56px; color: rgb(226, 232, 240);"></i>
-                                        <input type="file" name="file-upload[]" multiple id="file-upload" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm hidden">
-                                    </div>
-                                </label>
+                                <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+                                <div class="mt-2">
+                                    <input type="text" name="title" id="title" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
+                                <div class="mt-2">
+                                    <textarea id="description" name="description" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="category" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                                <div class="mt-2">
+                                    <select id="category" name="category" autocomplete="category-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                        <option value="Food">Food</option>
+                                        <option value="Nature">Nature</option>
+                                        <option value="Anime">Anime</option>
+                                        <option value="Game">Game</option>
+                                        <option value="Comic">Comic</option>
+                                        <option value="Sport">Sport</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="flex justify-center">
                         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
                             Submit
