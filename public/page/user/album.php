@@ -8,7 +8,7 @@ session_start();
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
     // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
-    header("Location: ./login.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -149,8 +149,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 </head>
 
 <body class="h-screen overflow-x-hidden font-poppins">
-     <!-- navbar -->
-     <div x-data="{ open: false, profileMenuOpen: false }">
+    <!-- navbar -->
+    <div x-data="{ open: false, profileMenuOpen: false }">
         <nav class="bg-gray-800">
             <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                 <div class="relative flex h-16 items-center justify-between">
@@ -317,9 +317,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <i class="fa-solid fa-folder"></i>
                             <?= $title ?>
                         </div>
-                        <p class="text-center text-xs">
-                            <?= $description ?>
-                        </p>
                     </a>
 
             <?php

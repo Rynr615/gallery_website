@@ -5,7 +5,8 @@ session_start();
 
 // Periksa apakah sesi username sudah diset atau belum
 if (!isset($_SESSION['username'])) {
-    header("Location: ./login.php");
+    // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
+    header("Location: ../index.php");
     exit();
 }
 
@@ -260,7 +261,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?= $title; ?>
                         </p>
                         <p class="pt-1 text-sm text-gray-400">
-                            <span class="font-normal">Author : </span><?= $username ?>
+                            <span class="font-normal">Uploaded by : </span><?= $username ?>
                         </p>
                     </div>
                 </div>
@@ -748,6 +749,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var dropdown = document.getElementById("optionsDropdown");
             dropdown.classList.toggle("hidden");
         }
+
+        
     </script>
 
 </body>

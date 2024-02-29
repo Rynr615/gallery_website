@@ -7,7 +7,7 @@ session_start();
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
     // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
-    header("Location: ./login.php");
+    header("Location: ../index.php");
     exit();
 }
 

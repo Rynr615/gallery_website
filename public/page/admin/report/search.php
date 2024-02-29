@@ -2,6 +2,32 @@
 
 include '../../../../database/koneksi.php';
 
+session_start();
+
+// Periksa apakah sesi username sudah diset atau belum
+if (!isset($_SESSION['username'])) {
+    header("Location: ../../index.php");
+    exit();
+}
+
+$username = $_SESSION["username"];
+
+$query = "SELECT * FROM users WHERE username = '$username'";
+$result = mysqli_query($conn, $query);
+
+// Periksa apakah query berhasil dieksekusi
+if ($result && mysqli_num_rows($result) > 0) {
+    // Ambil data pengguna terbaru
+    $row = mysqli_fetch_assoc($result);
+    $profile = $row['profile_photo'];
+    $username = $row['username']; // Inisialisasi variabel username
+    $accessLevel = $row['access_level']; //
+} else {
+    // Handle kesalahan query
+    echo "Error: " . mysqli_error($conn);
+}
+
+
 // Hitung jumlah total baris data
 $queryTotalRows = "SELECT COUNT(*) as total FROM reports";
 $resultTotalRows = mysqli_query($conn, $queryTotalRows);

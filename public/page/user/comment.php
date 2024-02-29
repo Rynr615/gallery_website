@@ -4,8 +4,8 @@ include "../../../database/koneksi.php";
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    // Pengguna belum login
-    header("Location: ./login.php");
+    // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
+    header("Location: ../index.php");
     exit();
 }
 

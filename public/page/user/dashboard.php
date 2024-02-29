@@ -6,7 +6,8 @@ include "../../../database/koneksi.php";
 
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['username'])) {
-    header("Location: ./login.php");
+    // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
+    header("Location: ../index.php");
     exit();
 }
 
@@ -30,12 +31,12 @@ if ($result && mysqli_num_rows($result) > 0) {
     exit();
 }
 
-$queryTotalRows = "SELECT COUNT(*) as total FROM photos";
+$queryTotalRows = "SELECT COUNT(*) as total FROM albums";
 $resultTotalRows = mysqli_query($conn, $queryTotalRows);
 $totalRows = mysqli_fetch_assoc($resultTotalRows)['total'];
 
 // Batasan jumlah baris per halaman
-$rowsPerPage = 12;
+$rowsPerPage = 15;
 
 // Hitung jumlah halaman
 $totalPages = ceil($totalRows / $rowsPerPage);
@@ -47,10 +48,10 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 $offset = ($current_page - 1) * $rowsPerPage;
 
 // Lakukan query untuk mendapatkan data foto
-$query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
-    FROM photos
-    INNER JOIN users ON photos.userID = users.userID
-    ORDER BY photos.createdAt DESC LIMIT $rowsPerPage OFFSET $offset";
+$query = "SELECT albums.albumID, albums.title, albums.description, albums.thumbnail_album, albums.createdAt, users.username AS uploader 
+    FROM albums
+    INNER JOIN users ON albums.userID = users.userID
+    ORDER BY albums.createdAt DESC LIMIT $rowsPerPage OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 
@@ -186,15 +187,15 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <!-- card  -->
                     <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
                         <div class="p-2 flex justify-center">
-                            <a href="./post.php?photoID=<?= $row['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                            <a href="./albumUser/photoAlbum.php?albumID=<?= $row['albumID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
                                 <!-- Tambahkan kelas CSS untuk memastikan rasio 16:9 -->
-                                <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../database/uploads/<?php echo $row['image_path']; ?>" loading="lazy" alt="<?php echo $row['title']; ?>">
+                                <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../database/uploads/<?php echo $row['thumbnail_album']; ?>" loading="lazy" alt="<?php echo $row['title']; ?>">
                             </a>
                         </div>
 
                         <div class="px-4 pb-3">
                             <div>
-                                <a href="./post.php?photoID=<?= $row['photoID'] ?>">
+                                <a href="./albumUser/photoAlbum.php?albumID=<?= $row['albumID'] ?>">
                                     <h5 class="text-xl font-semibold tracking-tight hover:text-blue-800 dark:hover:text-blue-300 text-gray-900 dark:text-white ">
                                         <?php echo $row['title']; ?>
                                     </h5>
@@ -207,7 +208,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     ?>
                                         <!-- Jika deskripsi lebih dari 20 karakter, potong dan tambahkan tautan "lihat postingan" -->
                                         <span><?= substr($description, 0, 20) ?></span>
-                                        <a href="./post.php?photoID=<?= $row['photoID'] ?>" class="text-blue-500 hover:text-white">lihat postingan</a>
+                                        <a href="./albumUser/photoAlbum.php?albumID=<?= $row['albumID'] ?>" class="text-blue-500 hover:text-white">lihat postingan</a>
                                     <?php
                                     } else {
                                         // Jika kurang dari atau sama dengan 20 karakter, tampilkan normal

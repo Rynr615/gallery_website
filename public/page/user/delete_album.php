@@ -43,7 +43,7 @@ if(isset($_GET['albumID']) && is_numeric($_GET['albumID'])) {
     }
 
     // Redirect kembali ke halaman album.php dengan pesan sukses
-    header("Location: album.php");
+    header("Location: ./dashboard.php");
     exit();
 } else {
     // Redirect kembali ke halaman album.php jika albumID tidak tersedia atau tidak valid

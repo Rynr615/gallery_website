@@ -5,7 +5,7 @@ session_start();
 
 // Periksa apakah sesi username sudah diset atau belum
 if (!isset($_SESSION['username'])) {
-    header("Location: ../user/login.php");
+    header("Location: ../index.php");
     exit();
 }
 
