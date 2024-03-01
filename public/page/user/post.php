@@ -15,21 +15,21 @@ $photoID = isset($_GET['photoID']) ? $_GET['photoID'] : null;
 
 $username = $_SESSION["username"];
 
-$queryUserID = "SELECT * FROM users WHERE username = '$username'";
-$resultUser = mysqli_query($conn, $queryUserID);
+$queryUser_others = "SELECT * FROM users WHERE username = '$username'";
+$resultUser = mysqli_query($conn, $queryUser_others);
 
 $showButtons = false;
 $showButtonsComment = false;
 if ($resultUser && mysqli_num_rows($resultUser) > 0) {
     $rowUser = mysqli_fetch_assoc($resultUser);
-    $userID = $rowUser["userID"];
+    $userIDPhoto = $rowUser["userID"];
     $profile_photo = $rowUser["profile_photo"];
     $username = $rowUser["username"];
     $accesLevel = $rowUser["access_level"];
 
     if ($photoID) {
         // Query untuk mendapatkan data foto
-        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username, users.userID, photos.category
+        $query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.profile_photo, users.username, users.userID, photos.category
         FROM photos
         INNER JOIN users ON photos.userID = users.userID
         WHERE photos.photoID = $photoID";
@@ -41,7 +41,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
         if ($result && mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_assoc($result);
 
-            if (isset($row['userID']) && $row['userID'] == $userID) {
+            if (isset($row['userID']) && $row['userID'] == $userIDPhoto) {
                 $showButtons = true;
             }
 
@@ -51,9 +51,10 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             $image_path = $row['image_path'];
             $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
             $name = $row['name'];
-            $username = $row['username'];
+            $usernamePhoto = $row['username'];
             $category = $row['category'];
             $reportedUserID = $row['userID'];
+            $profile_photo_other_user = $row['profile_photo'];
         } else {
             // Jika query gagal, atur nilai default
             $title = "Foto Tidak Ditemukan";
@@ -61,7 +62,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
             $createdAt = "";
             $name = "";
-            $username = "";
+            $usernamePhoto = "";
         }
     } else {
         // Jika photoID tidak ditemukan dalam parameter URL
@@ -70,11 +71,11 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
         $image_path = ""; // Atur path gambar default atau tampilkan placeholder gambar
         $createdAt = "";
         $name = "";
-        $username = "";
+        $usernamePhoto = "";
     }
 
     // Query untuk memeriksa apakah ada komentar yang terkait dengan foto
-    $queryShowButton = "SELECT * FROM comments WHERE photoID = $photoID AND userID = $userID";
+    $queryShowButton = "SELECT * FROM comments WHERE photoID = $photoID AND userID = $userIDPhoto";
     $resultShowButton = mysqli_query($conn, $queryShowButton);
 
     $showButtonsComment = $resultShowButton && mysqli_num_rows($resultShowButton) > 0;
@@ -111,7 +112,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
     }
 }
 
-$queryCheckLike = "SELECT * FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+$queryCheckLike = "SELECT * FROM likes WHERE userID = '$userIDPhoto' AND photoID = '$photoID'";
 $resultCheckLike = mysqli_query($conn, $queryCheckLike);
 
 $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
@@ -179,7 +180,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                     <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
+                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
+                                    <a href="../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
                                     <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php endif; ?>
@@ -195,13 +197,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <a href="../admin/report/reportPhoto.php" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <span class="absolute -inset-1.5"></span>
-                                <span class="sr-only">View notifications</span>
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                </svg>
-                            </a>
                             <div class="relative ml-3">
                                 <div>
                                     <button @click="profileMenuOpen = !profileMenuOpen" type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
@@ -250,18 +245,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
     </div>
+
     <!-- main-content -->
     <div class="container mx-auto ">
         <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
             <div class="mx-auto flex justify-between">
                 <div class="flex items-center">
-                    <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="w-10 mr-2 rounded-full">
+                    <?php if ($username === $usernamePhoto) : ?>
+                        <a href="./profile.php">
+                            <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="w-10 mr-2 rounded-full">
+                        </a>
+                    <?php elseif ($username !== $usernamePhoto) : ?>
+                        <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>">
+                            <img src="../../../database/uploads/<?= $profile_photo_other_user ?>" alt="" class="w-10 mr-2 rounded-full">
+                        </a>
+                    <?php endif; ?>
                     <div class="">
                         <p class="font-semibold">
                             <?= $title; ?>
                         </p>
                         <p class="pt-1 text-sm text-gray-400">
-                            <span class="font-normal">Uploaded by : </span><?= $username ?>
+                            <span class="font-normal">Uploaded by : </span><?= $usernamePhoto ?>
                         </p>
                     </div>
                 </div>
@@ -402,10 +406,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <!-- comments -->
-            <div class="mt-5">
+            <div class="mt-5 overflow-y-auto max-h-80">
                 <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
                     <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
+                        <?php $commentCount = 0; ?>
                         <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
+                            <?php $commentCount++; ?>
                             <div class="mb-3 flex justify-between">
                                 <div class="mb-3">
                                     <p class="font-bold mb-3"><?= htmlspecialchars($comment['username']) ?></p>
@@ -417,25 +423,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <div class="flex justify-end pt-2 relative">
                                         <!-- Tombol dropdown untuk menampilkan opsi -->
                                         <div class="relative inline-block text-left">
-                                            <button onclick="toggleOptions()" type="button" class="text-gray-700 bg-gray-200 rounded-lg px-5 py-2 focus:outline-none">
-                                                Actions
-                                                <svg class="h-4 w-4 inline-block ml-1 -mr-1 align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <button onclick="toggleOptions(<?= $comment['commentID'] ?>)" type="button" class="text-gray-700 bg-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
+                                                <svg class="h-4 w-4 inline-block align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M4.293 7.293a1 1 0 0 1 1.414 0L10 11.586l4.293-4.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
                                                 </svg>
                                             </button>
                                             <!-- Kontainer untuk opsi yang akan ditampilkan ketika tombol di klik -->
-                                            <div id="optionsDropdown" class="absolute hidden mt-1">
+                                            <div id="dropdownButton<?= $comment['commentID'] ?>" class="dropdown-button absolute hidden mt-1">
                                                 <!-- Opsi untuk mengedit -->
-                                                <div class="flex justify-between">
-                                                    <?php if ($comment['userID'] == $userID || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                                                        <?php if ($comment['userID'] == $userID) : ?>
-                                                            <button onclick="togglePopupEdit()" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 w-full font-medium rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                <div class="flex flex-col">
+                                                    <?php if ($comment['userID'] == $userIDPhoto || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                                                        <?php if ($comment['userID'] == $userIDPhoto) : ?>
+                                                            <button onclick="togglePopupEdit()" type="button" class="text-white z-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 w-full font-medium rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
                                                         <?php endif; ?>
                                                         <!-- Opsi untuk menghapus -->
-                                                        <button onclick="toggleCommentPopup()" type="button" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
+                                                        <button onclick="toggleCommentPopup()" type="button" name="deleteComment" class="focus:outline-none z-10 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
                                                     <?php endif; ?>
                                                     <!-- Opsi untuk melaporkan -->
-                                                    <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
+                                                    <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 z-10 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -480,6 +485,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
 
                             <hr>
+                            <!-- Hentikan loop jika komentar lebih dari 5 -->
+                            <?php if ($commentCount >= 5) {
+                                break;
+                            } ?>
                         <?php } ?>
                     </div>
                 <?php } else { ?>
@@ -487,7 +496,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php } ?>
             </div>
 
-            <div id="deletePhotoPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+
+            <div id="deletePhotoPopup" class=" fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
                 <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                     <h2 class="text-xl font-semibold mb-2">Delete Photo</h2>
                     <p class="mb-4">Are you sure you want to delete this photo? This action cannot be undone.</p>
@@ -513,7 +523,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <select id="album" name="albumID" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                                 <!-- Fetch and display user's albums as options -->
                                 <?php
-                                $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userID";
+                                $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userIDPhoto";
                                 $resultUserAlbums = mysqli_query($conn, $queryUserAlbums);
                                 if ($resultUserAlbums && mysqli_num_rows($resultUserAlbums) > 0) {
                                     while ($rowAlbum = mysqli_fetch_assoc($resultUserAlbums)) {
@@ -540,7 +550,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p class="">Select one that is relevant</p>
                     <div class="flex justify-center">
                         <form method="post" action="report.php">
-                            <input type="hidden" name="userID" value="<?= $userID ?>">
+                            <input type="hidden" name="userID" value="<?= $userIDPhoto ?>">
                             <input type="hidden" name="reportedUser" value="<?= $reportedUserID ?>">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <fieldset class="m-3">
@@ -744,13 +754,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             popup.classList.toggle("hidden");
         }
 
-        // Fungsi untuk menampilkan/menyembunyikan dropdown opsi
-        function toggleOptions() {
-            var dropdown = document.getElementById("optionsDropdown");
-            dropdown.classList.toggle("hidden");
+        function toggleOptions(commentID) {
+            var dropdownButton = document.getElementById("dropdownButton" + commentID);
+            console.log(commentID)
+            dropdownButton.classList.toggle("hidden");
+            // if (dropdownButton.classList.contains('hidden')) {
+            //     dropdownButton.classList.remove('hidden');
+            // } else {
+            //     dropdownButton.classList.add('hidden');
+            // }
         }
 
-        
+
+        // // Fungsi untuk menampilkan/menyembunyikan dropdown opsi
+        // function toggleOptions() {
+        //     var dropdown = document.getElementById("optionsDropdown");
+        //     dropdown.classList.toggle("hidden");
+        // }
     </script>
 
 </body>

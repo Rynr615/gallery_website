@@ -1,6 +1,6 @@
 <?php
 
-include '../../../../database/koneksi.php';
+include "../../../../database/koneksi.php";
 
 session_start();
 
@@ -27,14 +27,13 @@ if ($result && mysqli_num_rows($result) > 0) {
     echo "Error: " . mysqli_error($conn);
 }
 
-
 // Hitung jumlah total baris data
-$queryTotalRows = "SELECT COUNT(*) as total FROM reports";
+$queryTotalRows = "SELECT COUNT(*) as total FROM reports_album";
 $resultTotalRows = mysqli_query($conn, $queryTotalRows);
 $totalRows = mysqli_fetch_assoc($resultTotalRows)['total'];
 
 // Batasan jumlah baris per halaman
-$rowsPerPage = 5;
+$rowsPerPage = 10;
 
 // Hitung jumlah halaman
 $totalPages = ceil($totalRows / $rowsPerPage);
@@ -44,6 +43,7 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
 
 // Hitung offset untuk query
 $offset = ($current_page - 1) * $rowsPerPage;
+
 ?>
 
 <!DOCTYPE html>
@@ -154,7 +154,6 @@ $offset = ($current_page - 1) * $rowsPerPage;
         </div>
 
     </div>
-
     <!-- main-content -->
     <div class="container mx-auto ">
         <!-- component -->
@@ -175,7 +174,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     <tr>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported By</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Photo ID</th>
+                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Album ID</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported on</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Report Type</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reason</th>
@@ -185,16 +184,13 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 </thead>
                 <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                     <?php
-                    $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
-
-                    // Query untuk mengambil data laporan dari database dengan batasan berdasarkan halaman yang sedang aktif
-                    $queryReport = "SELECT reports.reportType, reports.photoID, reports.reason, reports.additionalInfo, users.username AS reportedBy, 
-                reported_users.username AS reportedUser, reports.reportedAt
-                FROM reports
-                INNER JOIN users ON reports.reportedBy = users.userID
-                INNER JOIN users AS reported_users ON reports.reportedUser = reported_users.userID
-                WHERE users.username LIKE '%$searchKeyword%'
-                LIMIT $rowsPerPage OFFSET $offset ";
+                    // Query untuk mendapatkan data laporan dari database dengan batasan berdasarkan halaman yang sedang aktif
+                    $queryReport = "SELECT reports_album.reportID, reports_album.reportType, reports_album.albumID, reports_album.reason, reports_album.additionalInfo, users.username AS reportedBy, 
+                    reported_users.username AS reportedUser, reports_album.reportedAt
+                    FROM reports_album
+                    INNER JOIN users ON reports_album.reportedBy = users.userID
+                    INNER JOIN users AS reported_users ON reports_album.reportedUser = reported_users.userID
+                    ORDER BY reports_album.reportedAt DESC LIMIT $rowsPerPage OFFSET $offset";
                     $resultReport = mysqli_query($conn, $queryReport);
 
                     // Periksa apakah query berhasil dieksekusi
@@ -204,62 +200,45 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     ?>
                             <tr class="hover:bg-gray-50">
                                 <!-- reportedBy -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedBy'] ?>
-                                </td>
+                                <td class="px-6 py-4"><?= $row['reportedBy'] ?></td>
                                 <!-- reportedUser -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedUser'] ?>
-                                </td>
-                                <!-- photoID -->
-                                <td class="px-6 py-4">
-                                    <?= $row['photoID'] ?>
-                                </td>
+                                <td class="px-6 py-4"><?= $row['reportedUser'] ?></td>
+                                <!-- albumID -->
+                                <td class="px-6 py-4"><?= $row['albumID'] ?></td>
                                 <!-- reportedAt -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedAt'] ?>
-                                </td>
+                                <td class="px-6 py-4"><?= $row['reportedAt'] ?></td>
                                 <!-- reportType -->
                                 <td class="px-6 py-4">
                                     <?php if ($row['reportType'] === 'spam') : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                                            Spam
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">Spam</span>
                                     <?php elseif ($row['reportType'] === 'nudity') : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-4 py-2 text-xs font-semibold text-yellow-600">
-                                            Nudity
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-4 py-2 text-xs font-semibold text-yellow-600">Nudity</span>
                                     <?php elseif ($row['reportType'] === "violence") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
-                                            Violence
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">Violence</span>
                                     <?php elseif ($row['reportType'] === "terrorism") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
-                                            Terrorism
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">Terrorism</span>
                                     <?php elseif ($row['reportType'] === "hate_speech") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
-                                            Hate Speech
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">Hate Speech</span>
                                     <?php elseif ($row['reportType'] === "sexual_harrasment") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-600">
-                                            Sexual Harassment
-                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-600">Sexual Harassment</span>
                                     <?php endif; ?>
                                 </td>
-
                                 <!-- reason -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reason'] ?>
-                                </td>
+                                <td class="px-6 py-4"><?= $row['reason'] ?></td>
                                 <!-- additionalInfo -->
+                                <td class="px-6 py-4"><?= $row['additionalInfo'] ?></td>
+                                <!-- Link to Album -->
                                 <td class="px-6 py-4">
-                                    <?= $row['additionalInfo'] ?>
-                                </td>
-                                <td>
-                                    <a href="../../user/post.php?photoID=<?= $row['photoID'] ?>" class="hover:text-blue-600 ease-in-out"><i class="fa-solid fa-arrow-right font-normal"></i></a>
+                                    <!-- Trash Icon for Delete -->
+                                    <a href="./delete_album_reports.php?reportID=<?= $row['reportID'] ?>" class="hover:text-red-600 ease-in-out mr-2">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                    <a href="../../user/albumUser/photoAlbum.php?albumID=<?= $row['albumID'] ?>" class="hover:text-blue-600 ease-in-out">
+                                        <i class="fa-solid fa-arrow-right font-normal"></i>
+                                    </a>
                                 </td>
                             </tr>
+
                         <?php
                         }
                         // Bebaskan hasil query
@@ -273,7 +252,6 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     <?php
                     }
                     ?>
-
                 </tbody>
 
             </table>
@@ -317,7 +295,6 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- footer -->

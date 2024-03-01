@@ -114,7 +114,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 <a href="../album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                     <a href="../../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <a href="../../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
+                                    <a href="../../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
+                                    <a href="../../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
                                     <a href="../../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php endif; ?>
@@ -130,13 +131,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <a href="../../admin/report/reportPhoto.php" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <span class="absolute -inset-1.5"></span>
-                                <span class="sr-only">View notifications</span>
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                </svg>
-                            </a>
                             <div class="relative ml-3">
                                 <div>
                                     <button @click="profileMenuOpen = !profileMenuOpen" type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
@@ -172,7 +166,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <h2 class="text-xl font-semibold mb-2">Sign Out</h2>
                 <p class="mb-4">Are you sure you want to Sign Out?</p>
                 <div class="flex justify-center">
-                    <form id="signOutForm" action="./logout.php">
+                    <form id="signOutForm" action="../logout.php">
                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
                             Yes
                         </button>
@@ -186,7 +180,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     </div>
 
-    <div class="container">
+    <div class="container p-10">
         <div id="deleteAlbumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
             <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Delete Album</h2>
@@ -210,7 +204,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_array($resultAlbums)) {
 
                 $title = $row['title'];
-                $username = $row['username'];
+                $usernameAlbum = $row['username'];
                 $createdAt = $row['createdAt'];
                 $description = $row['description'];
                 $userIDAlbum = $row['userID'];
@@ -223,7 +217,16 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <span>Title: </span> <?= $title ?>
                 </p>
                 <p class="font-light text-gray-500 text-sm">
-                    <span>Uploaded by: </span> <?= $username ?>
+                    <span>Uploaded by: </span>
+                    <?php if ($username !== $usernameAlbum) : ?>
+                        <a href="./profileUser/profile_others.php?username=<?= $usernameAlbum ?>" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
+                            <?php echo $usernameAlbum; ?>
+                        </a>
+                    <?php elseif ($username === $usernameAlbum) : ?>
+                        <a href="./profile.php" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
+                            <?php echo $usernameAlbum; ?>
+                        </a>
+                    <?php endif; ?>
                 </p>
                 <p class="text-xs pt-2">
                     <span>Created at: </span><?= $createdAt ?>
@@ -306,10 +309,15 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                                 <p class="mt-2 text-gray-500 text-sm">
                                     Uploaded by
-                                    <span class="hover:text-white" style="cursor: default;">
-                                        <?php echo $row['uploader']; ?>
-                                    </span>
-
+                                    <?php if ($username !== $row['uploader']) : ?>
+                                        <a href="../profileUser/profile_others.php?username=<?= $row['uploader'] ?>" class="hover:text-white font-medium" style="cursor: pointer;">
+                                            <?php echo $row['uploader']; ?>
+                                        </a>
+                                    <?php elseif ($username === $row['uploader']) : ?>
+                                        <a href="../profile.php" class="hover:text-white font-medium" style="cursor: pointer;">
+                                            <?php echo $row['uploader']; ?>
+                                        </a>
+                                    <?php endif; ?>
                                     on <br>
                                     <span>
                                         <?php echo date('F j Y, g:i a', strtotime($row['createdAt'])); ?>
@@ -463,7 +471,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../../dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>

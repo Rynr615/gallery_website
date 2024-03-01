@@ -113,7 +113,7 @@ $resultAlbums = mysqli_query($conn, $queryAlbums);
             </div>
     </div>
 
-    <div class="container p-10">
+    <div class="container">
         <div id="deleteAlbumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
             <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Delete Album</h2>
@@ -144,7 +144,7 @@ $resultAlbums = mysqli_query($conn, $queryAlbums);
             }
         }
         ?>
-        <div class="flex justify-between items-center mb-5">
+        <div class="flex justify-between items-center m-10">
             <div>
                 <p class="font-medium text-xl">
                     <span>Title: </span> <?= $title ?>
@@ -263,7 +263,7 @@ $resultAlbums = mysqli_query($conn, $queryAlbums);
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="../../dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                <a href="../index.php" aria-label="Go home" title="Company" class="inline-flex items-center">
                     <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>

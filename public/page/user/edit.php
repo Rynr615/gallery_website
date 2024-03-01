@@ -164,7 +164,8 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                                 <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
                                     <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report</a>
+                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
+                                    <a href="../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
                                     <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php endif; ?>
@@ -180,13 +181,6 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                             <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <a href="../admin/report/reportPhoto.php" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <span class="absolute -inset-1.5"></span>
-                                <span class="sr-only">View notifications</span>
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                </svg>
-                            </a>
                             <div class="relative ml-3">
                                 <div>
                                     <button @click="profileMenuOpen = !profileMenuOpen" type="button" class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
@@ -244,11 +238,11 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             </div>
             <form action="" method="post" enctype="multipart/form-data" class="w-full">
                 <input type="hidden" name="photoID" value="<?php echo $photoID; ?>">
-                <div class="flex items-center flex-col">
-                    <div>
+                <div class="flex items-center flex-col w-full">
+                    <div class="w-1/3 mt-5">
                         <div class="flex gap-2">
                             <!-- title -->
-                            <div class="mt-5">
+                            <div class="mt-5 w-full">
                                 <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
                                 <div class="mt-2">
                                     <input type="text" name="title" id="title" value="<?= $titleBeforeEdit ?>" required autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -258,7 +252,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                                 <div class="mx-auto w-full">
                                     <label for="category" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
                                     <div class="mt-2">
-                                        <select id="category" name="category" autocomplete="category-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                        <select id="category" name="category" autocomplete="category-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                             <option value="Food">Food</option>
                                             <option value="Nature">Nature</option>
                                             <option value="Anime">Anime</option>
@@ -274,10 +268,10 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                             </div>
                         </div>
                         <!-- album -->
-                        <div class="mt-5 inline-block">
+                        <div class="mt-5 w-full">
                             <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
                             <div class="mt-2">
-                                <select id="album" name="album" autocomplete="album-name" class="block w-screen rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                <select id="album" name="album" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                     <?php
                                     $userId = $userID;
                                     $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";

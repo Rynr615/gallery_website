@@ -1,28 +1,38 @@
 <?php
 
-include "../../../database/koneksi.php";
+include "../../../../database/koneksi.php";
 
 session_start();
 
-$username = $_SESSION["username"];
+$username_others = $_GET["username"];
+
+$username = $_SESSION['username'];
 
 if (!isset($_SESSION['username'])) {
     // Jika belum login, alihkan ke halaman login atau tampilkan pesan error
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
 }
 
-// Ambil data pengguna
 $query = "SELECT * FROM users WHERE username = '$username'";
 $result = mysqli_query($conn, $query);
 
-// Periksa apakah query berhasil dieksekusi
 if ($result && mysqli_num_rows($result) > 0) {
+    $user = mysqli_fetch_assoc($result);
+    $profile_photo = $user['profile_photo'];
+    $accesLevel = $user['access_level'];
+}
+
+// Ambil data pengguna
+$query_other_users = "SELECT * FROM users WHERE username = '$username_others'";
+$result_other_users = mysqli_query($conn, $query_other_users);
+
+// Periksa apakah query berhasil dieksekusi
+if ($result_other_users && mysqli_num_rows($result_other_users) > 0) {
     // Ambil data pengguna terbaru
-    $row = mysqli_fetch_assoc($result);
-    $accesLevel = $row['access_level'];
-    $profile_photo = $row['profile_photo'];
-    $userID = $row['userID'];
+    $row = mysqli_fetch_assoc($result_other_users);
+    $userID_others = $row['userID'];
+    $profile_photo_other_user = $row['profile_photo'];
 
     // Ambil jumlah postingan pengguna
     $query_postingan = "SELECT COUNT(*) AS jumlah_postingan FROM photos WHERE userID = '{$row['userID']}'";
@@ -59,11 +69,11 @@ if ($result && mysqli_num_rows($result) > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Numérique Gallery</title>
-    <link rel="stylesheet" href="../../css/output.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <link rel="stylesheet" href="../../css/all.min.css">
-    <link rel="stylesheet" href="../../css/fontawesome.min.css">
-    <link rel="icon" href="../../assets/logo/logo-main.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../../../css/output.css">
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/all.min.css">
+    <link rel="stylesheet" href="../../../css/fontawesome.min.css">
+    <link rel="icon" href="../../../assets/logo/logo-main.svg" type="image/x-icon">
 </head>
 
 <body class="h-screen font-poppins">
@@ -87,26 +97,26 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <img class="h-8 w-auto" src="../../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="./dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="../dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="../uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
+                                <a href="../album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                                    <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
-                                    <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
-                                    <a href="../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
+                                    <a href="../../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                    <a href="../../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
+                                    <a href="../../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
                                 <?php elseif ($accesLevel === 'user') : ?>
-                                    <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
+                                    <a href="../../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <!-- Search Box -->
-                        <form action="./result_search.php" class="flex flex-row gap-2" method="GET">
+                        <form action="../result_search.php" class="flex flex-row gap-2" method="GET">
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
@@ -119,12 +129,16 @@ if ($result && mysqli_num_rows($result) > 0) {
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile_photo ?>" alt="<?= $row['username'] ?> profile photo">
+                                        <?php if ($username !== $username_others) : ?>
+                                            <img class="h-8 w-8 rounded-full" src="../../../../database/uploads/<?= $profile_photo ?>" alt="<?= $user['username'] ?> profile photo">
+                                        <?php elseif ($username === $username_others) : ?>
+                                            <img class="h-8 w-8 rounded-full" src="../../../../database/uploads/<?= $profile_photo_other_user ?>" alt="<?= $user['username'] ?> profile photo">
+                                        <?php endif; ?>
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="./profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                    <a href="./setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                                    <a href="../profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="../setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
                                     <button type="button" onclick="toggleSignOutPopup()" id="signOutButton" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
                                 </div>
                             </div>
@@ -136,9 +150,9 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
                     <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <a href="../dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                    <a href="../uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
+                    <a href="../album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                 </div>
             </div>
         </nav>
@@ -148,7 +162,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <h2 class="text-xl font-semibold mb-2">Sign Out</h2>
                 <p class="mb-4">Are you sure you want to Sign Out?</p>
                 <div class="flex justify-center">
-                    <form id="signOutForm" action="./logout.php">
+                    <form id="signOutForm" action="../logout.php">
                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
                             Yes
                         </button>
@@ -170,7 +184,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div class="flex flex-wrap mb-6 xl:flex-nowrap">
                     <div class="mb-5 mr-5">
                         <div class="relative inline-block shrink-0 w-48 rounded-2xl">
-                            <img class="inline-block shrink-0 rounded-full w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]" src="../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo" />
+                            <img class="inline-block shrink-0 rounded-full w-[80px] h-[80px] lg:w-[160px] lg:h-[160px]" src="../../../../database/uploads/<?= $row['profile_photo'] ?>" alt="<?= $row['username'] ?> profile photo" />
                         </div>
                     </div>
                     <div class="grow">
@@ -207,7 +221,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                     <button id="albumButton" type="button" href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah Album
                                         <?= $jumlah_album ?>
                                     </button>
-                                    <!-- <span href="javascript:void(0)" class="mr-3 mb-2 inline-flex items-center justify-center text-secondary-inverse rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all duration-200 ease-in-out px-3 py-1 text-sm font-medium leading-normal"> Jumlah like didapatkan </span> -->
                                 </div>
                             </div>
                         </div>
@@ -215,62 +228,61 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </div>
             </div>
         </div>
-        <div id="photoContainer" class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
-            <?php
-            // Query untuk mendapatkan data foto pengguna
-            // Ganti ini dengan logika query sesuai dengan struktur tabel dan kondisi aplikasi Anda
-            $queryPhotos = "SELECT * FROM photos WHERE userID = $userID";
-            $resultPhotos = mysqli_query($conn, $queryPhotos);
 
-            if ($resultPhotos && mysqli_num_rows($resultPhotos) > 0) : ?>
-                <?php while ($photo = mysqli_fetch_assoc($resultPhotos)) : ?>
-                    <!-- Tampilkan setiap foto di sini -->
-                    <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
-                        <div class="p-2 flex justify-center">
-                            <a href="./post.php?photoID=<?= $photo['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
-                                <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../database/uploads/<?= $photo['image_path'] ?>" alt="<?= $photo['title'] ?>" class="w-full h-auto">
-                            </a>
+        <div class="relative flex flex-col w-full min-w-0 mb-6 !important break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30 draggable">
+            <div id="photoContainer" class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
+                <?php
+                // Pastikan $userID_others sudah didefinisikan sebelumnya
+                $queryPhotos = "SELECT * FROM photos WHERE userID = $userID_others";
+                $resultPhotos = mysqli_query($conn, $queryPhotos);
+
+                if ($resultPhotos && mysqli_num_rows($resultPhotos) > 0) :
+                    while ($photo = mysqli_fetch_assoc($resultPhotos)) : ?>
+                        <!-- Tampilkan setiap foto di sini -->
+                        <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                            <div class="p-2 flex justify-center">
+                                <a href="../post.php?photoID=<?= $photo['photoID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                                    <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../../database/uploads/<?= $photo['image_path'] ?>" alt="<?= $photo['title'] ?>">
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                <?php endwhile; ?>
-            <?php else : ?>
-                <p class="text-center w-full">No photo found</p>
-            <?php endif; ?>
-        </div>
-        
-        <div id="albumContainer" class="hidden">
-        <div class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
-            <?php
-            // Query untuk mendapatkan data foto pengguna
-            // Ganti ini dengan logika query sesuai dengan struktur tabel dan kondisi aplikasi Anda
-            $queryAlbums = "SELECT * FROM albums WHERE userID = $userID";
-            $resultAlbums = mysqli_query($conn, $queryAlbums);
+                    <?php endwhile; ?>
+                <?php else : ?>
+                    <p class="text-center w-full">No photo found</p>
+                <?php endif; ?>
+            </div>
 
-            if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) : ?>
-                <?php while ($album = mysqli_fetch_assoc($resultAlbums)) : ?>
-                    <!-- Tampilkan setiap foto di sini -->
-                    <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
-                        <div class="p-2 flex justify-center">
-                            <a href="./albumUser/photoAlbum.php?albumID=<?= $album['albumID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
-                                <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../database/uploads/<?= $album['thumbnail_album'] ?>" alt="<?= $photo['title'] ?>" class="w-full h-auto">
-                            </a>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
-            <?php else : ?>
-                <p class="text-center w-full">No photo found</p>
-            <?php endif; ?>
-        </div>
-        </div>
+            <div id="albumContainer" class="hidden">
+                <div class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
+                    <?php
+                    $queryAlbums = "SELECT * FROM albums WHERE userID = $userID_others";
+                    $resultAlbums = mysqli_query($conn, $queryAlbums);
 
+                    if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) :
+                        while ($album = mysqli_fetch_assoc($resultAlbums)) : ?>
+                            <!-- Tampilkan setiap album di sini -->
+                            <div class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                                <div class="p-2 flex justify-center">
+                                    <a href="../albumUser/photoAlbum.php?albumID=<?= $album['albumID'] ?>" style="display: block; width: 100%; height: 0; padding-bottom: 56.25%; position: relative;">
+                                        <img class="rounded-md object-cover w-full h-full absolute inset-0" src="../../../../database/uploads/<?= $album['thumbnail_album'] ?>" alt="<?= $album['title'] ?>">
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else : ?>
+                        <p class="text-center w-full">No album found</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- footer -->
     <div class="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border-t-2 mt-10">
         <div class="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2">
-                <a href="./dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
-                    <img src="../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
+                <a href="..dashboard.php" aria-label="Go home" title="Company" class="inline-flex items-center">
+                    <img src="../../../assets/logo/logo-main.svg" class="h-10 w-auto" alt="Numérique Gallery">
                     <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Numérique Gallery</span>
                 </a>
                 <div class="mt-6 lg:max-w-sm">
@@ -321,7 +333,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
     </div>
 
-    <script src="../../js/script.min.js"></script>
+    <script src="../../../js/script.min.js"></script>
     <script>
         function toggleSignOutPopup() {
             var popup = document.getElementById("signOutPopup");
