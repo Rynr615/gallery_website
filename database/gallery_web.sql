@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 29, 2024 at 11:48 AM
+-- Generation Time: Mar 03, 2024 at 02:40 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -36,15 +36,6 @@ CREATE TABLE `albums` (
   `thumbnail_album` varchar(255) NOT NULL DEFAULT 'album_default.svg'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `albums`
---
-
-INSERT INTO `albums` (`albumID`, `userID`, `title`, `description`, `createdAt`, `thumbnail_album`) VALUES
-(1, 1, 'First Album', '', '2024-02-21 13:03:46', 'album_default.jpg'),
-(2, 3, 'Album ke 1', 'Test 1 edit', '2024-02-22 08:41:31', '1708479145_items-11.jpg'),
-(4, 1, 'JKT Member', '', '2024-02-26 01:41:32', 'album_default.jpg');
-
 -- --------------------------------------------------------
 
 --
@@ -59,14 +50,6 @@ CREATE TABLE `comments` (
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `comments`
---
-
-INSERT INTO `comments` (`commentID`, `userID`, `photoID`, `commentText`, `createdAt`) VALUES
-(3, 3, 4, 'test 1 edit', '2024-02-22 08:35:36'),
-(15, 5, 29, 'akwokwok edit', '2024-02-28 09:19:48');
-
 -- --------------------------------------------------------
 
 --
@@ -79,13 +62,6 @@ CREATE TABLE `likes` (
   `photoID` int(11) DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `likes`
---
-
-INSERT INTO `likes` (`likeID`, `userID`, `photoID`, `createdAt`) VALUES
-(2, 1, 26, '2024-02-27 05:21:07');
 
 -- --------------------------------------------------------
 
@@ -104,30 +80,6 @@ CREATE TABLE `photos` (
   `category` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `photos`
---
-
-INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`, `category`) VALUES
-(4, 1, NULL, 'Yoimiya', '', '1708522392_items-1.jpg', '2024-02-21 13:33:12', ''),
-(13, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708479145_items-11.jpg', '2024-02-25 13:48:58', ''),
-(14, 1, NULL, 'Test gtw keberapa', 'akowkwok', '1708868938_1708522392_items-1.jpg', '2024-02-25 13:48:58', ''),
-(15, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708479145_items-11.jpg', '2024-02-25 13:49:23', ''),
-(16, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519400_items-6.jpg', '2024-02-25 13:49:23', ''),
-(17, 1, NULL, 'Test testo', 'dafadfa', '1708868963_1708519933_items-4.png', '2024-02-25 13:49:23', ''),
-(18, 1, 1, NULL, NULL, '1708869439_1708479145_items-11.jpg', '2024-02-25 13:57:19', ''),
-(20, 1, 1, NULL, NULL, '1708869439_1708519933_items-4.png', '2024-02-25 13:57:19', ''),
-(21, 1, 4, NULL, NULL, '1708912114_jessica_chandra.jpg', '2024-02-26 01:48:34', ''),
-(22, 1, 4, NULL, NULL, '1708912114_azizi_asadel.jpg', '2024-02-26 01:48:34', ''),
-(23, 1, 4, NULL, NULL, '1708912114_amanda_sukma.jpg', '2024-02-26 01:48:34', ''),
-(24, 1, 4, NULL, NULL, '1708912114_marsha_lenathea.jpg', '2024-02-26 01:48:34', ''),
-(25, 1, 4, NULL, NULL, '1708912114_freya_jayawardana.jpg', '2024-02-26 01:48:34', ''),
-(26, 1, NULL, 'test report', '', '1709003739_items-8.jpg', '2024-02-27 03:15:39', ''),
-(28, 1, NULL, 'maomao', '', '1709085152_1708861458_items-9.jpg', '2024-02-28 02:15:00', 'Idol'),
-(29, 1, 1, 'Waifu', 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Hic voluptates qui minus explicabo doloremque sed reiciendis ratione id inventore quasi!', '1709087479_items-3.jpg', '2024-02-28 02:35:37', 'Game'),
-(30, 1, 1, 'Waifu', 'mehweewh', '1709087479_items-4.png', '2024-02-28 02:31:19', 'Game'),
-(31, 1, 1, 'Waifu', 'mehweewh', '1709087479_items-5.jpg', '2024-02-28 02:31:19', 'Game');
-
 -- --------------------------------------------------------
 
 --
@@ -144,17 +96,6 @@ CREATE TABLE `reports` (
   `reportedUser` int(11) NOT NULL,
   `reportedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`reportID`, `reportType`, `photoID`, `reason`, `additionalInfo`, `reportedBy`, `reportedUser`, `reportedAt`) VALUES
-(6, 'spam', 26, 'too cute', '', 1, 0, '2024-02-27 11:56:00'),
-(7, 'spam', 26, 'too cute', '', 1, 0, '2024-02-27 11:57:23'),
-(8, 'spam', 26, 'apalah', '', 2, 0, '2024-02-27 12:00:36'),
-(9, 'spam', 26, 'wkkw', '', 2, 1, '2024-02-27 12:02:59'),
-(13, 'nudity', 29, 'too hot', '', 1, 1, '2024-02-28 02:38:20');
 
 -- --------------------------------------------------------
 
@@ -185,13 +126,6 @@ CREATE TABLE `reset_password` (
   `reset_code` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `reset_password`
---
-
-INSERT INTO `reset_password` (`id`, `email`, `reset_code`) VALUES
-(1, 'ryanyanuar184@gmail.com', '171456');
-
 -- --------------------------------------------------------
 
 --
@@ -215,11 +149,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$jV/2X2Ft3CoWZ9hJExamIeYii9pEhFnIdGAf9fs.EX.xlTHm6YWqq', 'ryanyanuarpradana@gmai.com', 'super_admin', '2024-02-29 11:22:58', '2024-02-20 17:20:41', '1709085397profile_photo_1.jpg'),
-(2, '', 'raihanrei', '$2y$10$xS8NUCRafzGRh2EEP46aO.4NrKh/WdXka7BT1gcGSMS9NV.NNWWc6', 'raihanrei@gmail.com', 'user', '2024-02-27 14:00:42', '2024-02-21 06:42:50', 'default_profile.svg'),
-(3, '', 'fxthir', '$2y$10$kR52EIBOS9dqoo1SpXK7J.acVAIvQ.dHeiCtjbeNh5/p5EgI0gSvG', 'muhammadabdulfathir@gmail.com', 'user', '2024-02-29 11:42:26', '2024-02-22 02:33:34', 'default_profile.svg'),
-(4, '', 'reynaldi', '$2y$10$qLeyJMP/l2e.ItonRGp1seRZSG1ZtnCvpE07sffkqIXkEISAjVQxa', 'rynldh@gmail.com', 'user', '2024-02-26 03:54:14', '2024-02-25 20:54:14', 'default_profile.svg'),
-(5, '', 'Ryan', '$2y$10$h2x.Na0iES1Z.R1iI7C6oezfTFe1hHjNLGttZ9cj6VFulKuT4Z1E.', 'ryanyanuar184@gmail.com', 'user', '2024-02-28 10:49:55', '2024-02-28 03:13:53', 'default_profile.svg');
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$TkJpZiCxguPz2fWQUNZJ8eFMaNF.xxaM7E8hM68sGbb2aHcED.0fK', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-03 01:26:23', '2024-03-02 18:26:17', 'default_profile.svg');
 
 --
 -- Indexes for dumped tables
@@ -266,6 +196,15 @@ ALTER TABLE `reports`
   ADD KEY `fk_reported_user` (`reportedUser`);
 
 --
+-- Indexes for table `reports_album`
+--
+ALTER TABLE `reports_album`
+  ADD PRIMARY KEY (`reportID`),
+  ADD KEY `FK_reports_album_albumID` (`albumID`),
+  ADD KEY `fk_reportedBy` (`reportedBy`),
+  ADD KEY `fk_reportedUser` (`reportedUser`);
+
+--
 -- Indexes for table `reset_password`
 --
 ALTER TABLE `reset_password`
@@ -286,43 +225,49 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `albums`
 --
 ALTER TABLE `albums`
-  MODIFY `albumID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `albumID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reports_album`
+--
+ALTER TABLE `reports_album`
+  MODIFY `reportID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reset_password`
 --
 ALTER TABLE `reset_password`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -362,6 +307,14 @@ ALTER TABLE `reports`
   ADD CONSTRAINT `fk_report_photo` FOREIGN KEY (`photoID`) REFERENCES `photos` (`photoID`),
   ADD CONSTRAINT `fk_report_user` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`),
   ADD CONSTRAINT `fk_reported_user` FOREIGN KEY (`reportedUser`) REFERENCES `users` (`userID`);
+
+--
+-- Constraints for table `reports_album`
+--
+ALTER TABLE `reports_album`
+  ADD CONSTRAINT `FK_reports_album_albumID` FOREIGN KEY (`albumID`) REFERENCES `albums` (`albumID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_reportedBy` FOREIGN KEY (`reportedBy`) REFERENCES `users` (`userID`),
+  ADD CONSTRAINT `fk_reportedUser` FOREIGN KEY (`reportedUser`) REFERENCES `users` (`userID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -219,11 +219,11 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <p class="font-light text-gray-500 text-sm">
                     <span>Uploaded by: </span>
                     <?php if ($username !== $usernameAlbum) : ?>
-                        <a href="./profileUser/profile_others.php?username=<?= $usernameAlbum ?>" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
+                        <a href="../profileUser/profile_others.php?username=<?= $usernameAlbum ?>" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
                             <?php echo $usernameAlbum; ?>
                         </a>
                     <?php elseif ($username === $usernameAlbum) : ?>
-                        <a href="./profile.php" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
+                        <a href="../profile.php" class="hover:text-blue-600 font-medium" style="cursor: pointer;">
                             <?php echo $usernameAlbum; ?>
                         </a>
                     <?php endif; ?>

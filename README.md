@@ -1,44 +1,54 @@
-# Website Gallery untuk Syarat Kelulusan Jurusan Rekayasa Perangkat Lunak
+# Website Gallery
 
 ## Deskripsi
-Ini adalah sebuah proyek website gallery yang dibuat untuk memenuhi syarat kelulusan dalam jurusan Rekayasa Perangkat Lunak. Website ini memiliki berbagai fitur yang memungkinkan pengguna untuk mendaftar, masuk, mengelola profil, mengelola album, mengelola foto, memberikan komentar, memberikan like.
+Ini adalah website yang dibuat menggunakan bahasa pemrograman PHP. Website memiliki berbagai fitur yang memungkinkan pengguna untuk mendaftar, mengelola profile, mengelola album, mengelola foto dan masih banyak yang lainnya.
+
 
 ## Fitur
-- Register
-- Login
-- Log Out
-- Profile
-- Lihat Foto
-- Search
-- Lihat Album
-- Tambah Album
-- Edit Album
-- Hapus Album
-- Tambah Foto
-- Edit Foto
-- Hapus Foto
-- Komentar
-- Like
-- Data User
+Fitur | Guest | User | Admin | Super Admin 
+| :--- | :---: | :---: | :---: | :---:
+Register  | &#x2713;  | &#x2713;  | &#x2713; | &#x2713;
+Login   | &#x2717;  | &#x2713;  | &#x2713; |&#x2713;
+Logout   | &#x2717;  | &#x2713;  | &#x2713; | &#x2713;
+Foto  | &#x2713;  | &#x2713;  | &#x2713; | &#x2713;
+Album  | &#x2713;  | &#x2713;  | &#x2713; | &#x2713;
+Report   |&#x2717;  | &#x2713;  | &#x2713; | &#x2713;
+Like  | &#x2717;  | &#x2713;  | &#x2713; | &#x2713;
+Komentar  | &#x2717;  | &#x2713;  | &#x2713; | &#x2713;
+Data User  | &#x2717;  | &#x2717;  | &#x2713; | &#x2713;
+
+#### Fitur ( Tambahan )
+_Backup dan restore database_
 
 ## Cara Penggunaan
 Untuk menggunakan aplikasi ini, pastikan Anda memiliki Git dan Node.js (beserta npm) terinstall di komputer Anda. Berikut adalah langkah-langkah untuk meng-clone dan menjalankan aplikasi:
 
 1. Clone repository ini:
     ```bash
-    $ git clone https://github.com/Rynr615/gallery_website.git
+    git clone https://github.com/Rynr615/gallery_website.git
     ```
 2. [Download](https://nodejs.org/en/download) dan Install Node.js.
+3. [Download](https://getcomposer.org/download/) dan Install Composer.
 
-3. Pindah ke direktori proyek:
+4. Pindah ke direktori proyek:
     ```bash
-    $ cd gallery
+    cd gallery_website
     ```
 
-4. Jalankan Tailwind:
+5. Jalankan Tailwind:
     ```bash
-    $ npm run build-css -watch
+    npm run build-css -watch
+    ```
+- _Lakukan perintah berikut jika ingin melakukan backup dan restore database, dan pastikan bahwa kita sudah ada di direktori database._
+
+6. Backup Database:
+    ```bash
+    php backup_database.php
+    ```
+7. Restore Database:
+    ```bash
+    php restore_database.php
     ```
 
-## Catatan
-Pastikan untuk mengikuti instruksi di atas dengan benar untuk menjalankan aplikasi dengan lancar. Jika Anda mengalami masalah, pastikan untuk memeriksa dokumentasi resmi Node.js dan Tailwind CSS. Selamat mencoba!
+### Catatan
+Pastikan untuk mengikuti instruksi di atas dengan benar untuk menjalankan aplikasi dengan lancar. Jika Anda mengalami masalah, pastikan untuk memeriksa dokumentasi resmi Node.js dan Tailwind CSS. Selamat mencoba! :3👍

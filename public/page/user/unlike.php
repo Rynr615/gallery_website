@@ -1,5 +1,4 @@
 <?php
-
 include "../../../database/koneksi.php";
 
 session_start();
@@ -19,29 +18,20 @@ if (!isset($_SESSION["username"])) {
         $rowUser = mysqli_fetch_assoc($resultUser);
         $userID = $rowUser['userID'];
 
-        // Periksa apakah pengguna sudah memberikan like sebelumnya
-        $queryLike = "SELECT * FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
-        $resultLike = mysqli_query($conn, $queryLike);
+        // Hapus like dari database
+        $queryDeleteLike = "DELETE FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+        $resultDeleteLike = mysqli_query($conn, $queryDeleteLike);
 
-        if (mysqli_num_rows($resultLike) == 1) {
-            // Jika pengguna sudah memberikan like, hapus like tersebut dari database
-            $queryDeleteLike = "DELETE FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
-            $resultDeleteLike = mysqli_query($conn, $queryDeleteLike);
-
-            if ($resultDeleteLike) {
-                header("Location: " . $_SERVER['HTTP_REFERER']);
-                exit();
-            } else {
-                // Handle jika terjadi kesalahan saat menghapus like
-                echo "Error: Failed to unlike";
-            }
-        } else {
-            // Handle jika pengguna belum memberikan like sebelumnya
+        if ($resultDeleteLike) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit();
+        } else {
+            // Handle jika terjadi kesalahan saat menghapus like
+            echo "Error: Failed to unlike";
         }
     } else {
         // Handle jika data pengguna tidak ditemukan
         echo "Error: User not found";
     }
 }
+?>

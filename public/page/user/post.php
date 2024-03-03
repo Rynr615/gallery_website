@@ -265,7 +265,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?= $title; ?>
                         </p>
                         <p class="pt-1 text-sm text-gray-400">
-                            <span class="font-normal">Uploaded by : </span><?= $usernamePhoto ?>
+                            <?php if ($username === $usernamePhoto) : ?>
+                                <span>Uploaded by : </span><a href="./profile.php" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
+                            <?php elseif ($username !== $usernamePhoto) : ?>
+                                <span>Uploaded by : </span><a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
+                            <?php endif; ?>
                         </p>
                     </div>
                 </div>
@@ -364,15 +368,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- before like -->
                 <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
                     <?php if ($userHasLiked) : ?>
-                        <a href="unlike.php?photoID=<?= $photoID; ?>" class="text-gray-800">
-                            <i class="fa-regular fa-thumbs-up text-blue-500"></i>
-                            <span><?= $totalLikes ?> Likes</span>
-                        </a>
+                        <form action="unlike.php" method="get">
+                            <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                            <button class="text-gray-800">
+                                <i class="fa-regular fa-thumbs-up text-blue-500"></i>
+                                <span><?= $totalLikes ?> Likes</span>
+                            </button>
+                        </form>
                     <?php else : ?>
-                        <a href="like.php?photoID=<?= $photoID; ?>" class="text-gray-800">
-                            <i class="fa-regular fa-thumbs-up"></i>
-                            <span><?= $totalLikes ?> Likes</span>
-                        </a>
+                        <form action="like.php" method="get">
+                            <input type="hidden" name="photoID" value="<?= $photoID ?>">
+                            <button class="text-gray-800">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                                <span><?= $totalLikes ?> Likes</span>
+                            </button>
+                        </form>
                     <?php endif; ?>
                 </div>
 

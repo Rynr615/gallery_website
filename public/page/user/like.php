@@ -1,7 +1,5 @@
 <?php
-
 include "../../../database/koneksi.php";
-
 session_start();
 
 if (!isset($_SESSION["username"])) {
@@ -23,14 +21,23 @@ if (!isset($_SESSION["username"])) {
         $queryLike = "SELECT * FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
         $resultLike = mysqli_query($conn, $queryLike);
 
-        if (mysqli_num_rows($resultLike) == 1) {
-            // Jika pengguna sudah memberikan like, berikan opsi untuk membatalkan like
-            echo '<a href="unlike.php?photoID=' . $photoID . '" type="submit" class="text-gray-800"><i class="fa-solid fa-thumbs-up text-blue-500"></i> Unlike</a>';
-        } else {
+        if (mysqli_num_rows($resultLike) == 0) {
+            // Jika pengguna belum memberikan like, tambahkan like ke database
             $createdAt = date("Y-m-d H:i:s");
-            // Perbaikan pada kueri INSERT
-            mysqli_query($conn, "INSERT INTO likes (photoID, userID, createdAt) VALUES ('$photoID', '$userID', '$createdAt')");
+            $queryInsertLike = "INSERT INTO likes (photoID, userID, createdAt) VALUES ('$photoID', '$userID', '$createdAt')";
+            $resultInsertLike = mysqli_query($conn, $queryInsertLike);
+
+            if ($resultInsertLike) {
+                header("Location: " . $_SERVER['HTTP_REFERER']);
+                exit();
+            } else {
+                // Handle jika terjadi kesalahan saat menambahkan like
+                echo "Error: Failed to like";
+            }
+        } else {
+            // Handle jika pengguna sudah memberikan like sebelumnya
             header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit();
         }
     } else {
         // Handle jika data pengguna tidak ditemukan

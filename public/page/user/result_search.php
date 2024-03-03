@@ -38,7 +38,7 @@ if (isset($_GET['search'])) {
     $query = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos 
     INNER JOIN users ON photos.userID = users.userID 
-    WHERE photos.title LIKE '%$search%' 
+    WHERE photos.title LIKE '%$search%' OR photos.category LIKE '%$search%' 
     ORDER BY photos.createdAt DESC";
 
     $result = mysqli_query($conn, $query);
