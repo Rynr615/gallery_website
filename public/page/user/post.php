@@ -296,37 +296,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mt-5">
                 <p>
                     <?php if ($category === 'Anime') : ?>
-                        <span class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
-                            <i class="fas fa-tv mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                                <i class="fas fa-tv mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Food') : ?>
-                        <span class="rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
-                            <i class="fas fa-utensils mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
+                                <i class="fas fa-utensils mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Nature') : ?>
-                        <span class="rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                            <i class="fas fa-tree mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                <i class="fas fa-tree mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Game') : ?>
-                        <span class="rounded-full bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-600">
-                            <i class="fas fa-gamepad mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-600">
+                                <i class="fas fa-gamepad mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Comic') : ?>
-                        <span class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600">
-                            <i class="fas fa-book mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600">
+                                <i class="fas fa-book mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Sport') : ?>
-                        <span class="rounded-full bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-600">
-                            <i class="fas fa-football-ball mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-600">
+                                <i class="fas fa-football-ball mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Music') : ?>
-                        <span class="rounded-full bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-600">
-                            <i class="fas fa-music mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-600">
+                                <i class="fas fa-music mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php elseif ($category === 'Idol') : ?>
-                        <span class="rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
-                            <i class="fas fa-star mr-1"></i> <?= $category ?>
-                        </span>
+                        <a href="category.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
+                                <i class="fas fa-star mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
                     <?php endif; ?>
                 </p>
 

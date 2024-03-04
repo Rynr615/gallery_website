@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2024 at 02:40 AM
+-- Generation Time: Mar 04, 2024 at 01:07 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -126,6 +126,13 @@ CREATE TABLE `reset_password` (
   `reset_code` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `reset_password`
+--
+
+INSERT INTO `reset_password` (`id`, `email`, `reset_code`) VALUES
+(1, 'ryanyanuarpradana@gmail.com', '507136');
+
 -- --------------------------------------------------------
 
 --
@@ -149,7 +156,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$TkJpZiCxguPz2fWQUNZJ8eFMaNF.xxaM7E8hM68sGbb2aHcED.0fK', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-03 01:26:23', '2024-03-02 18:26:17', 'default_profile.svg');
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-04 13:06:34', '2024-03-02 18:26:17', 'default_profile.svg');
 
 --
 -- Indexes for dumped tables
@@ -261,7 +268,7 @@ ALTER TABLE `reports_album`
 -- AUTO_INCREMENT for table `reset_password`
 --
 ALTER TABLE `reset_password`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Kirim email menggunakan fungsi sendResetPasswordEmail
                 if (sendResetPasswordEmail($email, $reset_code)) {
                     // Redirect ke halaman reset password dengan mengirim email sebagai parameter
-                    header('location: reset/reset_password.php?email=' . urlencode($email));
+                    header('location: ./reset_password.php?email=' . urlencode($email));
                     $_SESSION['success'] = "Code Reset Password sudah dikirim";
                 } else {
                     // Jika gagal mengirim email, tampilkan pesan error

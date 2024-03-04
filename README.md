@@ -29,23 +29,31 @@ Untuk menggunakan aplikasi ini, pastikan Anda memiliki Git dan Node.js (beserta 
     ```
 2. [Download](https://nodejs.org/en/download) dan Install Node.js.
 3. [Download](https://getcomposer.org/download/) dan Install Composer.
+4. Install PHP Mailer
+    ```bash
+    "phpmailer/phpmailer": "^6.9.1"
+    ``` 
+    atau
+    ```bash
+    composer require phpmailer/phpmailer
+    ```
 
-4. Pindah ke direktori proyek:
+5. Pindah ke direktori proyek:
     ```bash
     cd gallery_website
     ```
 
-5. Jalankan Tailwind:
+6. Jalankan Tailwind:
     ```bash
     npm run build-css -watch
     ```
 - _Lakukan perintah berikut jika ingin melakukan backup dan restore database, dan pastikan bahwa kita sudah ada di direktori database._
-
-6. Backup Database:
+- _Jangan lupa untuk buka command prompt dari terminal atau bawaan dari VSCode_
+7. Backup Database:
     ```bash
     php backup_database.php
     ```
-7. Restore Database:
+8. Restore Database:
     ```bash
     php restore_database.php
     ```
