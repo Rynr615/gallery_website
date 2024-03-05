@@ -70,7 +70,7 @@ $result = mysqli_query($conn, $query);
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="./index-guest.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="./index.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="./user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
                                 <a href="./user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                             </div>
@@ -217,7 +217,6 @@ $result = mysqli_query($conn, $query);
         } else {
             // Handle kesalahan query
             echo "<p>No photo founds</p>";
-            exit();
         }
         ?>
     </div>

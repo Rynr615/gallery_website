@@ -93,7 +93,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
         $totalLikes = 0;
     }
 
-    $queryComments = "SELECT comments.commentText, comments.createdAt, users.username, comments.userID, comments.commentID, users.userID
+    $queryComments = "SELECT comments.commentText, comments.createdAt, users.username, comments.userID, comments.commentID, users.userID, users.profile_photo
                       FROM comments
                       INNER JOIN users ON comments.userID = users.userID
                       WHERE comments.photoID = $photoID
@@ -439,9 +439,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
                             <?php $commentCount++; ?>
                             <div class="mb-3 flex justify-between">
-                                <div class="mb-3">
-                                    <p class="font-bold mb-3"><?= htmlspecialchars($comment['username']) ?></p>
-                                    <p><?= htmlspecialchars($comment['commentText']) ?></p>
+                                <div class="flex">
+                                    <div class="">
+                                        <?php if($usernamePhoto !== $username) : ?>
+                                        <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>">
+                                            <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                        </a>
+                                        <?php elseif($usernamePhoto === $username) : ?>
+                                        <a href="./profile.php">
+                                            <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                        </a>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
+                                        <p><?= htmlspecialchars($comment['commentText']) ?></p>
+                                    </div>
                                 </div>
 
                                 <div class="">
