@@ -53,7 +53,7 @@ if ($resultLikes) {
     $totalLikes = 0;
 }
 
-$queryComments = "SELECT comments.commentText, comments.createdAt, users.username, comments.userID, comments.commentID, users.userID
+$queryComments = "SELECT comments.commentText, comments.createdAt, users.username, comments.userID, comments.commentID, users.userID, users.profile_photo
                       FROM comments
                       INNER JOIN users ON comments.userID = users.userID
                       WHERE comments.photoID = $photoID
@@ -75,6 +75,12 @@ $queryCheckLike = "SELECT * FROM likes WHERE photoID = '$photoID'";
 $resultCheckLike = mysqli_query($conn, $queryCheckLike);
 
 $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
+
+if ($queryCheckLike && mysqli_num_rows($resultCheckLike) > 0) {
+    while ($row = mysqli_fetch_array($resultCheckLike)) {
+        $type = $row['type'];
+    }
+};
 
 ?>
 
@@ -128,7 +134,7 @@ $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
-                            <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                            <button type="submit" class="text-white hidden sm:block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                     </div>
 
@@ -143,17 +149,29 @@ $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
                                 </button>
                             </div>
                             <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                <a href="./user/register.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Register</a>
-                                <a href="./user/login.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Login</a>
+                                <a href="../user/register.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Register</a>
+                                <a href="../user/login.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Login</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </nav>
+        <div class="sm:hidden bg-gray-800" id="mobile-menu" x-show="open" @click.away="open = false">
+            <div class="space-y-1 px-2 pb-3 pt-2">
+                <form action="../guest/result-search_guest.php" class="flex gap-2 mb-2" method="GET">
+                    <input type="text" name="search" placeholder="Search" class="bg-gray-700 w-full text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  px-3 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                </form>
+                <a href="../index.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
+                <a href="../user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
+                <a href="../user/register.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+            </div>
+        </div>
     </div>
     <!-- main-content -->
     <div class="container mx-auto ">
-        <div class="m-10 border-gray-100 border shadow-md rounded-xl py-12 px-8">
+        <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
             <div class="mx-auto flex justify-between ">
                 <div class="">
                     <p class="font-semibold">
@@ -206,13 +224,32 @@ $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
             <div class='flex justify-center mt-5'>
                 <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
             </div>
-            <div class="flex justify-between mt-5">
+            <div class="flex justify-between md:items-center mt-5">
                 <!-- before like -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
-                    <a href="../user/register.php" class="text-gray-800">
-                        <i class="fa-regular fa-thumbs-up"></i>
-                        <span><?= $totalLikes ?> Likes</span>
-                    </a>
+                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex sm:flex sm:items-center items-center">
+                    <div class="flex gap-2">
+                        <button name="type" value="like" class="text-blue-500">
+                            <i class="fa-regular fa-thumbs-up"></i>
+                        </button>
+                        <button name="type" value="love" class="text-red-500">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <button name="type" value="cry" class="text-orange-500">
+                            <i class="fa-regular fa-face-sad-cry"></i>
+                        </button>
+                        <button name="type" value="lol" class="text-yellow-500">
+                            <i class="fa-regular fa-face-grin-squint-tears"></i>
+                        </button>
+                        <button name="type" value="shessh" class="text-blue-500">
+                            <i class="fa-regular fa-face-grimace"></i>
+                        </button>
+                        <button name="type" value="angry" class="text-red-500">
+                            <i class="fa-regular fa-face-angry"></i>
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <span><?= $totalLikes ?> Reaction </span>
+                    </div>
                 </div>
 
                 <!-- comment -->
@@ -228,12 +265,18 @@ $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
                 <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
                     <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
                         <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
-                            <div class="mb-3 flex justify-between">
-                                <div class="mb-3">
-                                    <p class="font-bold mb-3"><?= htmlspecialchars($comment['username']) ?></p>
-                                    <p><?= htmlspecialchars($comment['commentText']) ?></p>
+                            <div class=" flex justify-between">
+                                <div class="flex">
+                                    <div>
+                                        <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                    </div>
+                                    <div class="ml-3 flex justify-between">
+                                        <div class="">
+                                            <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
+                                            <p><?= htmlspecialchars($comment['commentText']) ?></p>
+                                        </div>
+                                    </div>
                                 </div>
-
                                 <div class="">
                                     <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
                                 </div>
