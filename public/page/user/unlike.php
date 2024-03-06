@@ -18,20 +18,46 @@ if (!isset($_SESSION["username"])) {
         $rowUser = mysqli_fetch_assoc($resultUser);
         $userID = $rowUser['userID'];
 
-        // Hapus like dari database
-        $queryDeleteLike = "DELETE FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
-        $resultDeleteLike = mysqli_query($conn, $queryDeleteLike);
+        // Periksa apakah pengguna sudah memberikan like sebelumnya
+        $queryCheckLike = "SELECT * FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+        $resultCheckLike = mysqli_query($conn, $queryCheckLike);
 
-        if ($resultDeleteLike) {
-            header("Location: " . $_SERVER['HTTP_REFERER']);
-            exit();
+        if (mysqli_num_rows($resultCheckLike) > 0) {
+            $rowLike = mysqli_fetch_assoc($resultCheckLike);
+            $currentType = $rowLike['type'];
+            $newType = $_GET['type'];
+
+            // Jika pengguna memilih ikon yang sama, hapus like dari database
+            if ($currentType === $newType) {
+                $queryDeleteLike = "DELETE FROM likes WHERE userID = '$userID' AND photoID = '$photoID'";
+                $resultDeleteLike = mysqli_query($conn, $queryDeleteLike);
+
+                if ($resultDeleteLike) {
+                    header("Location: " . $_SERVER['HTTP_REFERER']);
+                    exit();
+                } else {
+                    // Handle jika terjadi kesalahan saat menghapus like
+                    echo "Error: Failed to unlike";
+                }
+            } else {
+                // Jika pengguna memilih ikon yang berbeda, update tipe ikon reaksi
+                $queryUpdateLike = "UPDATE likes SET type = '$newType' WHERE userID = '$userID' AND photoID = '$photoID'";
+                $resultUpdateLike = mysqli_query($conn, $queryUpdateLike);
+
+                if ($resultUpdateLike) {
+                    header("Location: " . $_SERVER['HTTP_REFERER']);
+                    exit();
+                } else {
+                    // Handle jika terjadi kesalahan saat memperbarui ikon reaksi
+                    echo "Error: Failed to update reaction";
+                }
+            }
         } else {
-            // Handle jika terjadi kesalahan saat menghapus like
-            echo "Error: Failed to unlike";
+            // Handle jika pengguna belum memberikan like sebelumnya
+            echo "Error: Like not found";
         }
     } else {
         // Handle jika data pengguna tidak ditemukan
         echo "Error: User not found";
     }
 }
-?>

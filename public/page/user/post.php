@@ -14,6 +14,7 @@ if (!isset($_SESSION['username'])) {
 $photoID = isset($_GET['photoID']) ? $_GET['photoID'] : null;
 
 $username = $_SESSION["username"];
+$userID = $_SESSION["userID"];
 
 $queryUser_others = "SELECT * FROM users WHERE username = '$username'";
 $resultUser = mysqli_query($conn, $queryUser_others);
@@ -114,6 +115,12 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
 
 $queryCheckLike = "SELECT * FROM likes WHERE userID = '$userIDPhoto' AND photoID = '$photoID'";
 $resultCheckLike = mysqli_query($conn, $queryCheckLike);
+
+if ($queryCheckLike && mysqli_num_rows($resultCheckLike) > 0) {
+    while ($row = mysqli_fetch_array($resultCheckLike)) {
+        $type = $row['type'];
+    }
+};
 
 $userHasLiked = mysqli_num_rows($resultCheckLike) > 0;
 
@@ -278,10 +285,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <p class="text-xs">
                         <span>Published on : </span><?= $createdAt ?>
                     </p>
-                    <button onclick="toggleReportPopup()" class="absolute bottom-0 right-0 pt-2 text-2xl text-red-500 hover:text-red-700">
-                        <!-- Ganti dengan ikon flag yang diinginkan -->
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </button>
+                    <?php if ($userIDPhoto !== $reportedUserID) : ?>
+                        <button onclick="toggleReportPopup()" class="absolute bottom-0 right-0 pt-2 text-2xl text-red-500 hover:text-red-700">
+                            <!-- Ganti dengan ikon flag yang diinginkan -->
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </button>
+                    <?php elseif ($userIDPhoto === $reportedUserID) : ?>
+                        <div></div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -386,18 +397,98 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php if ($userHasLiked) : ?>
                         <form action="unlike.php" method="get">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                            <button class="text-gray-800">
-                                <i class="fa-regular fa-thumbs-up text-blue-500"></i>
-                                <span><?= $totalLikes ?> Likes</span>
-                            </button>
+                            <div class="flex gap-2">
+                                <?php if ($type === 'like') : ?>
+                                    <button  name="type" value="like" class="text-blue-500">
+                                        <i class="fa-solid fa-thumbs-up"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="like" class="text-blue-500">
+                                        <i class="fa-regular fa-thumbs-up"></i>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type === 'love') : ?>
+                                    <button name="type" value="love" class="text-red-500">
+                                        <i class="fa-solid fa-heart"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="love" class="text-red-500">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type === 'cry') : ?>
+                                    <button name="type" value="cry" class="text-orange-500">
+                                        <i class="fa-solid fa-face-sad-cry"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="cry" class="text-orange-500">
+                                        <i class="fa-regular fa-face-sad-cry"></i>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type === 'lol') : ?>
+                                    <button name="type" value="lol" class="text-yellow-500">
+                                        <i class="fa-solid fa-face-grin-squint-tears"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="lol" class="text-yellow-500">
+                                        <i class="fa-regular fa-face-grin-squint-tears"></i>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type === 'shessh') : ?>
+                                    <button name="type" value="shessh" class="text-blue-500">
+                                        <i class="fa-solid fa-face-grimace"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="shessh" class="text-blue-500">
+                                        <i class="fa-regular fa-face-grimace"></i>
+                                    </button>
+                                <?php endif; ?>
+
+                                <?php if ($type === 'angry') : ?>
+                                    <button name="type" value="angry" class="text-red-500">
+                                        <i class="fa-solid fa-face-angry"></i>
+                                    </button>
+                                <?php else : ?>
+                                    <button name="type" value="angry" class="text-red-500">
+                                        <i class="fa-regular fa-face-angry"></i>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="text-center">
+                                <span><?= $totalLikes ?> Reaction </span>
+                            </div>
                         </form>
                     <?php else : ?>
                         <form action="like.php" method="get">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                            <button class="text-gray-800">
-                                <i class="fa-regular fa-thumbs-up"></i>
-                                <span><?= $totalLikes ?> Likes</span>
-                            </button>
+                            <div class="flex gap-2">
+                                <button name="type" value="like" class="text-blue-500">
+                                    <i class="fa-regular fa-thumbs-up"></i>
+                                </button>
+                                <button name="type" value="love" class="text-red-500">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                                <button name="type" value="cry" class="text-orange-500">
+                                    <i class="fa-regular fa-face-sad-cry"></i>
+                                </button>
+                                <button name="type" value="lol" class="text-yellow-500">
+                                    <i class="fa-regular fa-face-grin-squint-tears"></i>
+                                </button>
+                                <button name="type" value="shessh" class="text-blue-500">
+                                    <i class="fa-regular fa-face-grimace"></i>
+                                </button>
+                                <button name="type" value="angry" class="text-red-500">
+                                    <i class="fa-regular fa-face-angry"></i>
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <span><?= $totalLikes ?> Reaction </span>
+                            </div>
                         </form>
                     <?php endif; ?>
                 </div>
@@ -441,14 +532,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="mb-3 flex justify-between">
                                 <div class="flex">
                                     <div class="">
-                                        <?php if($usernamePhoto !== $username) : ?>
-                                        <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>">
-                                            <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
-                                        </a>
-                                        <?php elseif($usernamePhoto === $username) : ?>
-                                        <a href="./profile.php">
-                                            <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
-                                        </a>
+                                        <?php if ($usernamePhoto !== $username) : ?>
+                                            <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>">
+                                                <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                            </a>
+                                        <?php elseif ($usernamePhoto === $username) : ?>
+                                            <a href="./profile.php">
+                                                <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                            </a>
                                         <?php endif; ?>
                                     </div>
                                     <div class="ml-3">
@@ -478,8 +569,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <!-- Opsi untuk menghapus -->
                                                         <button onclick="toggleCommentPopup()" type="button" name="deleteComment" class="focus:outline-none z-10 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
                                                     <?php endif; ?>
-                                                    <!-- Opsi untuk melaporkan -->
-                                                    <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 z-10 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
+                                                    <?php if ($userID !== $comment['userID']) : ?>
+                                                        <!-- Opsi untuk melaporkan -->
+                                                        <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 z-10 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
+                                                    <?php elseif ($userID === $comment['userID']) : ?>
+                                                        <div></div>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -810,6 +905,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //     var dropdown = document.getElementById("optionsDropdown");
         //     dropdown.classList.toggle("hidden");
         // }
+
+        function toggleLike(photoID, type) {
+            // Send AJAX request to like.php or unlike.php based on current state
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', (type === 'like') ? 'like.php' : 'unlike.php' + '?photoID=' + photoID + '&type=' + type, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Update the like button and count based on response
+                    var response = JSON.parse(xhr.responseText);
+                    var totalLikes = response.totalLikes;
+                    var userHasLiked = response.userHasLiked;
+
+                    // Update UI elements accordingly
+                    var likeButton = document.getElementById('likeButton');
+                    likeButton.innerHTML = userHasLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>';
+                    document.getElementById('totalLikes').textContent = totalLikes + ' Likes';
+                }
+            };
+            xhr.send();
+        }
     </script>
 
 </body>

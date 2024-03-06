@@ -33,6 +33,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title = mysqli_real_escape_string($conn, $_POST['title']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
+        $acces_level = mysqli_real_escape_string($conn, $_POST['acces_level']);
 
         // Cek apakah thumbnail diunggah
         if ($_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
@@ -94,7 +95,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         $thumbnail_name_only = pathinfo($thumbnail_path, PATHINFO_BASENAME);
 
         // Query untuk menambahkan album baru dengan thumbnail
-        $insertQuery = "INSERT INTO albums (userID, title, description, thumbnail_album) VALUES ($userID, '$title', '$description', '$thumbnail_name_only')";
+        $insertQuery = "INSERT INTO albums (userID, title, description, thumbnail_album, acces_level) VALUES ($userID, '$title', '$description', '$thumbnail_name_only', '$acces_level')";
 
         if (mysqli_query($conn, $insertQuery)) {
             // Jika berhasil, alihkan ke halaman album atau halaman lain yang sesuai
@@ -261,6 +262,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div class="mb-2">
                                 <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title :</label>
                                 <input type="text" name="title" id="title" autocomplete="title" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                            <div class="mb-2">
+                                <label for="acces_level" class="block text-sm font-medium leading-6 text-gray-900">Set to :</label>
+                                <select id="acces_level" name="acces_level" autocomplete="acces_level-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    <option value="public">Public</option>
+                                    <option value="private">Private</option>
+                                </select>
                             </div>
                             <div class="mb-2">
                                 <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description :</label>

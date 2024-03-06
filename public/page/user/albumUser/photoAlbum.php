@@ -51,7 +51,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     $queryPhotos = "SELECT photos.photoID, photos.title, photos.description, photos.image_path, photos.createdAt, users.username AS uploader 
     FROM photos
     INNER JOIN users ON photos.userID = users.userID 
-    WHERE photos.albumID = $albumID
+    WHERE photos.albumID = $albumID AND photos.acces_level = 'public'
     ORDER BY photos.createdAt DESC
     LIMIT $offset, $rowsPerPage";
     $resultPhotos = mysqli_query($conn, $queryPhotos);
@@ -63,6 +63,64 @@ if ($result && mysqli_num_rows($result) > 0) {
     ORDER BY albums.createdAt DESC";
 
     $resultAlbums = mysqli_query($conn, $queryAlbums);
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        // Ambil nilai dari form
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $acces_level = $_POST['acces_level'];
+        $thumbnailName = $_FILES['thumbnail']['name'];
+        $thumbnailTmpName = $_FILES['thumbnail']['tmp_name'];
+        $thumbnailSize = $_FILES['thumbnail']['size'];
+        $thumbnailType = $_FILES['thumbnail']['type'];
+
+        // Tentukan lokasi penyimpanan thumbnail baru
+        $thumbnailDirectory = "../../../database/uploads/";
+        $thumbnailPath = $thumbnailDirectory . $thumbnailName;
+
+        // Jika thumbnail diupload
+        if (!empty($thumbnailName)) {
+            // Periksa ukuran gambar
+            if ($thumbnailSize > 5 * 1024 * 1024) {
+                echo "<script>alert('Ukuran gambar terlalu besar. Maksimal 5MB.');</script>";
+            } elseif (!in_array($thumbnailType, ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'])) {
+                echo "<script>alert('Tipe gambar tidak didukung. Hanya PNG, JPEG, JPG, dan SVG yang diperbolehkan.');</script>";
+            } else {
+                // Pindahkan thumbnail yang diupload ke folder penyimpanan baru
+                move_uploaded_file($thumbnailTmpName, $thumbnailPath);
+
+                // Perbarui data album di database
+                $query = "UPDATE albums SET title='$title', description='$description', thumbnail_album='$thumbnailName', acces_level='$acces_level' WHERE albumID='$albumID'";
+                $result = mysqli_query($conn, $query);
+
+                // Periksa apakah query berhasil dieksekusi
+                if ($result) {
+                    echo "<script>alert('Album succesfully updated.');</script>";
+                    echo "<script>window.location.href ='album_detail.php?=' + <?php echo $albumID ?></script>";
+                } else {
+                    echo "<script>alert('Error: Album fail to updated.');</script>";
+                    echo "<script>window.location.href ='album_detail.php?=' + <?php echo $albumID ?></script>";
+                }
+            }
+        } else {
+            // Jika thumbnail tidak diupload, perbarui hanya title dan description
+            $query = "UPDATE albums SET title='$title', description='$description', acces_level='$acces_level' WHERE albumID='$albumID'";
+            $result = mysqli_query($conn, $query);
+
+            // Periksa apakah query berhasil dieksekusi
+            if ($result) {
+                echo "<script>alert('Album succesfully updated.');</script>";
+                echo "<script>window.location.href ='album_detail.php?=' + <?php echo $albumID ?></script>";
+            } else {
+                echo "<script>alert('Album fail to updated.');</script>";
+                echo "<script>window.location.href ='album_detail.php?=' + <?php echo $albumID ?></script>";
+            }
+        }
+
+        // Tutup koneksi database
+        mysqli_close($conn);
+    }
 } else {
     // Handle kesalahan query
     echo "<script>alert('Error: " . mysqli_error($conn) . "');</script>";
@@ -208,6 +266,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 $createdAt = $row['createdAt'];
                 $description = $row['description'];
                 $userIDAlbum = $row['userID'];
+                $thumbnail = $row['thumbnail_album'];
             }
         }
         ?>
@@ -246,6 +305,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 <?php elseif ($userID === $userIDAlbum) : ?>
+                    <button onclick="togglePopup()" id="albumPopupButton" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
                     <button onclick="toggleDeletePopup()" id="deleteAlbumButton" class="text-white block bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
                         <i class="fa-solid fa-trash"></i>
                     </button>
@@ -257,6 +319,47 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </button>
                     </div>
                 <?php endif ?>
+            </div>
+            <div id="albumPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                    <h2 class="text-xl font-semibold mb-2">Edit Album</h2>
+                    <form id="albumForm" action="" method="post" enctype="multipart/form-data">
+                        <div class="flex items-start mb-2">
+                            <div class="w-48 h-64 overflow-hidden mr-4"> <!-- Memperbesar ukuran thumbnail -->
+                                <img id="thumbnailPreview" src="../../../../database/uploads/<?= $thumbnail ?>" alt="Thumbnail Preview" class="object-cover rounded-md w-full h-full">
+                            </div>
+                            <div class="flex-1">
+                                <div class="mb-2">
+                                    <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title :</label>
+                                    <input type="text" name="title" id="title" value="<?= $title ?>" autocomplete="title" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="acces_level" class="block text-sm font-medium leading-6 text-gray-900">Set to :</label>
+                                    <select id="acces_level" name="acces_level" autocomplete="acces_level-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        <option value="public">Public</option>
+                                        <option value="private">Private</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description :</label>
+                                    <textarea id="description" name="description" rows="3" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"><?= $description ?></textarea>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="thumbnail" class="block text-sm font-medium leading-6 text-gray-900">Thumbnail :</label>
+                                    <input type="file" name="thumbnail" id="thumbnail" accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
+                                Submit
+                            </button>
+                            <button type="button" onclick="togglePopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 focus:outline-none">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -285,7 +388,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                         <div class="px-4 pb-3">
                             <div>
-                                <a href="../user/post.php?photoID=<?= $row['photoID'] ?>">
+                                <a href="../post.php?photoID=<?= $row['photoID'] ?>">
                                     <h5 class="text-xl font-semibold tracking-tight hover:text-blue-800 dark:hover:text-blue-300 text-gray-900 dark:text-white ">
                                         <?php echo $row['title']; ?>
                                     </h5>

@@ -54,6 +54,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         $title = mysqli_real_escape_string($conn, $_POST['title']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
         $category = mysqli_real_escape_string($conn, $_POST['category']);
+        $acces_level = mysqli_real_escape_string($conn, $_POST['acces_level']);
 
         // Tentukan direktori penyimpanan (gantilah sesuai kebutuhan Anda)
         $uploadDirectory = "../../../database/uploads/";
@@ -71,8 +72,8 @@ if ($result && mysqli_num_rows($result) > 0) {
             // Insert data foto ke tabel photos
             $albumId = isset($_POST['album']) && $_POST['album'] > 0 ? mysqli_real_escape_string($conn, $_POST['album']) : 'NULL'; // Ambil id album dari input select, atau gunakan NULL jika tidak ada album yang dipilih
 
-            $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path, category) 
-                VALUES ('$userID', $albumId, '$title', '$description', '$encryptedFileName', '$category')";
+            $insertQuery = "INSERT INTO photos (userID, albumID, title, description, image_path, category, acces_level) 
+                VALUES ('$userID', $albumId, '$title', '$description', '$encryptedFileName', '$category', '$acces_level')";
 
             if (!mysqli_query($conn, $insertQuery)) {
                 // Handle kesalahan query
@@ -254,33 +255,42 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </div>
                             </div>
                         </div>
-                        <!-- album -->
-                        <div class="mt-5 w-full">
-                            <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
-                            <div class="mt-2 ">
-                                <select id="album" name="album" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                    <?php
-                                    $userId = $userID;
-                                    $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";
-                                    $albumResult = mysqli_query($conn, $albumQuery);
+                        <div class="flex gap-2">
+                            <!-- album -->
+                            <div class="mt-5 w-full">
+                                <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to Album</label>
+                                <div class="mt-2 ">
+                                    <select id="album" name="album" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        <?php
+                                        $userId = $userID;
+                                        $albumQuery = "SELECT * FROM albums WHERE userID = '$userId'";
+                                        $albumResult = mysqli_query($conn, $albumQuery);
 
-                                    // Periksa apakah ada album yang tersedia
-                                    if (mysqli_num_rows($albumResult) > 0) {
-                                        // Tampilkan opsi album
-                                        echo "<option value='0'></option>";
-                                        while ($row = mysqli_fetch_assoc($albumResult)) {
-                                            echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
+                                        // Periksa apakah ada album yang tersedia
+                                        if (mysqli_num_rows($albumResult) > 0) {
+                                            // Tampilkan opsi album
+                                            echo "<option value='0'></option>";
+                                            while ($row = mysqli_fetch_assoc($albumResult)) {
+                                                echo "<option value='" . $row['albumID'] . "'>" . $row['title'] . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option value='0'>No Album Available</option>";
                                         }
-                                    } else {
-                                        echo "<option value='0'>No Album Available</option>";
-                                    }
-                                    ?>
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <label for="acces_level" class="block text-sm font-medium leading-6 mb-2 text-gray-900">Set to :</label>
+                                <select id="acces_level" name="acces_level" autocomplete="acces_level-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    <option value="public">Public</option>
+                                    <option value="private">Private</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div>
-                        
+
                     </div>
 
                     <!-- Upload image -->

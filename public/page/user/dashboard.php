@@ -50,7 +50,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
 // Lakukan query untuk mendapatkan data foto
 $query = "SELECT albums.albumID, albums.title, albums.description, albums.thumbnail_album, albums.createdAt, users.username AS uploader 
     FROM albums
-    INNER JOIN users ON albums.userID = users.userID
+    INNER JOIN users ON albums.userID = users.userID WHERE albums.acces_level = 'public'
     ORDER BY albums.createdAt DESC LIMIT $rowsPerPage OFFSET $offset";
 
 $result = mysqli_query($conn, $query);

@@ -233,7 +233,7 @@ if ($result_other_users && mysqli_num_rows($result_other_users) > 0) {
             <div id="photoContainer" class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
                 <?php
                 // Pastikan $userID_others sudah didefinisikan sebelumnya
-                $queryPhotos = "SELECT * FROM photos WHERE userID = $userID_others";
+                $queryPhotos = "SELECT * FROM photos WHERE userID = $userID_others AND acces_level = 'public'";
                 $resultPhotos = mysqli_query($conn, $queryPhotos);
 
                 if ($resultPhotos && mysqli_num_rows($resultPhotos) > 0) :
@@ -255,7 +255,7 @@ if ($result_other_users && mysqli_num_rows($result_other_users) > 0) {
             <div id="albumContainer" class="hidden">
                 <div class="px-9 pt-9 pb-0 bg-transparent grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
                     <?php
-                    $queryAlbums = "SELECT * FROM albums WHERE userID = $userID_others";
+                    $queryAlbums = "SELECT * FROM albums WHERE userID = $userID_others AND acces_level = 'public'";
                     $resultAlbums = mysqli_query($conn, $queryAlbums);
 
                     if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) :

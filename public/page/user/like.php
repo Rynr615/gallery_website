@@ -24,7 +24,8 @@ if (!isset($_SESSION["username"])) {
         if (mysqli_num_rows($resultLike) == 0) {
             // Jika pengguna belum memberikan like, tambahkan like ke database
             $createdAt = date("Y-m-d H:i:s");
-            $queryInsertLike = "INSERT INTO likes (photoID, userID, createdAt) VALUES ('$photoID', '$userID', '$createdAt')";
+            $type = $_GET['type'];
+            $queryInsertLike = "INSERT INTO likes (photoID, userID, createdAt, type) VALUES ('$photoID', '$userID', '$createdAt', '$type')";
             $resultInsertLike = mysqli_query($conn, $queryInsertLike);
 
             if ($resultInsertLike) {

@@ -64,6 +64,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         // Ambil nilai dari form
         $title = $_POST['title'];
         $description = $_POST['description'];
+        $acces_level = $_POST['acces_level'];
         $thumbnailName = $_FILES['thumbnail']['name'];
         $thumbnailTmpName = $_FILES['thumbnail']['tmp_name'];
         $thumbnailSize = $_FILES['thumbnail']['size'];
@@ -85,7 +86,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 move_uploaded_file($thumbnailTmpName, $thumbnailPath);
 
                 // Perbarui data album di database
-                $query = "UPDATE albums SET title='$title', description='$description', thumbnail_album='$thumbnailName' WHERE albumID='$albumID'";
+                $query = "UPDATE albums SET title='$title', description='$description', thumbnail_album='$thumbnailName', acces_level='$acces_level' WHERE albumID='$albumID'";
                 $result = mysqli_query($conn, $query);
 
                 // Periksa apakah query berhasil dieksekusi
@@ -99,7 +100,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             }
         } else {
             // Jika thumbnail tidak diupload, perbarui hanya title dan description
-            $query = "UPDATE albums SET title='$title', description='$description' WHERE albumID='$albumID'";
+            $query = "UPDATE albums SET title='$title', description='$description', acces_level='$acces_level' WHERE albumID='$albumID'";
             $result = mysqli_query($conn, $query);
 
             // Periksa apakah query berhasil dieksekusi
@@ -302,6 +303,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div class="mb-2">
                                 <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title :</label>
                                 <input type="text" name="title" id="title" value="<?= $title ?>" autocomplete="title" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </div>
+                            <div class="mb-2">
+                                <label for="acces_level" class="block text-sm font-medium leading-6 text-gray-900">Set to :</label>
+                                <select id="acces_level" name="acces_level" autocomplete="acces_level-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    <option value="public">Public</option>
+                                    <option value="private">Private</option>
+                                </select>
                             </div>
                             <div class="mb-2">
                                 <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description :</label>
