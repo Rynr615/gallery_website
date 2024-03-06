@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2024 at 01:07 PM
+-- Generation Time: Mar 06, 2024 at 05:53 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -33,8 +33,19 @@ CREATE TABLE `albums` (
   `title` varchar(100) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `thumbnail_album` varchar(255) NOT NULL DEFAULT 'album_default.svg'
+  `thumbnail_album` varchar(255) NOT NULL DEFAULT 'album_default.svg',
+  `acces_level` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `albums`
+--
+
+INSERT INTO `albums` (`albumID`, `userID`, `title`, `description`, `createdAt`, `thumbnail_album`, `acces_level`) VALUES
+(1, 1, 'Genshin Impact', 'Game yang baik', '2024-03-06 01:49:21', '1709634209_items-5.jpg', 'public'),
+(2, 2, 'Pemandangan', '', '2024-03-06 03:18:07', 'album_default.jpg', 'public'),
+(3, 3, 'Animek', 'Simpenan', '2024-03-06 01:49:29', 'items-17.jpg', 'public'),
+(5, 2, 'test', '', '2024-03-06 01:43:40', 'album_default.jpg', 'public');
 
 -- --------------------------------------------------------
 
@@ -50,6 +61,17 @@ CREATE TABLE `comments` (
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`commentID`, `userID`, `photoID`, `commentText`, `createdAt`) VALUES
+(1, 2, 1, 'Jos gandos', '2024-03-05 10:32:44'),
+(2, 1, 7, 'Kiritooo', '2024-03-05 10:37:58'),
+(3, 3, 5, 'Kerennyoo', '2024-03-05 10:44:46'),
+(4, 4, 6, 'test test', '2024-03-06 03:01:12'),
+(5, 2, 5, 'mantap banh', '2024-03-06 04:47:44');
+
 -- --------------------------------------------------------
 
 --
@@ -60,6 +82,7 @@ CREATE TABLE `likes` (
   `likeID` int(11) NOT NULL,
   `userID` int(11) DEFAULT NULL,
   `photoID` int(11) DEFAULT NULL,
+  `type` varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -77,8 +100,25 @@ CREATE TABLE `photos` (
   `description` text DEFAULT NULL,
   `image_path` varchar(255) DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `category` varchar(255) NOT NULL
+  `category` varchar(255) NOT NULL,
+  `acces_level` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `photos`
+--
+
+INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`, `category`, `acces_level`) VALUES
+(1, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-1.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
+(2, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-2.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
+(3, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-3.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
+(4, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-4.png', '2024-03-06 02:05:32', 'Game', 'public'),
+(5, 2, 2, 'Alam', '', '1709634694_items-12.jpg', '2024-03-06 02:05:32', 'Nature', 'public'),
+(6, 2, 2, 'Alam', '', '1709634694_items-13.jpg', '2024-03-06 02:05:32', 'Nature', 'public'),
+(7, 3, 3, 'SAwO', 'Kirito', '1709634953_items-14.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
+(8, 3, 3, 'SAwO', 'Kirito', '1709634953_items-15.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
+(9, 3, 3, 'SAwO', 'Kirito', '1709634953_items-16.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
+(10, 2, 5, 'test', '', '1709689974_Haerin.full.319794.jpg', '2024-03-06 02:03:17', 'Food', 'private');
 
 -- --------------------------------------------------------
 
@@ -126,13 +166,6 @@ CREATE TABLE `reset_password` (
   `reset_code` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `reset_password`
---
-
-INSERT INTO `reset_password` (`id`, `email`, `reset_code`) VALUES
-(1, 'ryanyanuarpradana@gmail.com', '507136');
-
 -- --------------------------------------------------------
 
 --
@@ -156,7 +189,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-04 13:06:34', '2024-03-02 18:26:17', 'default_profile.svg');
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-06 03:14:20', '2024-03-02 18:26:17', '1709634519profile_photo_1.jpg'),
+(2, 'Muhammad Abdul Fathir', 'fxthir', '$2y$10$uHom.NeGhhwsNYBGGl4DQu9CO45jmk/71W7De.N6QXSZ6sTGd6Tm.', 'muhammadabdoelfathir@gmail.com', 'user', '2024-03-06 04:13:17', '2024-03-05 04:10:17', '1709634743profile_photo_2.jpg'),
+(3, 'Rendi Raihanrai', 'raihanrei', '$2y$10$wAACMFQtBHGhnQiy9UvNkel/ZR0mzOCltsfcile0kwu/MdTE7JKAa', 'raihanrai.rendi@gmail.com', 'admin', '2024-03-06 03:59:56', '2024-03-05 04:22:31', '1709635016profile_photo_3.jpg'),
+(4, '', 'reynaldi', '$2y$10$nNDrEnJfGsLk9tEehyww8uUcDcmF4mD3AT.XWSC9C6/Y4cnX3.y0W', 'rynldhi@gmail.com', 'user', '2024-03-06 04:00:59', '2024-03-05 20:29:30', 'default_profile.svg');
 
 --
 -- Indexes for dumped tables
@@ -232,13 +268,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `albums`
 --
 ALTER TABLE `albums`
-  MODIFY `albumID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `albumID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `likes`
@@ -250,7 +286,7 @@ ALTER TABLE `likes`
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -268,13 +304,13 @@ ALTER TABLE `reports_album`
 -- AUTO_INCREMENT for table `reset_password`
 --
 ALTER TABLE `reset_password`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
