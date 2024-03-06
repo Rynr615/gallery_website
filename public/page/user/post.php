@@ -238,7 +238,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Photo</a>
                         <a href="../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Album</a>
                     <?php elseif ($accesLevel === 'user') : ?>
-                        <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a>
+                        <!-- <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a> -->
                     <?php endif; ?>
                 </div>
             </div>
@@ -409,7 +409,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <div class="flex gap-2">
                                 <?php if ($type === 'like') : ?>
-                                    <button  name="type" value="like" class="text-blue-500">
+                                    <button name="type" value="like" class="text-blue-500">
                                         <i class="fa-solid fa-thumbs-up"></i>
                                     </button>
                                 <?php else : ?>
@@ -915,26 +915,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //     var dropdown = document.getElementById("optionsDropdown");
         //     dropdown.classList.toggle("hidden");
         // }
-
-        function toggleLike(photoID, type) {
-            // Send AJAX request to like.php or unlike.php based on current state
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', (type === 'like') ? 'like.php' : 'unlike.php' + '?photoID=' + photoID + '&type=' + type, true);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    // Update the like button and count based on response
-                    var response = JSON.parse(xhr.responseText);
-                    var totalLikes = response.totalLikes;
-                    var userHasLiked = response.userHasLiked;
-
-                    // Update UI elements accordingly
-                    var likeButton = document.getElementById('likeButton');
-                    likeButton.innerHTML = userHasLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>';
-                    document.getElementById('totalLikes').textContent = totalLikes + ' Likes';
-                }
-            };
-            xhr.send();
-        }
     </script>
 
 </body>

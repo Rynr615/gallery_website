@@ -107,8 +107,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 </head>
 
 <body class="h-screen font-poppins">
-    <!-- navbar -->
-    <div x-data="{ open: false, profileMenuOpen: false }">
+     <!-- navbar -->
+     <div x-data="{ open: false, profileMenuOpen: false }">
         <nav class="bg-gray-800">
             <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                 <div class="relative flex h-16 items-center justify-between">
@@ -150,7 +150,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
-                            <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                            <button type="submit" class="text-white hidden sm:block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             <div class="relative ml-3">
@@ -175,10 +175,20 @@ if ($result && mysqli_num_rows($result) > 0) {
 
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
-                    <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
+                    <form action="./result_search.php" class="flex flex-row gap-2 mb-2" method="GET">
+                        <input type="text" name="search" placeholder="Search" class="bg-gray-700 w-full text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-3 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                    </form>
                     <a href="./dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
                     <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
                     <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <?php if ($accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                        <a href="../admin/manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a>
+                        <a href="../admin/report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Photo</a>
+                        <a href="../admin/report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Album</a>
+                    <?php elseif ($accesLevel === 'user') : ?>
+                        <!-- <a href="../admin/manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a> -->
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
@@ -226,8 +236,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
             <form action="" method="post" enctype="multipart/form-data" class="w-full">
-                <div class="flex items-center flex-col w-full">
-                    <div class="w-1/3 mt-5">
+                <div class="flex flex-col gap-5">
+                    <div class="w-full mt-5">
                         <div class="flex gap-2 ">
                             <!-- title -->
                             <div class="mt-5 w-full">
@@ -288,13 +298,9 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div>
-
-                    </div>
 
                     <!-- Upload image -->
-                    <div class="w-1/3 mt-5">
+                    <div class="w-full mt-5">
                         <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Photo</label>
                         <div class="mt-2 w-full flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                             <div class="text-center">
@@ -308,7 +314,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </div>
                     </div>
                     <!-- description -->
-                    <div class="w-1/3 mt-5">
+                    <div class="w-full mt-5">
                         <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
                         <div class="mt-2">
                             <textarea id="description" placeholder="Tell us about your photo" name="description" rows="5" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
