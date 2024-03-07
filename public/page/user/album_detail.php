@@ -59,6 +59,16 @@ if ($result && mysqli_num_rows($result) > 0) {
     $queryAlbums = "SELECT * FROM albums WHERE userID = $userID AND albumID = $albumID";
     $resultAlbums = mysqli_query($conn, $queryAlbums);
 
+    if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) {
+        while ($row = mysqli_fetch_array($resultAlbums)) {
+
+            $title = $row['title'];
+            $createdAt = $row['createdAt'];
+            $description = $row['description'];
+            $thumbnail = $row['thumbnail_album'];
+        }
+    }
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Ambil nilai dari form
@@ -158,7 +168,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <img class="h-8 hidden sm:block w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <a href="./album_detail.php?albumID=<?= $albumID ?>" class="block sm:hidden text-gray-400 hover:text-white"><?= $title ?></a>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
@@ -261,15 +272,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         <?php
 
-        if ($resultAlbums && mysqli_num_rows($resultAlbums) > 0) {
-            while ($row = mysqli_fetch_array($resultAlbums)) {
-
-                $title = $row['title'];
-                $createdAt = $row['createdAt'];
-                $description = $row['description'];
-                $thumbnail = $row['thumbnail_album'];
-            }
-        }
+        
         ?>
         <div class="flex justify-between items-center mb-5">
             <div>

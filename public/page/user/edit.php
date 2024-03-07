@@ -156,7 +156,8 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <img class="h-8 hidden sm:block w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <a class="block sm:hidden text-gray-400 hover:text-white" href="./edit.php?photoID=<?= $photoID ?>"><i class="fa-regular fa-pen-to-square"></i> Edit Photo</a>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
