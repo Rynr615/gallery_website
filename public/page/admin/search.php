@@ -82,7 +82,8 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <img class="h-8 w-auto hidden sm:block" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <a href="./manage-user.php" class="text-gray-400 hover:text-white blcok sm:hidden"><i class="fa-solid fa-users"></i> Manage User</a>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">

@@ -102,7 +102,49 @@ $result = mysqli_query($conn, $query);
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
                             <img class="h-8 hidden sm:block w-auto" src="../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
-                            <p class="text-gray-400 hover:text-white"><?= $category ?></p>
+                            <div class="block sm:hidden">
+                                <?php if ($category === 'Anime') : ?>
+                                    <i class="fas fa-tv mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Food') : ?>
+                                    <i class="fas fa-utensils mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Game') : ?>
+                                    <i class="fas fa-gamepad mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Nature') : ?>
+                                    <i class="fas fa-tree mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Comic') : ?>
+                                    <i class="fas fa-book mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Sport') : ?>
+                                    <i class="fas fa-football-ball mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Music') : ?>
+                                    <i class="fas fa-music mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php elseif ($category === 'Idol') : ?>
+                                    <i class="fas fa-star mr-1 text-gray-400 hover:text-white"></i> 
+                                    <span class="text-gray-400 hover:text-white">
+                                        <?= $category ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">

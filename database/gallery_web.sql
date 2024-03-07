@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 07, 2024 at 06:41 AM
+-- Generation Time: Mar 07, 2024 at 12:16 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -44,7 +44,7 @@ CREATE TABLE `albums` (
 INSERT INTO `albums` (`albumID`, `userID`, `title`, `description`, `createdAt`, `thumbnail_album`, `acces_level`) VALUES
 (1, 1, 'Genshin Impact', 'Game yang baik', '2024-03-07 05:34:30', '1709634209_items-5.jpg', 'private'),
 (2, 2, 'Pemandangan', '', '2024-03-06 03:18:07', 'album_default.jpg', 'public'),
-(3, 3, 'Animek', 'Simpenan', '2024-03-06 01:49:29', 'items-17.jpg', 'public'),
+(3, 3, 'Animeee', 'Simpenan', '2024-03-07 11:16:08', 'items-17.jpg', 'public'),
 (5, 2, 'test', '', '2024-03-06 01:43:40', 'album_default.jpg', 'public');
 
 -- --------------------------------------------------------
@@ -187,8 +187,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-07 05:29:42', '2024-03-02 18:26:17', '1709634519profile_photo_1.jpg'),
-(2, 'Muhammad Abdul Fathir', 'fxthir', '$2y$10$uHom.NeGhhwsNYBGGl4DQu9CO45jmk/71W7De.N6QXSZ6sTGd6Tm.', 'muhammadabdoelfathir@gmail.com', 'user', '2024-03-07 06:34:45', '2024-03-05 04:10:17', '1709634743profile_photo_2.jpg'),
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-07 12:02:58', '2024-03-02 18:26:17', '1709634519profile_photo_1.jpg'),
+(2, 'Muhammad Abdul Fathir', 'fxthir', '$2y$10$uHom.NeGhhwsNYBGGl4DQu9CO45jmk/71W7De.N6QXSZ6sTGd6Tm.', 'muhammadabdoelfathir@gmail.com', 'user', '2024-03-07 11:49:04', '2024-03-05 04:10:17', '1709634743profile_photo_2.jpg'),
 (3, 'Rendi Raihanrai', 'raihanrei', '$2y$10$wAACMFQtBHGhnQiy9UvNkel/ZR0mzOCltsfcile0kwu/MdTE7JKAa', 'raihanrai.rendi@gmail.com', 'admin', '2024-03-06 03:59:56', '2024-03-05 04:22:31', '1709635016profile_photo_3.jpg'),
 (4, '', 'reynaldi', '$2y$10$nNDrEnJfGsLk9tEehyww8uUcDcmF4mD3AT.XWSC9C6/Y4cnX3.y0W', 'rynldhi@gmail.com', 'user', '2024-03-06 04:00:59', '2024-03-05 20:29:30', 'default_profile.svg');
 

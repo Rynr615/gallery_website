@@ -177,7 +177,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
                             <img class="h-8 w-auto hidden sm:block" src="../../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
-                            <a class="block sm:hidden text-white hover:text-blue-500" href="./photoAlbum.php?albumID=<?= $albumID ?>"><?= $usernameAlbum ?> <span>Album</span></a>
+                            <a class="block sm:hidden text-gray-400 hover:text-white" href="./photoAlbum.php?albumID=<?= $albumID ?>"><i class="fa-solid fa-folder"></i> <?= $usernameAlbum ?> <span>Album</span></a>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">

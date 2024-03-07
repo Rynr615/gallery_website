@@ -19,7 +19,7 @@ $result = mysqli_query($conn, $query);
 if ($result && mysqli_num_rows($result) > 0) {
     // Ambil data pengguna terbaru
     $row = mysqli_fetch_assoc($result);
-    $profile = $row['profile_photo'];
+    $profile_photo = $row['profile_photo'];
     $username = $row['username']; // Inisialisasi variabel username
     $accessLevel = $row['access_level']; //
 } else {
@@ -81,28 +81,28 @@ $offset = ($current_page - 1) * $rowsPerPage;
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="../../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <img class="h-8 w-auto hidden sm:block" src="../../../assets/logo/logo-secondary.svg" alt="Numérique Gallery">
+                            <a href="" class="text-gray-400 hover:text-white blcok sm:hidden"><i class="fa-solid fa-triangle-exclamation"></i> Reports</a>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
                                 <a href="../../user/dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
                                 <a href="../../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="../../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My
-                                    Album</a>
-                                <a href="../manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage
-                                    User</a>
+                                <a href="../../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="../manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <a href="./reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
                                 <a href="./reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
+                                <a href="../manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <!-- Search Box -->
-                        <form action="../../user/result_search.php" class="flex flex-row gap-2" method="GET">
+                        <form action="../user/result_search.php" class="flex flex-row gap-2" method="GET">
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
-                            <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                            <button type="submit" class="text-white hidden sm:block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             <div class="relative ml-3">
@@ -111,11 +111,11 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="../../../../database/uploads/<?= $profile ?>" alt="<?= $username ?> profile photo">
+                                        <img class="h-8 w-8 rounded-full" src="../../../../database/uploads/<?= $profile_photo ?>" alt="<?= $row['username'] ?> profile photo">
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="../../user/profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="../../user//profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
                                     <a href="../../user/setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
                                     <button type="button" onclick="toggleSignOutPopup()" id="signOutButton" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
                                 </div>
@@ -127,11 +127,13 @@ $offset = ($current_page - 1) * $rowsPerPage;
 
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
-                    <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="../../user/dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="../../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="../../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My
-                        Album</a>
+                    <form action="../user/result_search.php" class="flex flex-row gap-2 mb-2" method="GET">
+                        <input type="text" name="search" placeholder="Search" class="bg-gray-700 w-full text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-3 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                    </form>
+                    <a href="../manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a>
+                    <a href="./reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Photo</a>
+                    <a href="./reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Album</a>
                 </div>
             </div>
         </nav>
@@ -169,114 +171,115 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 </form>
             </div>
 
-
-            <table class="w-full border-collapse bg-white text-left text-xs text-gray-500">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported By</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Photo ID</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported on</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Report Type</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reason</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">additional Info</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 border-t border-gray-100">
-                    <?php
-                    $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
-
-                    // Query untuk mengambil data laporan dari database dengan batasan berdasarkan halaman yang sedang aktif
-                    $queryReport = "SELECT reports.reportType, reports.photoID, reports.reason, reports.additionalInfo, users.username AS reportedBy, 
-                reported_users.username AS reportedUser, reports.reportedAt
-                FROM reports
-                INNER JOIN users ON reports.reportedBy = users.userID
-                INNER JOIN users AS reported_users ON reports.reportedUser = reported_users.userID
-                WHERE users.username LIKE '%$searchKeyword%'
-                LIMIT $rowsPerPage OFFSET $offset ";
-                    $resultReport = mysqli_query($conn, $queryReport);
-
-                    // Periksa apakah query berhasil dieksekusi
-                    if ($resultReport && mysqli_num_rows($resultReport) > 0) {
-                        // Loop melalui setiap baris hasil query dan tampilkan data laporan
-                        while ($row = mysqli_fetch_assoc($resultReport)) {
-                    ?>
-                            <tr class="hover:bg-gray-50">
-                                <!-- reportedBy -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedBy'] ?>
-                                </td>
-                                <!-- reportedUser -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedUser'] ?>
-                                </td>
-                                <!-- photoID -->
-                                <td class="px-6 py-4">
-                                    <?= $row['photoID'] ?>
-                                </td>
-                                <!-- reportedAt -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reportedAt'] ?>
-                                </td>
-                                <!-- reportType -->
-                                <td class="px-6 py-4">
-                                    <?php if ($row['reportType'] === 'spam') : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                                            Spam
-                                        </span>
-                                    <?php elseif ($row['reportType'] === 'nudity') : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-4 py-2 text-xs font-semibold text-yellow-600">
-                                            Nudity
-                                        </span>
-                                    <?php elseif ($row['reportType'] === "violence") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
-                                            Violence
-                                        </span>
-                                    <?php elseif ($row['reportType'] === "terrorism") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
-                                            Terrorism
-                                        </span>
-                                    <?php elseif ($row['reportType'] === "hate_speech") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
-                                            Hate Speech
-                                        </span>
-                                    <?php elseif ($row['reportType'] === "sexual_harrasment") : ?>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-600">
-                                            Sexual Harassment
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-
-                                <!-- reason -->
-                                <td class="px-6 py-4">
-                                    <?= $row['reason'] ?>
-                                </td>
-                                <!-- additionalInfo -->
-                                <td class="px-6 py-4">
-                                    <?= $row['additionalInfo'] ?>
-                                </td>
-                                <td>
-                                    <a href="../../user/post.php?photoID=<?= $row['photoID'] ?>" class="hover:text-blue-600 ease-in-out"><i class="fa-solid fa-arrow-right font-normal"></i></a>
-                                </td>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse bg-white text-left text-xs text-gray-500">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported By</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Photo ID</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reported on</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Report Type</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Reason</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">additional Info</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 border-t border-gray-100">
+                        <?php
+                        $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
+    
+                        // Query untuk mengambil data laporan dari database dengan batasan berdasarkan halaman yang sedang aktif
+                        $queryReport = "SELECT reports.reportType, reports.photoID, reports.reason, reports.additionalInfo, users.username AS reportedBy, 
+                    reported_users.username AS reportedUser, reports.reportedAt
+                    FROM reports
+                    INNER JOIN users ON reports.reportedBy = users.userID
+                    INNER JOIN users AS reported_users ON reports.reportedUser = reported_users.userID
+                    WHERE users.username LIKE '%$searchKeyword%'
+                    LIMIT $rowsPerPage OFFSET $offset ";
+                        $resultReport = mysqli_query($conn, $queryReport);
+    
+                        // Periksa apakah query berhasil dieksekusi
+                        if ($resultReport && mysqli_num_rows($resultReport) > 0) {
+                            // Loop melalui setiap baris hasil query dan tampilkan data laporan
+                            while ($row = mysqli_fetch_assoc($resultReport)) {
+                        ?>
+                                <tr class="hover:bg-gray-50">
+                                    <!-- reportedBy -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['reportedBy'] ?>
+                                    </td>
+                                    <!-- reportedUser -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['reportedUser'] ?>
+                                    </td>
+                                    <!-- photoID -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['photoID'] ?>
+                                    </td>
+                                    <!-- reportedAt -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['reportedAt'] ?>
+                                    </td>
+                                    <!-- reportType -->
+                                    <td class="px-6 py-4">
+                                        <?php if ($row['reportType'] === 'spam') : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                                Spam
+                                            </span>
+                                        <?php elseif ($row['reportType'] === 'nudity') : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-yellow-50 px-4 py-2 text-xs font-semibold text-yellow-600">
+                                                Nudity
+                                            </span>
+                                        <?php elseif ($row['reportType'] === "violence") : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
+                                                Violence
+                                            </span>
+                                        <?php elseif ($row['reportType'] === "terrorism") : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
+                                                Terrorism
+                                            </span>
+                                        <?php elseif ($row['reportType'] === "hate_speech") : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
+                                                Hate Speech
+                                            </span>
+                                        <?php elseif ($row['reportType'] === "sexual_harrasment") : ?>
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-600">
+                                                Sexual Harassment
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+    
+                                    <!-- reason -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['reason'] ?>
+                                    </td>
+                                    <!-- additionalInfo -->
+                                    <td class="px-6 py-4">
+                                        <?= $row['additionalInfo'] ?>
+                                    </td>
+                                    <td>
+                                        <a href="../../user/post.php?photoID=<?= $row['photoID'] ?>" class="hover:text-blue-600 ease-in-out"><i class="fa-solid fa-arrow-right font-normal"></i></a>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                            // Bebaskan hasil query
+                            mysqli_free_result($resultReport);
+                        } else {
+                            // Jika tidak ada data laporan yang ditemukan
+                            ?>
+                            <tr>
+                                <td colspan="7" class="text-center py-4">No reports found.</td>
                             </tr>
                         <?php
                         }
-                        // Bebaskan hasil query
-                        mysqli_free_result($resultReport);
-                    } else {
-                        // Jika tidak ada data laporan yang ditemukan
                         ?>
-                        <tr>
-                            <td colspan="7" class="text-center py-4">No reports found.</td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-
-                </tbody>
-
-            </table>
+    
+                    </tbody>
+    
+                </table>
+            </div>
 
             <!-- pagination -->
             <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
