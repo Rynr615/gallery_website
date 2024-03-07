@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2024 at 05:53 AM
+-- Generation Time: Mar 07, 2024 at 06:41 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 7.4.33
 
@@ -42,7 +42,7 @@ CREATE TABLE `albums` (
 --
 
 INSERT INTO `albums` (`albumID`, `userID`, `title`, `description`, `createdAt`, `thumbnail_album`, `acces_level`) VALUES
-(1, 1, 'Genshin Impact', 'Game yang baik', '2024-03-06 01:49:21', '1709634209_items-5.jpg', 'public'),
+(1, 1, 'Genshin Impact', 'Game yang baik', '2024-03-07 05:34:30', '1709634209_items-5.jpg', 'private'),
 (2, 2, 'Pemandangan', '', '2024-03-06 03:18:07', 'album_default.jpg', 'public'),
 (3, 3, 'Animek', 'Simpenan', '2024-03-06 01:49:29', 'items-17.jpg', 'public'),
 (5, 2, 'test', '', '2024-03-06 01:43:40', 'album_default.jpg', 'public');
@@ -68,9 +68,7 @@ CREATE TABLE `comments` (
 INSERT INTO `comments` (`commentID`, `userID`, `photoID`, `commentText`, `createdAt`) VALUES
 (1, 2, 1, 'Jos gandos', '2024-03-05 10:32:44'),
 (2, 1, 7, 'Kiritooo', '2024-03-05 10:37:58'),
-(3, 3, 5, 'Kerennyoo', '2024-03-05 10:44:46'),
-(4, 4, 6, 'test test', '2024-03-06 03:01:12'),
-(5, 2, 5, 'mantap banh', '2024-03-06 04:47:44');
+(9, 1, 11, 'hu tao👻', '2024-03-06 22:39:37');
 
 -- --------------------------------------------------------
 
@@ -111,14 +109,14 @@ CREATE TABLE `photos` (
 INSERT INTO `photos` (`photoID`, `userID`, `albumID`, `title`, `description`, `image_path`, `createdAt`, `category`, `acces_level`) VALUES
 (1, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-1.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
 (2, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-2.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
-(3, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-3.jpg', '2024-03-06 02:05:32', 'Game', 'public'),
+(3, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-3.jpg', '2024-03-06 14:02:37', 'Food', 'private'),
 (4, 1, 1, 'Genshin Impek', 'Mantapkan banh', '1709634339_items-4.png', '2024-03-06 02:05:32', 'Game', 'public'),
-(5, 2, 2, 'Alam', '', '1709634694_items-12.jpg', '2024-03-06 02:05:32', 'Nature', 'public'),
 (6, 2, 2, 'Alam', '', '1709634694_items-13.jpg', '2024-03-06 02:05:32', 'Nature', 'public'),
 (7, 3, 3, 'SAwO', 'Kirito', '1709634953_items-14.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
 (8, 3, 3, 'SAwO', 'Kirito', '1709634953_items-15.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
 (9, 3, 3, 'SAwO', 'Kirito', '1709634953_items-16.jpg', '2024-03-06 02:05:32', 'Anime', 'public'),
-(10, 2, 5, 'test', '', '1709689974_Haerin.full.319794.jpg', '2024-03-06 02:03:17', 'Food', 'private');
+(10, 2, 5, 'test', '', '1709689974_Haerin.full.319794.jpg', '2024-03-07 05:36:14', 'Food', 'private'),
+(11, 1, 1, 'Jenshin', '', '1709734449_101462757_p0.png', '2024-03-06 14:14:09', 'Game', 'public');
 
 -- --------------------------------------------------------
 
@@ -189,8 +187,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `username`, `password`, `email`, `access_level`, `last_login`, `createdAt`, `profile_photo`) VALUES
-(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-06 03:14:20', '2024-03-02 18:26:17', '1709634519profile_photo_1.jpg'),
-(2, 'Muhammad Abdul Fathir', 'fxthir', '$2y$10$uHom.NeGhhwsNYBGGl4DQu9CO45jmk/71W7De.N6QXSZ6sTGd6Tm.', 'muhammadabdoelfathir@gmail.com', 'user', '2024-03-06 04:13:17', '2024-03-05 04:10:17', '1709634743profile_photo_2.jpg'),
+(1, 'Ryan Yanuar Pradana', 'Ryn', '$2y$10$afL11FP0XsdbsoViMln3T.Zz0WrhUCRZ8ThcH7KfqvAt9GgGsm.Ci', 'ryanyanuarpradana@gmail.com', 'super_admin', '2024-03-07 05:29:42', '2024-03-02 18:26:17', '1709634519profile_photo_1.jpg'),
+(2, 'Muhammad Abdul Fathir', 'fxthir', '$2y$10$uHom.NeGhhwsNYBGGl4DQu9CO45jmk/71W7De.N6QXSZ6sTGd6Tm.', 'muhammadabdoelfathir@gmail.com', 'user', '2024-03-07 06:34:45', '2024-03-05 04:10:17', '1709634743profile_photo_2.jpg'),
 (3, 'Rendi Raihanrai', 'raihanrei', '$2y$10$wAACMFQtBHGhnQiy9UvNkel/ZR0mzOCltsfcile0kwu/MdTE7JKAa', 'raihanrai.rendi@gmail.com', 'admin', '2024-03-06 03:59:56', '2024-03-05 04:22:31', '1709635016profile_photo_3.jpg'),
 (4, '', 'reynaldi', '$2y$10$nNDrEnJfGsLk9tEehyww8uUcDcmF4mD3AT.XWSC9C6/Y4cnX3.y0W', 'rynldhi@gmail.com', 'user', '2024-03-06 04:00:59', '2024-03-05 20:29:30', 'default_profile.svg');
 
@@ -274,19 +272,19 @@ ALTER TABLE `albums`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `commentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `likeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `photoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `reports`

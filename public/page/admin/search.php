@@ -19,7 +19,7 @@ $result = mysqli_query($conn, $query);
 if ($result && mysqli_num_rows($result) > 0) {
     // Ambil data pengguna terbaru
     $row = mysqli_fetch_assoc($result);
-    $profile = $row['profile_photo'];
+    $profile_photo = $row['profile_photo'];
     $username = $row['username']; // Inisialisasi variabel username
     $accesLevel = $row['access_level']; //
 } else {
@@ -92,6 +92,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                 <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <a href="./report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
                                 <a href="./report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
+                                <a href="./manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                             </div>
                         </div>
                     </div>
@@ -101,7 +102,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
-                            <button type="submit" class="text-white block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                            <button type="submit" class="text-white hidden sm:block bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm  h-8 w-8 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                         </form>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             <div class="relative ml-3">
@@ -110,11 +111,11 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                         <!-- ... (kode gambar profil) -->
                                         <span class="absolute -inset-1.5"></span>
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile ?>" alt="<?= $username ?> profile photo">
+                                        <img class="h-8 w-8 rounded-full" src="../../../database/uploads/<?= $profile_photo ?>" alt="<?= $row['username'] ?> profile photo">
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="../user/profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="../user//profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
                                     <a href="../user/setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
                                     <button type="button" onclick="toggleSignOutPopup()" id="signOutButton" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
                                 </div>
@@ -126,10 +127,13 @@ $offset = ($current_page - 1) * $rowsPerPage;
 
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
-                    <input type="text" placeholder="Search" class="bg-gray-700 w-full mb-2 text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
-                    <a href="../user/dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="./uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="./album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
+                    <form action="../user/result_search.php" class="flex flex-row gap-2 mb-2" method="GET">
+                        <input type="text" name="search" placeholder="Search" class="bg-gray-700 w-full text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-3 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
+                    </form>
+                    <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a>
+                    <a href="./report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Photo</a>
+                    <a href="./report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Album</a>
                 </div>
             </div>
         </nav>
@@ -165,129 +169,130 @@ $offset = ($current_page - 1) * $rowsPerPage;
                         <button type="submit" class="inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white text-xs rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </div>
                 </form>
-                <div class="">
+                <div class="mt-3">
                     <a href="add-user.php" class="inset-y-0 right-0 w-10 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"><i class="fa-solid fa-plus"></i></a>
                 </div>
             </div>
 
-
-            <table class="w-full border-collapse bg-white text-left text-xs text-gray-500">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">User</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Name</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Last Login</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Joined Since</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Role</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 border-t border-gray-100">
-                    <?php
-                    if (isset($_GET['search'])) {
-                        // Sanitasi input pencarian
-                        $search = mysqli_real_escape_string($conn, $_GET['search']);
-                        // Buat query untuk mencari pengguna berdasarkan nama pengguna atau email yang cocok dengan kata kunci pencarian
-                        $querySearch = "SELECT * FROM users WHERE username LIKE '%$search%' OR email LIKE '%$search%'";
-                        $resultSearch = mysqli_query($conn, $querySearch);
-                        if ($resultSearch && mysqli_num_rows($resultSearch) > 0) {
-                            // Tampilkan hasil pencarian di tabel pengguna
-                            while ($row = mysqli_fetch_assoc($resultSearch)) {
-                                $profile_photo = $row['profile_photo'];
-                                $username = $row['username'];
-                                $iduser = $row['userID'];
-                                $email = $row['email'];
-                                $name = $row['name'];
-                                $role = $row['access_level'];
-                                $createdAt = $row['createdAt'];
-                                $lastLogin = $row['last_login'];
-                    ?>
-                                <tr class="hover:bg-gray-50">
-                                    <!-- profile username, email -->
-                                    <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
-                                        <div class="relative h-10 w-10">
-                                            <!-- profile_photo -->
-                                            <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo ?>" alt="" />
-                                        </div>
-                                        <div class="text-sm">
-                                            <!-- username -->
-                                            <div class="font-medium text-gray-700"><?= $username ?></div>
-                                            <!-- email -->
-                                            <div class="text-gray-400"><?= $email ?></div>
-                                        </div>
-                                    </th>
-                                    <!-- name -->
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center w-auto gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                                            <?= $name ?>
-                                        </span>
-                                    </td>
-                                    <!-- last login -->
-                                    <td class="px-6 py-4"><?= $lastLogin ?></td>
-                                    <!-- joined since -->
-                                    <td class="px-6 py-4"><?= $createdAt ?></td>
-                                    <!-- role -->
-                                    <td class="px-6 py-4">
-                                        <div class="flex gap-2">
-                                            <?php if ($role === 'admin') : ?>
-                                                <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
-                                                    Admin
-                                                </span>
-                                            <?php elseif ($role === 'user') : ?>
-                                                <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
-                                                    User
-                                                </span>
-                                            <?php elseif ($role === "super_admin") : ?>
-                                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
-                                                    Super Admin
-                                                </span>
-
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex justify-end gap-4">
-                                            <?php if ($role === 'admin' || $role === 'user') : ?>
-                                                <form action="manage-user.php" method="get">
-                                                    <button type="submit" name="userID" onclick="togglePopup()" value="<?= $iduser ?>" class="hover:text-sky-600" x-data="{ tooltip: 'Edit' }">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                                                        </svg>
-                                                    </button>
-                                                </form>
-                                                <?php
-
-                                                $usernameSession = $_SESSION['username'];
-
-                                                ?>
-
-                                                <?php if ($usernameSession === $username) : ?>
-                                                    <div></div>
-                                                <?php else : ?>
-                                                    <button onclick="toggleUserPopup()" id="deleteUserButton" class="hover:text-red-600" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                        </svg>
-                                                    </button>
-                                                <?php endif; ?>
-                                            <?php elseif ($role === 'super_admin') : ?>
-                                                <div></div>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                        <?php
-
-                            }
-                        }
-                    } else { ?>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse bg-white text-left text-xs text-gray-500">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <td colspan="5" class="text-center py-4">No users found.</td>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">User</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Name</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Last Login</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Joined Since</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900">Role</th>
+                            <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 border-t border-gray-100">
+                        <?php
+                        if (isset($_GET['search'])) {
+                            // Sanitasi input pencarian
+                            $search = mysqli_real_escape_string($conn, $_GET['search']);
+                            // Buat query untuk mencari pengguna berdasarkan nama pengguna atau email yang cocok dengan kata kunci pencarian
+                            $querySearch = "SELECT * FROM users WHERE username LIKE '%$search%' OR email LIKE '%$search%'";
+                            $resultSearch = mysqli_query($conn, $querySearch);
+                            if ($resultSearch && mysqli_num_rows($resultSearch) > 0) {
+                                // Tampilkan hasil pencarian di tabel pengguna
+                                while ($row = mysqli_fetch_assoc($resultSearch)) {
+                                    $profile_photo_user = $row['profile_photo'];
+                                    $usernameUser = $row['username'];
+                                    $iduser = $row['userID'];
+                                    $email = $row['email'];
+                                    $name = $row['name'];
+                                    $role = $row['access_level'];
+                                    $createdAt = $row['createdAt'];
+                                    $lastLogin = $row['last_login'];
+                        ?>
+                                    <tr class="hover:bg-gray-50">
+                                        <!-- profile username, email -->
+                                        <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+                                            <div class="relative h-10 w-10">
+                                                <!-- profile_photo -->
+                                                <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo_user ?>" alt="" />
+                                            </div>
+                                            <div class="text-sm">
+                                                <!-- username -->
+                                                <div class="font-medium text-gray-700"><?= $usernameUser ?></div>
+                                                <!-- email -->
+                                                <div class="text-gray-400"><?= $email ?></div>
+                                            </div>
+                                        </th>
+                                        <!-- name -->
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center w-auto gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                                <?= $name ?>
+                                            </span>
+                                        </td>
+                                        <!-- last login -->
+                                        <td class="px-6 py-4"><?= $lastLogin ?></td>
+                                        <!-- joined since -->
+                                        <td class="px-6 py-4"><?= $createdAt ?></td>
+                                        <!-- role -->
+                                        <td class="px-6 py-4">
+                                            <div class="flex gap-2">
+                                                <?php if ($role === 'admin') : ?>
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                                                        Admin
+                                                    </span>
+                                                <?php elseif ($role === 'user') : ?>
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                                        User
+                                                    </span>
+                                                <?php elseif ($role === "super_admin") : ?>
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold text-red-600">
+                                                        Super Admin
+                                                    </span>
+    
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex justify-end gap-4">
+                                                <?php if ($role === 'admin' || $role === 'user') : ?>
+                                                    <form action="manage-user.php" method="get">
+                                                        <button type="submit" name="userID" onclick="togglePopup()" value="<?= $iduser ?>" class="hover:text-sky-600" x-data="{ tooltip: 'Edit' }">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                    <?php
+    
+                                                    $usernameSession = $_SESSION['username'];
+    
+                                                    ?>
+    
+                                                    <?php if ($usernameSession === $username) : ?>
+                                                        <div></div>
+                                                    <?php else : ?>
+                                                        <button onclick="toggleUserPopup()" id="deleteUserButton" class="hover:text-red-600" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" x-tooltip="tooltip">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                            </svg>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                <?php elseif ($role === 'super_admin') : ?>
+                                                    <div></div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                            <?php
+    
+                                }
+                            }
+                        } else { ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-4">No users found.</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+    
+                </table>
+            </div>
 
             <!-- pagination -->
             <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
@@ -398,6 +403,34 @@ $offset = ($current_page - 1) * $rowsPerPage;
 
         </div>
 
+    </div>
+
+    <div class="block sm:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+        <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+            <a href="../user/dashboard.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-house w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Home</span>
+            </a>
+            <a href="../user/uploads.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-upload w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11.074 4 8.442.408A.95.95 0 0 0 7.014.254L2.926 4h8.148ZM9 13v-1a4 4 0 0 1 4-4h6V6a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1v-2h-6a4 4 0 0 1-4-4Z" />
+                    <path d="M19 10h-6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Zm-4.5 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM12.62 4h2.78L12.539.41a1.086 1.086 0 1 0-1.7 1.352L12.62 4Z" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Uploads</span>
+            </a>
+            <a href="../user/album.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-folder w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">My Album</span>
+            </a>
+            <a href="../user/profile.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="h-8 w-8 rounded-full">
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"><?= $username ?></span>
+            </a>
+        </div>
     </div>
 
     <!-- footer -->

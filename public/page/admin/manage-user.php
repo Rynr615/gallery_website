@@ -89,18 +89,19 @@ $offset = ($current_page - 1) * $rowsPerPage;
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">
-                                <a href="../dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                                <a href="../uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
-                                <a href="../album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
+                                <a href="../user/dashboard.php" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="../user/uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Upload</a>
+                                <a href="../user/album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">My Album</a>
                                 <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                                 <a href="./report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Photo</a>
                                 <a href="./report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Report Album</a>
+                                <a href="./manage-user.php" hidden class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Manage User</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <!-- Search Box -->
-                        <form action="../result_search.php" class="flex flex-row gap-2" method="GET">
+                        <form action="../user/result_search.php" class="flex flex-row gap-2" method="GET">
                             <div class="hidden sm:block">
                                 <input type="text" name="search" placeholder="Search" class="bg-gray-700 text-white px-4 py-3 h-8 rounded-md text-xs focus:outline-none focus:shadow-outline">
                             </div>
@@ -117,8 +118,8 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                     </button>
                                 </div>
                                 <div x-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                    <a href="../profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                    <a href="../setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                                    <a href="../user//profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                    <a href="../user/setting_profile.php" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
                                     <button type="button" onclick="toggleSignOutPopup()" id="signOutButton" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
                                 </div>
                             </div>
@@ -129,13 +130,10 @@ $offset = ($current_page - 1) * $rowsPerPage;
 
             <div class="sm:hidden" id="mobile-menu" x-show="open" @click.away="open = false">
                 <div class="space-y-1 px-2 pb-3 pt-2">
-                    <form action="./result_search.php" class="flex flex-row gap-2 mb-2" method="GET">
+                    <form action="../user/result_search.php" class="flex flex-row gap-2 mb-2" method="GET">
                         <input type="text" name="search" placeholder="Search" class="bg-gray-700 w-full text-white px-3 py-2 rounded-md focus:outline-none focus:shadow-outline">
                         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-3 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-magnifying-glass text-xs mx-auto"></i></button>
                     </form>
-                    <a href="../dashboard.php" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-                    <a href="../uploads.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Upload<i class="baseline-add_shopping_cart"></i></a>
-                    <a href="../album.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">My Album</a>
                     <a href="./manage-user.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Manage User</a>
                     <a href="./report/reportPhoto.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Photo</a>
                     <a href="./report/reportAlbum.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Report Album</a>
@@ -148,7 +146,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
                 <h2 class="text-xl font-semibold mb-2">Sign Out</h2>
                 <p class="mb-4">Are you sure you want to Sign Out?</p>
                 <div class="flex justify-center">
-                    <form id="signOutForm" action="../logout.php">
+                    <form id="signOutForm" action="../user/logout.php">
                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
                             Yes
                         </button>
@@ -203,8 +201,8 @@ $offset = ($current_page - 1) * $rowsPerPage;
                             // Loop melalui setiap baris hasil query dan tampilkan data user
                             while ($row = mysqli_fetch_assoc($resultUser)) {
                                 // Data user untuk tiap baris
-                                $profile_photo = $row['profile_photo'];
-                                $username = $row['username'];
+                                $profile_photo_User = $row['profile_photo'];
+                                $usernameUser = $row['username'];
                                 $iduser = $row['userID'];
                                 $email = $row['email'];
                                 $name = $row['name'];
@@ -217,11 +215,11 @@ $offset = ($current_page - 1) * $rowsPerPage;
                                     <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
                                         <div class="relative h-10 w-10">
                                             <!-- profile_photo -->
-                                            <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo ?>" alt="" />
+                                            <img class="h-full w-full rounded-full object-cover object-center" src="../../../database/uploads/<?= $profile_photo_User ?>" alt="" />
                                         </div>
                                         <div class="text-sm">
                                             <!-- username -->
-                                            <div class="font-medium text-gray-700"><?= $username ?></div>
+                                            <div class="font-medium text-gray-700"><?= $usernameUser ?></div>
                                             <!-- email -->
                                             <div class="text-gray-400"><?= $email ?></div>
                                         </div>
@@ -271,7 +269,7 @@ $offset = ($current_page - 1) * $rowsPerPage;
 
                                                 ?>
 
-                                                <?php if ($usernameSession === $username) : ?>
+                                                <?php if ($usernameSession === $usernameUser) : ?>
                                                     <div></div>
                                                 <?php else : ?>
                                                     <button onclick="toggleUserPopup()" id="deleteUserButton" class="hover:text-red-600" onclick="return confirm('Are you sure you want to delete this album? This action cannot be undone.')">
@@ -429,6 +427,34 @@ $offset = ($current_page - 1) * $rowsPerPage;
             </div>
         </div>
 
+    </div>
+
+    <div class="block sm:hidden fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+        <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+            <a href="../user/dashboard.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-house w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Home</span>
+            </a>
+            <a href="../user/uploads.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-upload w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11.074 4 8.442.408A.95.95 0 0 0 7.014.254L2.926 4h8.148ZM9 13v-1a4 4 0 0 1 4-4h6V6a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1v-2h-6a4 4 0 0 1-4-4Z" />
+                    <path d="M19 10h-6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Zm-4.5 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM12.62 4h2.78L12.539.41a1.086 1.086 0 1 0-1.7 1.352L12.62 4Z" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Uploads</span>
+            </a>
+            <a href="../user/album.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <i class="fa-solid fa-folder w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12.25V1m0 11.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M4 19v-2.25m6-13.5V1m0 2.25a2.25 2.25 0 0 0 0 4.5m0-4.5a2.25 2.25 0 0 1 0 4.5M10 19V7.75m6 4.5V1m0 11.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM16 19v-2" />
+                </i>
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">My Album</span>
+            </a>
+            <a href="../user/profile.php" type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="h-8 w-8 rounded-full">
+                <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"><?= $username ?></span>
+            </a>
+        </div>
     </div>
 
     <!-- footer -->
