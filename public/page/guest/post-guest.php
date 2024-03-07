@@ -5,7 +5,7 @@ include "../../../database/koneksi.php";
 $photoID = isset($_GET['photoID']) ? $_GET['photoID'] : null;
 
 // Query untuk mendapatkan data foto
-$query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.image_path, photos.createdAt, users.name, users.username
+$query = "SELECT photos.photoID, photos.userID, photos.title, photos.description, photos.category, photos.image_path, photos.createdAt, users.name, users.username, users.profile_photo
         FROM photos
         INNER JOIN users ON photos.userID = users.userID
         WHERE photos.photoID = $photoID";
@@ -24,6 +24,8 @@ if ($result && mysqli_num_rows($result) > 0) {
     $createdAt = date('F j Y, g:i a', strtotime($row['createdAt']));
     $name = $row['name'];
     $username = $row['username'];
+    $profile_photo = $row['profile_photo'];
+    $category = $row['category'];
 } else {
     // Jika query gagal, atur nilai default
     $title = "Foto Tidak Ditemukan";
@@ -169,83 +171,112 @@ if ($queryCheckLike && mysqli_num_rows($resultCheckLike) > 0) {
             </div>
         </div>
     </div>
+
     <!-- main-content -->
     <div class="container mx-auto ">
-        <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
-            <div class="mx-auto flex justify-between ">
-                <div class="">
-                    <p class="font-semibold">
-                        <span>Title : </span> <?= $title; ?>
-                    </p>
-                    <p class="pt-2 text-sm text-gray-400">
-                        <span class="font-normal">Author : </span><?= $username ?>
-                    </p>
-                    <p class="pt-2">
-                        <?= $description ?>
-                    </p>
+        <div class="border-gray-100 border rounded-xl py-12 px-8 m-5">
+            <div class="flex justify-between ">
+                <div class="flex items-center">
+                    <img src="../../../database/uploads/<?= $profile_photo ?>" alt="" class="w-10 mr-2 rounded-full">
+                    <div>
+                        <p class="font-semibold">
+                            <?= $title; ?>
+                        </p>
+                        <p class="text-sm text-gray-400">
+                            <?= $username ?>
+                        </p>
+                    </div>
                 </div>
-                <div class="">
+                <div class="relative">
                     <p class="text-xs">
                         <span>Published on : </span><?= $createdAt ?>
                     </p>
-                    <?php if (isset($showButtons) && $showButtons) : ?>
-                        <!-- Tampilkan tombol hanya jika user yang sedang login adalah pemilik foto -->
-                        <div class="mt-10 flex gap-4">
-                            <a href="edit.php?photoID=<?= $photoID ?>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Edit <i class="fa-solid fa-pen-to-square ml-2"></i></a>
-                            <form method="post" action="delete.php">
-                                <input type="hidden" name="photoID" value="<?= $photoID ?>">
-                                <button type="submit" name="deletePhoto" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete<i class="fa-solid fa-trash ml-2"></i></button>
-                            </form>
-                        </div>
-                        <label for="album" class="block text-sm font-medium leading-6 text-gray-900">Add to album</label>
-                        <div class="mt-2">
-                            <form method="post" action="">
-                                <select id="album" name="albumID" autocomplete="album-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                    <!-- Fetch and display user's albums as options -->
-                                    <?php
-                                    $queryUserAlbums = "SELECT * FROM albums WHERE userID = $userID";
-                                    $resultUserAlbums = mysqli_query($conn, $queryUserAlbums);
-                                    if ($resultUserAlbums && mysqli_num_rows($resultUserAlbums) > 0) {
-                                        while ($rowAlbum = mysqli_fetch_assoc($resultUserAlbums)) {
-                                            echo "<option value='" . $rowAlbum['albumID'] . "'>" . $rowAlbum['title'] . "</option>";
-                                        }
-                                    } else {
-                                        echo "<option value=''>No albums found</option>";
-                                    }
-                                    ?>
-                                </select>
-                                <button type="submit" name="addToAlbum" class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Album</button>
-                            </form>
-                        </div>
-                    <?php endif; ?>
                 </div>
 
             </div>
-            <div class='flex justify-center mt-5'>
-                <img class="rounded-lg w-4/5" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
+            <p class="pt-2">
+                <?= $description ?>
+            </p>
+            <!-- category -->
+            <div class="mt-5">
+                <p>
+                    <?php if ($category === 'Anime') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600">
+                                <i class="fas fa-tv mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Food') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-orange-50 px-4 py-2 text-xs font-semibold text-orange-600">
+                                <i class="fas fa-utensils mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Nature') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-green-50 px-4 py-2 text-xs font-semibold text-green-600">
+                                <i class="fas fa-tree mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Game') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-violet-50 px-4 py-2 text-xs font-semibold text-violet-600">
+                                <i class="fas fa-gamepad mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Comic') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-600">
+                                <i class="fas fa-book mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Sport') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-600">
+                                <i class="fas fa-football-ball mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Music') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-cyan-50 px-4 py-2 text-xs font-semibold text-cyan-600">
+                                <i class="fas fa-music mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php elseif ($category === 'Idol') : ?>
+                        <a href="./category-guest.php?category=<?= $category ?>">
+                            <span class="rounded-full bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-600">
+                                <i class="fas fa-star mr-1"></i> <?= $category ?>
+                            </span>
+                        </a>
+                    <?php endif; ?>
+                </p>
+
             </div>
-            <div class="flex justify-between md:items-center mt-5">
+            <div class='flex justify-center mt-5'>
+                <img class="rounded-lg w-full" src="../../../database/uploads/<?= $image_path; ?>" alt="<?= $title; ?>">
+            </div>
+            <div class="flex justify-between gap-2">
                 <!-- before like -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex sm:flex sm:items-center items-center">
+                <div class="mt-2 py-8 px-8 h-10">
                     <div class="flex gap-2">
-                        <button name="type" value="like" class="text-blue-500">
+                        <a href="../user/register.php" name="type" value="like" class="text-blue-500 text-xl">
                             <i class="fa-regular fa-thumbs-up"></i>
-                        </button>
-                        <button name="type" value="love" class="text-red-500">
+                        </a href="../user/register.php">
+                        <a href="../user/register.php" name="type" value="love" class="text-red-500 text-xl">
                             <i class="fa-regular fa-heart"></i>
-                        </button>
-                        <button name="type" value="cry" class="text-orange-500">
+                        </a href="../user/register.php">
+                        <a href="../user/register.php" name="type" value="cry" class="text-orange-500 text-xl">
                             <i class="fa-regular fa-face-sad-cry"></i>
-                        </button>
-                        <button name="type" value="lol" class="text-yellow-500">
+                        </a href="../user/register.php">
+                        <a href="../user/register.php" name="type" value="lol" class="text-yellow-500 text-xl">
                             <i class="fa-regular fa-face-grin-squint-tears"></i>
-                        </button>
-                        <button name="type" value="shessh" class="text-blue-500">
+                        </a href="../user/register.php">
+                        <a href="../user/register.php" name="type" value="shessh" class="text-blue-500 text-xl">
                             <i class="fa-regular fa-face-grimace"></i>
-                        </button>
-                        <button name="type" value="angry" class="text-red-500">
+                        </a href="../user/register.php">
+                        <a href="../user/register.php" name="type" value="angry" class="text-red-500 text-xl">
                             <i class="fa-regular fa-face-angry"></i>
-                        </button>
+                        </a href="../user/register.php">
                     </div>
                     <div class="text-center">
                         <span><?= $totalLikes ?> Reaction </span>
@@ -253,7 +284,7 @@ if ($queryCheckLike && mysqli_num_rows($resultCheckLike) > 0) {
                 </div>
 
                 <!-- comment -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
+                <div class="mt-2 py-8 px-8 h-10">
                     <div class="">
                         <a href="../user/register.php" class="text-gray-800">
                             <i class="fa-regular fa-comment"></i> <?= $totalComment; ?> Comments
@@ -261,56 +292,38 @@ if ($queryCheckLike && mysqli_num_rows($resultCheckLike) > 0) {
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
-                    <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
-                        <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
-                            <div class=" flex justify-between">
-                                <div class="flex">
-                                    <div>
-                                        <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
-                                    </div>
-                                    <div class="ml-3 flex justify-between">
-                                        <div class="">
-                                            <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
-                                            <p><?= htmlspecialchars($comment['commentText']) ?></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="">
-                                    <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
-                                </div>
-                            </div>
-
-                            <!-- update comment popup -->
-                            <div id="editCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
-                                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
-                                    <h2 class="text-xl font-semibold mb-2">Edit Comment</h2>
-                                    <form method="post" action="edit_comment.php" class="space-y-4">
-                                        <input type="hidden" name="commentID" value="<?= $comment['commentID'] ?>">
-                                        <input type="hidden" name="photoID" value="<?= $comment['photoID'] ?>">
-                                        <textarea name="commentText" placeholder="" class="w-full h-24 p-2 border rounded-md"><?= $comment["commentText"] ?></textarea>
-                                        <div class="flex justify-center">
-                                            <button type="submit" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none">
-                                                Save<i class="fa-solid fa-save ml-3"></i>
-                                            </button>
-                                            <button type="button" onclick="togglePopupEdit()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <hr>
-                        <?php } ?>
-                    </div>
-                <?php } else { ?>
-                    <p class="text-gray-600">No comments yet.</p>
-                <?php } ?>
-            </div>
 
         </div>
+
+        <div class="m-5 overflow-y-auto max-h-80">
+            <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
+                <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
+                    <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
+                        <div class="flex justify-between mb-3">
+                            <div class="flex">
+                                <div>
+                                    <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                </div>
+                                <div class="ml-3 flex flex-col justify-between">
+                                    <div class="">
+                                        <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
+                                        <p class="text-gray-600 text-xs"><?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 mb-3">
+                            <p><?= htmlspecialchars($comment['commentText']) ?></p>
+                        </div>
+
+                        <hr>
+                    <?php } ?>
+                </div>
+            <?php } else { ?>
+                <p class="text-gray-600 text-center">No comments yet.</p>
+            <?php } ?>
+        </div>
+
     </div>
 
     <!-- footer -->

@@ -247,7 +247,7 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
             <div class="w-full text-center mt-10">
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
-            <form action="" method="post" enctype="multipart/form-data" class="w-full">
+            <form action="" method="post" enctype="multipart/form-data" class="w-full sm:w-1/3 mx-auto">
                 <input type="hidden" name="photoID" value="<?php echo $photoID; ?>">
                 <div class="flex items-center flex-col w-full">
                     <div class="w-full mt-5">

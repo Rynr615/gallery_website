@@ -265,7 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- main-content -->
     <div class="container mx-auto ">
-        <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
+        <div class="border-gray-100 border rounded-xl py-8 px-8 m-5">
             <div class="mx-auto flex justify-between">
                 <div class="flex items-center">
                     <?php if ($username === $usernamePhoto) : ?>
@@ -281,11 +281,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <p class="font-semibold">
                             <?= $title; ?>
                         </p>
-                        <p class="pt-1 text-sm text-gray-400">
+                        <p class="text-sm text-gray-400">
                             <?php if ($username === $usernamePhoto) : ?>
-                                <span>Uploaded by : </span><a href="./profile.php" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
+                                <a href="./profile.php" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
                             <?php elseif ($username !== $usernamePhoto) : ?>
-                                <span>Uploaded by : </span><a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
+                                <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>" class="font-normal hover:text-blue-600"><?= $usernamePhoto ?></a>
                             <?php endif; ?>
                         </p>
                     </div>
@@ -401,15 +401,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <!-- likes -->
-            <div class="flex justify-between  mt-5">
+            <div class="flex justify-between mx-auto">
                 <!-- before like -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
+                <div class="mt-10 py-12 px-8 h-10 flex items-center">
                     <?php if ($userHasLiked) : ?>
                         <form action="unlike.php" method="get">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <div class="flex gap-2">
                                 <?php if ($type === 'like') : ?>
-                                    <button name="type" value="like" class="text-blue-500">
+                                    <button name="type" value="like" class="text-blue-500 text-2xl">
                                         <i class="fa-solid fa-thumbs-up"></i>
                                     </button>
                                 <?php else : ?>
@@ -419,7 +419,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <?php endif; ?>
 
                                 <?php if ($type === 'love') : ?>
-                                    <button name="type" value="love" class="text-red-500">
+                                    <button name="type" value="love" class="text-red-500 text-2xl">
                                         <i class="fa-solid fa-heart"></i>
                                     </button>
                                 <?php else : ?>
@@ -429,7 +429,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <?php endif; ?>
 
                                 <?php if ($type === 'cry') : ?>
-                                    <button name="type" value="cry" class="text-orange-500">
+                                    <button name="type" value="cry" class="text-orange-500 text-2xl">
                                         <i class="fa-solid fa-face-sad-cry"></i>
                                     </button>
                                 <?php else : ?>
@@ -439,7 +439,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <?php endif; ?>
 
                                 <?php if ($type === 'lol') : ?>
-                                    <button name="type" value="lol" class="text-yellow-500">
+                                    <button name="type" value="lol" class="text-yellow-500 text-2xl">
                                         <i class="fa-solid fa-face-grin-squint-tears"></i>
                                     </button>
                                 <?php else : ?>
@@ -449,7 +449,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <?php endif; ?>
 
                                 <?php if ($type === 'shessh') : ?>
-                                    <button name="type" value="shessh" class="text-blue-500">
+                                    <button name="type" value="shessh" class="text-blue-500 text-2xl">
                                         <i class="fa-solid fa-face-grimace"></i>
                                     </button>
                                 <?php else : ?>
@@ -459,7 +459,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <?php endif; ?>
 
                                 <?php if ($type === 'angry') : ?>
-                                    <button name="type" value="angry" class="text-red-500">
+                                    <button name="type" value="angry" class="text-red-500 text-2xl">
                                         <i class="fa-solid fa-face-angry"></i>
                                     </button>
                                 <?php else : ?>
@@ -477,22 +477,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <form action="like.php" method="get">
                             <input type="hidden" name="photoID" value="<?= $photoID ?>">
                             <div class="flex gap-2">
-                                <button name="type" value="like" class="text-blue-500">
+                                <button name="type" value="like" class="text-blue-500 text-xl">
                                     <i class="fa-regular fa-thumbs-up"></i>
                                 </button>
-                                <button name="type" value="love" class="text-red-500">
+                                <button name="type" value="love" class="text-red-500 text-xl">
                                     <i class="fa-regular fa-heart"></i>
                                 </button>
-                                <button name="type" value="cry" class="text-orange-500">
+                                <button name="type" value="cry" class="text-orange-500 text-xl">
                                     <i class="fa-regular fa-face-sad-cry"></i>
                                 </button>
-                                <button name="type" value="lol" class="text-yellow-500">
+                                <button name="type" value="lol" class="text-yellow-500 text-xl">
                                     <i class="fa-regular fa-face-grin-squint-tears"></i>
                                 </button>
-                                <button name="type" value="shessh" class="text-blue-500">
+                                <button name="type" value="shessh" class="text-blue-500 text-xl">
                                     <i class="fa-regular fa-face-grimace"></i>
                                 </button>
-                                <button name="type" value="angry" class="text-red-500">
+                                <button name="type" value="angry" class="text-red-500 text-xl">
                                     <i class="fa-regular fa-face-angry"></i>
                                 </button>
                             </div>
@@ -504,7 +504,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- comment popup -->
-                <div id="commentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center mx-auto items-center">
+                <div id="commentPopup" class="fixed inset-0 z-30 overflow-y-auto hidden bg-black bg-opacity-50 justify-center mx-auto items-center">
                     <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
                         <h2 class="text-xl font-semibold mb-2">Send a comment</h2>
                         <form method="post" action="comment.php" class="space-y-4">
@@ -523,7 +523,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- comment -->
-                <div class="m-5 border-gray-100 border shadow-md rounded-xl py-12 px-8 h-10 flex items-center">
+                <div class="mt-10 py-12 px-8 h-10 flex items-center">
                     <div class="">
                         <button class="text-gray-800" onclick="togglePopup()">
                             <i class="fa-regular fa-comment"></i> <?= $totalComment; ?> Comments
@@ -531,115 +531,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
             </div>
-
-            <!-- comments -->
-            <div class="mt-5 overflow-y-auto max-h-80">
-                <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
-                    <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
-                        <?php $commentCount = 0; ?>
-                        <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
-                            <?php $commentCount++; ?>
-                            <div class="mb-3 flex justify-between">
-                                <div class="flex">
-                                    <div class="">
-                                        <?php if ($usernamePhoto !== $username) : ?>
-                                            <a href="./profileUser/profile_others.php?username=<?= $usernamePhoto ?>">
-                                                <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
-                                            </a>
-                                        <?php elseif ($usernamePhoto === $username) : ?>
-                                            <a href="./profile.php">
-                                                <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
-                                            </a>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
-                                        <p><?= htmlspecialchars($comment['commentText']) ?></p>
-                                    </div>
-                                </div>
-
-                                <div class="">
-                                    <p class="text-gray-600 text-xs">Comments on : <?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
-                                    <div class="flex justify-end pt-2 relative">
-                                        <!-- Tombol dropdown untuk menampilkan opsi -->
-                                        <div class="relative inline-block text-left">
-                                            <button onclick="toggleOptions(<?= $comment['commentID'] ?>)" type="button" class="text-gray-700 bg-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                                                <svg class="h-4 w-4 inline-block align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M4.293 7.293a1 1 0 0 1 1.414 0L10 11.586l4.293-4.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                            <!-- Kontainer untuk opsi yang akan ditampilkan ketika tombol di klik -->
-                                            <div id="dropdownButton<?= $comment['commentID'] ?>" class="dropdown-button absolute hidden mt-1">
-                                                <!-- Opsi untuk mengedit -->
-                                                <div class="flex flex-col">
-                                                    <?php if ($comment['userID'] == $userIDPhoto || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
-                                                        <?php if ($comment['userID'] == $userIDPhoto) : ?>
-                                                            <button onclick="togglePopupEdit()" type="button" class="text-white z-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 w-full font-medium rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
-                                                        <?php endif; ?>
-                                                        <!-- Opsi untuk menghapus -->
-                                                        <button onclick="toggleCommentPopup()" type="button" name="deleteComment" class="focus:outline-none z-10 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
-                                                    <?php endif; ?>
-                                                    <?php if ($userID !== $comment['userID']) : ?>
-                                                        <!-- Opsi untuk melaporkan -->
-                                                        <button onclick="toggleReportPopup()" type="button" class="focus:outline-none text-white bg-red-700 z-10 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
-                                                    <?php elseif ($userID === $comment['userID']) : ?>
-                                                        <div></div>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <!-- delete comment popup -->
-                            <div id="deleteCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
-                                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
-                                    <h2 class="text-xl font-semibold mb-2">Delete Comment</h2>
-                                    <p class="mb-4">Are you sure you want to delete this comment? This action cannot be undone.</p>
-                                    <div class="flex justify-center">
-                                        <form method="post" action="comment.php">
-                                            <input type="text" name="commentID" value="<?= $comment['commentID'] ?>" hidden>
-                                            <button type="submit" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Yes</button>
-                                        </form>
-                                        <button onclick="toggleCommentPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">No</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- update comment popup -->
-                            <div id="editCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
-                                <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
-                                    <h2 class="text-xl font-semibold mb-2">Edit Comment</h2>
-                                    <form method="post" action="edit_comment.php" class="space-y-4">
-                                        <input type="hidden" name="commentID" value="<?= $comment['commentID'] ?>">
-                                        <input type="hidden" name="photoID" value="<?= $comment['photoID'] ?>">
-                                        <textarea name="commentText" placeholder="" class="w-full h-24 p-2 border rounded-md"><?= $comment["commentText"] ?></textarea>
-                                        <div class="flex justify-center">
-                                            <button type="submit" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none">
-                                                Save<i class="fa-solid fa-save ml-3"></i>
-                                            </button>
-                                            <button type="button" onclick="togglePopupEdit()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <hr>
-                            <!-- Hentikan loop jika komentar lebih dari 5 -->
-                            <?php if ($commentCount >= 5) {
-                                break;
-                            } ?>
-                        <?php } ?>
-                    </div>
-                <?php } else { ?>
-                    <p class="text-gray-600">No comments yet.</p>
-                <?php } ?>
-            </div>
-
 
             <div id="deletePhotoPopup" class=" fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
                 <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
@@ -788,6 +679,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
         </div>
+
+        <div class="m-5 overflow-y-auto max-h-80">
+            <?php if ($resultComments && mysqli_num_rows($resultComments) > 0) { ?>
+                <div class="border-gray-100 border shadow-md rounded-xl py-12 px-8">
+                    <?php $commentCount = 0; ?>
+                    <?php while ($comment = mysqli_fetch_assoc($resultComments)) { ?>
+                        <?php $commentCount++; ?>
+                        <div class="flex flex-col mb-3">
+                            <div class="mb-3 mt-3 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="mt-1">
+                                        <img src="../../../database/uploads/<?= $comment['profile_photo'] ?>" alt="" class="h-10 rounded-full">
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="font-bold"><?= htmlspecialchars($comment['username']) ?></p>
+                                        <p class="text-gray-600 text-xs"><?= date("F j, Y, g:i a", strtotime($comment['createdAt'])) ?></p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button onclick="toggleOptions(<?= $comment['commentID'] ?>)" type="button" class="text-gray-700 bg-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
+                                        <svg class="h-4 w-4 inline-block align-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4.293 7.293a1 1 0 0 1 1.414 0L10 11.586l4.293-4.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <!-- Kontainer untuk opsi yang akan ditampilkan ketika tombol di klik -->
+                                    <div id="dropdownButton<?= $comment['commentID'] ?>" class="dropdown-button absolute hidden mt-1">
+                                        <!-- Opsi untuk mengedit -->
+                                        <div class="flex flex-col">
+                                            <?php if ($comment['userID'] == $userIDPhoto || $accesLevel === 'admin' || $accesLevel === 'super_admin') : ?>
+                                                <?php if ($comment['userID'] == $userIDPhoto) : ?>
+                                                    <button onclick="togglePopupEdit(<?= $comment['commentID'] ?>)" type="button" class="text-white z-10 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 w-full font-medium rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                <?php endif; ?>
+                                                <!-- Opsi untuk menghapus -->
+                                                <button onclick="toggleCommentPopup(<?= $comment['commentID'] ?>)" type="button" class="focus:outline-none z-10 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-trash"></i></button>
+                                            <?php endif; ?>
+                                            <?php if ($userID !== $comment['userID']) : ?>
+                                                <!-- Opsi untuk melaporkan -->
+                                                <button onclick="toggleReportPopup(<?= $comment['commentID'] ?>)" type="button" class="focus:outline-none text-white bg-red-700 z-10 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium w-full rounded-lg text-xs px-3 py-1.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"> <i class="fa-solid fa-triangle-exclamation"></i></button>
+                                            <?php elseif ($userID === $comment['userID']) : ?>
+                                                <div></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class=""><?= htmlspecialchars($comment['commentText']) ?></p>
+                            </div>
+                        </div>
+                        <!-- delete comment popup -->
+                        <div id="deleteCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                            <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                                <h2 class="text-xl font-semibold mb-2">Delete Comment</h2>
+                                <p class="mb-4">Are you sure you want to delete this comment? This action cannot be undone.</p>
+                                <div class="flex justify-center">
+                                    <form method="post" action="comment.php">
+                                        <input type="text" name="commentID" value="<?= $comment['commentID'] ?>" hidden>
+                                        <button type="submit" name="deleteComment" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Yes</button>
+                                    </form>
+                                    <button onclick="toggleCommentPopup()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:focus:ring-gray-200 focus:outline-none">No</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- update comment popup -->
+                        <div id="editCommentPopup" class="fixed inset-0 z-10 overflow-y-auto hidden bg-black bg-opacity-50 justify-center items-center">
+                            <div class="my-8 mx-auto p-4 bg-white w-full max-w-md rounded shadow-md">
+                                <h2 class="text-xl font-semibold mb-2">Edit Comment</h2>
+                                <form method="post" action="edit_comment.php" class="space-y-4">
+                                    <input type="hidden" name="commentID" value="<?= $comment['commentID'] ?>">
+                                    <input type="hidden" name="photoID" value="<?= $comment['photoID'] ?>">
+                                    <textarea name="commentText" placeholder="" class="w-full h-24 p-2 border rounded-md"><?= $comment["commentText"] ?></textarea>
+                                    <div class="flex justify-center">
+                                        <button type="submit" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none">
+                                            Save<i class="fa-solid fa-save ml-3"></i>
+                                        </button>
+                                        <button type="button" onclick="togglePopupEdit()" class="text-gray-700 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Hentikan loop jika komentar lebih dari 5 -->
+                        <?php if ($commentCount >= 5) {
+                            break;
+                        } ?>
+                    <?php } ?>
+                </div>
+            <?php } else { ?>
+                <p class="text-gray-600">No comments yet.</p>
+            <?php } ?>
+        </div>
     </div>
 
     <!-- footer -->
@@ -902,11 +886,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var dropdownButton = document.getElementById("dropdownButton" + commentID);
             console.log(commentID)
             dropdownButton.classList.toggle("hidden");
-            // if (dropdownButton.classList.contains('hidden')) {
-            //     dropdownButton.classList.remove('hidden');
-            // } else {
-            //     dropdownButton.classList.add('hidden');
-            // }
         }
 
 

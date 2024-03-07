@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
             session_start();
             $_SESSION['username'] = $row["username"];
             $_SESSION['userID'] = $row["userID"];
+            $_SESSION['access_level'] = $row["access_level"];
             header("Location: ./dashboard.php");
             exit();
         } else {

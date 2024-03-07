@@ -235,7 +235,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             <div class="w-full text-center mt-10">
                 <p class="font-semibold text-2xl">Upload Your Photo<i class="fa-solid fa-image ml-2"></i></p>
             </div>
-            <form action="" method="post" enctype="multipart/form-data" class="w-full">
+            <form action="" method="post" enctype="multipart/form-data" class="mx-auto w-full sm:w-1/3">
                 <div class="flex flex-col gap-5">
                     <div class="w-full mt-5">
                         <div class="flex gap-2 ">

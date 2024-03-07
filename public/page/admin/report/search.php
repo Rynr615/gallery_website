@@ -5,8 +5,8 @@ include '../../../../database/koneksi.php';
 session_start();
 
 // Periksa apakah sesi username sudah diset atau belum
-if (!isset($_SESSION['username'])) {
-    header("Location: ../../index.php");
+if (!isset($_SESSION['username']) && $_SESSION['access_level'] !== 'admin' || $_SESSION['access_level'] !== 'super_admin') {
+    header("Location: ../../user/dashboard.php");
     exit();
 }
 
